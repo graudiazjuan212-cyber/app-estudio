@@ -1,32 +1,62 @@
 # CLAUDE.md — App de estudio (uso personal de Juan)
 
-Lee esto al empezar cada sesión. El detalle del producto está en `docs/BRIEF.md`; el plan y el estado, en `docs/PLAN.md` y `docs/PROGRESS.md`.
+Lee esto al empezar cada sesión. El detalle del producto está en `docs/BRIEF.md`; el plan y el estado, en `docs/PLAN.md` y `docs/PROGRESS.md`. Codex lee `AGENTS.md` (mismas reglas, versión para quien programa).
 
-## Roles
-- **Claude Code (Opus, esfuerzo alto) = director técnico.** Planifica, escribe las especificaciones de cada tarea, revisa cada diff, ejecuta los controles de calidad y decide. No delega decisiones de arquitectura.
-- **Codex (vía plugin `codex@openai-codex`) = programador principal.** Implementa las tareas que Claude especifica (`/codex:rescue`) y hace revisiones cruzadas (`/codex:review`, `/codex:adversarial-review`).
-- **Juan = dueño del producto.** Solo decide lo que está en `docs/QUESTIONS.md`. No es programador: los resúmenes para él, en español, cortos y sin jerga.
+## Roles (quien programa no revisa su propio trabajo)
+- **Claude Code = director técnico y revisor.** Planifica, escribe la especificación de cada tarea, verifica y decide. No da por bueno nada que no haya comprobado en disco, en los tests o en `git log`.
+- **Codex (plugin `codex@openai-codex`) = programador principal.** Implementa lo que Claude especifica (`/codex:rescue`) y hace revisiones cruzadas (`/codex:review`, `/codex:adversarial-review`), también del código que escriba Claude.
+- **Juan = dueño del producto.** Casi no va a responder preguntas: solo decide lo que esté en `docs/QUESTIONS.md` y lo que exige permiso (ver «Límites»). Los resúmenes para él, en español, cortos y sin jerga.
 
-## Reglas de trabajo
-1. **Nunca se programa sin plan aprobado.** Fase de planificación → resumen a Juan → esperar «aceptar».
-2. **Un hito cada vez** (`docs/PLAN.md`). Cada hito: especificación → implementación (Codex) → revisión (Claude) → `npm run check` en verde → commit.
-3. **Antes de delegar en Codex, commit** del estado actual (punto de vuelta atrás). Una tarea delegada = un archivo `docs/tasks/<hito>-<n>.md` con: objetivo, archivos a tocar, interfaces, criterios de aceptación y tests obligatorios.
-4. **Revisión de Claude obligatoria** de todo diff de Codex: legibilidad, tipos, casos límite, accesibilidad, que los tests prueban algo de verdad. Si no pasa, se devuelve a Codex con `/codex:rescue --resume` y los fallos concretos.
-5. **Revisión adversarial de Codex** (`/codex:adversarial-review`) en los hitos críticos: esquema e importación de paquetes, almacenamiento/copias de seguridad, planificador de repasos y exportación de progreso. También sobre código que escriba Claude.
-6. **No activar el review gate** del plugin (`--enable-review-gate`): puede crear bucles Claude↔Codex que agotan el uso.
-7. **Calidad mínima para hacer commit:** `npm run check` = typecheck + lint + tests unitarios + build. Los hitos con UI añaden tests E2E (Playwright, viewport móvil).
-8. **Sin dependencias innecesarias.** Cada dependencia nueva se justifica en `docs/DECISIONS.md`. Nada de servicios de pago, APIs de IA ni backends: coste 0 €.
-9. **Datos personales fuera del repositorio.** Los paquetes reales de contenido y el progreso viven solo en el móvil. En el repo, solo paquetes de ejemplo inventados (`fixtures/`).
-10. **Memoria entre sesiones:** al terminar cada hito, actualizar `docs/PROGRESS.md` (qué está hecho, qué falta, decisiones, problemas abiertos). Una sesión nueva empieza leyendo `CLAUDE.md` → `docs/PROGRESS.md` → `docs/PLAN.md`. Hacer `/compact` entre hitos.
-11. **Si algo solo lo puede decidir Juan:** anotarlo en `docs/QUESTIONS.md` con la opción por defecto propuesta, seguir con otro hito que no dependa de ello y avisarle en el siguiente resumen.
-12. **Si se acaba el uso** a mitad de un hito: dejar `docs/PROGRESS.md` al día y el árbol de trabajo en un estado que compile (o en un commit anterior que compile).
+## Flujo
+1. **Sin plan aprobado no se programa.** Fase de planificación → resumen a Juan → esperar «aceptar».
+2. **Un hito cada vez** (`docs/PLAN.md`), con tabla de estado: Cerrado / Con fallo abierto / Sin implementar.
+3. **Antes de empezar un hito: verifica tú el estado real** (archivos, tests, `git status` limpio). No te fíes de lo que diga un documento de cierre anterior.
+4. **Cada tarea delegada = `docs/tasks/<hito>-<n>.md`** con esta estructura (la que funcionó en el proyecto anterior de Juan):
+   1. Contexto y por qué importa.
+   2. Estado verificado: archivos, líneas, casos reales (si es una corrección, el fallo con fichero y línea).
+   3. Lo que quiero (criterios de aceptación comprobables).
+   4. Lo que NO hay que hacer.
+   5. Verificación exigida (tests concretos, positivo y negativo de cada regla).
+   6. Reglas de siempre (bloque de `AGENTS.md`).
+5. **Commit de seguridad antes de delegar.** Luego `/codex:rescue` con la especificación.
+6. **Verificación externa obligatoria** de lo que entregue Codex: leer el diff completo, ejecutar `npm run check`, contar los tests (número exacto, antes → después) y comprobar que cada criterio de aceptación tiene código y test que lo prueban. «El informe dice que está hecho» no es una prueba.
+7. Si no pasa: devolver a Codex con `--resume` y los fallos concretos (fichero, línea, caso). Máximo 3 vueltas; después lo resuelves tú.
+8. **Revisión adversarial** (`/codex:adversarial-review`) antes de cerrar los hitos críticos: esquema e importación de paquetes, almacenamiento/migraciones/copias, planificador de repasos y exportación de progreso.
+9. **Cierre de hito:** `docs/results/RESULTADO-<hito>.md` (qué se hizo, verificaciones con su salida resumida, número de tests) y `docs/results/PARA-REVISAR-<hito>.md` (autoauditoría con preguntas numeradas a), b), c)… que incluya siempre: qué queda a medias, qué pasa con una entrada inválida o ausente, qué podría romperse en otra parte). Commit. Actualizar `docs/PROGRESS.md`. `/compact`.
+10. **Correcciones pequeñas:** sin especificación larga, pero con la misma verificación.
 
-## Esfuerzo y modelos
-- Claude: Opus en esfuerzo alto para planificar, especificar y revisar. Juan tiene plan Pro (límites de uso ajustados): si Juan cambia a Sonnet para la fase de programación, se sigue igual, pero los hitos críticos (sección «Reglas», punto 5) se revisan con especial cuidado y siempre con `/codex:adversarial-review`. Para tareas mecánicas propias (renombrar, mover, docs) se puede bajar el esfuerzo.
-- Ahorro de uso: Codex escribe el grueso del código; Claude no reescribe lo que Codex ya hizo bien; leer solo los archivos necesarios; `/compact` entre hitos.
-- Codex: `--effort medium` por defecto; `--effort high` para planificador de repasos, validación de importación, migraciones de base de datos y cualquier tarea que haya fallado una vez. No usar modelos «spark»/rápidos para lógica de dominio.
+## Reglas de código (evitaron bugs en el proyecto anterior)
+- Ningún archivo de código por encima de **300 líneas**.
+- Ninguna dependencia nueva sin justificarla en `docs/DECISIONS.md`. Las dependencias las instala Claude, no Codex.
+- Sin valores mágicos repartidos: constantes y parámetros (pesos 1/3/5, umbral de dominio 80 %, intervalos, retención FSRS) en un único módulo de configuración.
+- Arquitectura por capas sin saltos: `domain/` (lógica pura) ← `data/` (IndexedDB) ← `ui/`. La UI no habla directamente con IndexedDB.
+- **Fallar abierto con los datos de Juan:** un paquete o una copia que no se entiende se rechaza con mensaje claro y NUNCA borra ni sobrescribe progreso. Las preguntas eliminadas de un paquete se archivan, no se borran.
+- **Migraciones de base de datos con copia previa automática** y test de migración desde la versión anterior.
+- Nada de evaluar rutas, fechas u otros valores de entorno al importar un módulo: funciones.
+- TypeScript estricto, sin `any`. Código en inglés; interfaz y documentos para Juan en español de España.
+- Commits convencionales `tipo(ámbito): …` (`feat(scheduler): …`, `fix(import): …`), uno por cambio lógico.
 
-## Convenciones
-- TypeScript estricto, sin `any`. Código y nombres en inglés; textos de la interfaz y documentación para Juan en español de España.
-- Componentes pequeños, lógica de dominio pura en `src/domain/` (sin React ni IndexedDB) y con tests unitarios.
-- Commits convencionales (`feat:`, `fix:`, `test:`, `docs:`, `chore:`).
+## Tests
+- Unitarios (Vitest) para todo `domain/`; E2E (Playwright, perfil Android) para los flujos principales.
+- **Datos de prueba fijos e independientes** en `tests/fixtures/`: nunca construir el caso esperado copiando lo que hace el código probado.
+- Planificador y dominio: **pruebas deterministas** con historiales de respuestas fijos y fechas fijas (reloj inyectado). Tabla antes → después cuando se cambie la lógica, con cada caso que cambia y su motivo.
+- Positivo y negativo de cada regla nueva (p. ej., «un paquete con ids duplicados se rechaza» y «uno válido se acepta»).
+- Ningún test toca la red ni servicios reales.
+- `npm run check` = `tsc --noEmit` + lint + Vitest + build. En rojo → no hay commit. Hitos de PWA: auditoría Lighthouse (PWA/offline) en el resultado.
+
+## Límites (permisos)
+- **Commits locales: autónomos** (son reversibles). **`git push` y despliegue: solo con autorización explícita de Juan** (se pedirá en el hito de publicación). Bloqueado en `.claude/settings.json`.
+- Nada de `rm -rf`, `git reset --hard` ni reescribir historia.
+- No leer ni crear `.env` con secretos (no hacen falta: no hay backend).
+
+## Registro
+- `docs/PROGRESS.md`: estado por hito, último commit, número de tests, fallos abiertos, **decisiones cerradas que no se reabren**, pendientes de Juan. Una sesión nueva arranca leyendo `CLAUDE.md` → `docs/PROGRESS.md` → `docs/PLAN.md`.
+- `docs/PENDIENTE-JUAN.md`: lo que Juan tiene que hacer a mano. **Solo se añade** (no reescribir).
+- `docs/diario-friccion.md`: lecciones aprendidas con etiquetas (`#codex`, `#windows`, `#tests`, `#pwa`…). **Solo se añade.** Servirá para sacar skills al final.
+- `docs/QUESTIONS.md`: lo que solo Juan puede decidir, con opción por defecto. Mientras no conteste, se sigue con la opción por defecto si es reversible.
+
+## Esfuerzo, modelos y uso
+- Claude: Opus en esfuerzo alto para planificar, especificar y revisar. Juan tiene plan Pro: si cambia a Sonnet para programar, se sigue igual, pero los hitos críticos se revisan con especial cuidado y siempre con `/codex:adversarial-review`.
+- Codex: `--effort medium` por defecto; `--effort high` para planificador, validación de importación, migraciones y cualquier tarea que haya fallado una vez. No usar modelos rápidos/«spark» para lógica de dominio.
+- Ahorro: Codex escribe el grueso; Claude no reescribe lo que ya está bien; leer solo lo necesario; `/compact` entre hitos. **No activar el review gate** del plugin (bucles que agotan el uso).
+- Si se acaba el uso a mitad de un hito: `docs/PROGRESS.md` al día y el proyecto compilando (o en el último commit que compila).
