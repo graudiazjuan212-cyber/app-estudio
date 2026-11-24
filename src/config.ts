@@ -10,3 +10,11 @@ export const appConfig = {
 export function previewUrl(): string {
   return `http://localhost:${String(appConfig.previewPort)}${appConfig.productionBase}`;
 }
+
+export const packConfig = {
+  schema: 'estudio-pack/1', idMax: 80, nameMax: 80, titleMax: 120,
+  textMax: 4000, bodyMax: 8000, sourceMax: 200, tagsMax: 10, tagMax: 40,
+  blocksMax: 60, itemsMax: 200, errorsMax: 50, suggestionDistance: 2,
+  weights: [1, 3, 5], testOptions: [3, 5], multiOptions: [3, 6],
+  gapOptions: [2, 5], steps: [3, 8], pairs: [3, 6], gaps: [1, 6],
+} as const;

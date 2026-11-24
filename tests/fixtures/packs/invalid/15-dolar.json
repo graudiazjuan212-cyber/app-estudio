@@ -1,0 +1,263 @@
+{
+  "schema": "estudio-pack/1",
+  "asignatura": {
+    "id": "ejmat",
+    "nombre": "Matemáticas (ejemplo)"
+  },
+  "capitulo": {
+    "id": "ejmat-c01",
+    "numero": 1,
+    "titulo": "Vectores en el plano"
+  },
+  "version": 1,
+  "generado": "2026-11-24",
+  "bloques": [
+    {
+      "id": "mat-b1",
+      "titulo": "Componentes y norma",
+      "peso": 1,
+      "requiere": [],
+      "items": [
+        {
+          "id": "mat-i1",
+          "tipo": "info",
+          "titulo": "Norma",
+          "cuerpo": "$sin cerrar"
+        },
+        {
+          "id": "mat-i2",
+          "tipo": "flashcard",
+          "anverso": "¿Qué es un vector del plano?",
+          "reverso": "Un par ordenado de componentes reales."
+        },
+        {
+          "id": "mat-i3",
+          "tipo": "test",
+          "enunciado": "Norma de $(3,4)$",
+          "opciones": [
+            {
+              "texto": "$5$",
+              "correcta": true,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "$7$",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "$25$",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        },
+        {
+          "id": "mat-i4",
+          "tipo": "multi",
+          "enunciado": "Vectores unitarios",
+          "opciones": [
+            {
+              "texto": "$(1,0)$",
+              "correcta": true
+            },
+            {
+              "texto": "$(0,1)$",
+              "correcta": true
+            },
+            {
+              "texto": "$(1,1)$",
+              "correcta": false
+            }
+          ]
+        },
+        {
+          "id": "mat-i5",
+          "tipo": "vf",
+          "enunciado": "La norma nunca es negativa.",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "id": "mat-b2",
+      "titulo": "Operaciones",
+      "peso": 3,
+      "requiere": [
+        "mat-b1"
+      ],
+      "items": [
+        {
+          "id": "mat-i6",
+          "tipo": "ordenar",
+          "enunciado": "Calcula la norma de $(6,8)$.",
+          "pasos": [
+            "Elevar cada componente al cuadrado.",
+            "Sumar: 36 + 64 = 100.",
+            "Tomar la raíz: 10."
+          ]
+        },
+        {
+          "id": "mat-i7",
+          "tipo": "emparejar",
+          "enunciado": "Empareja vector y norma.",
+          "pares": [
+            {
+              "izquierda": "$(3,4)$",
+              "derecha": "$5$"
+            },
+            {
+              "izquierda": "$(0,2)$",
+              "derecha": "$2$"
+            },
+            {
+              "izquierda": "$(0,0)$",
+              "derecha": "$0$"
+            }
+          ]
+        },
+        {
+          "id": "mat-i8",
+          "tipo": "huecos",
+          "enunciado": "La suma de (1,2) y (3,4) es ({{1}},{{2}}).",
+          "huecos": [
+            {
+              "n": 1,
+              "opciones": [
+                {
+                  "texto": "4",
+                  "correcta": true,
+                  "feedback": "Correcto."
+                },
+                {
+                  "texto": "3",
+                  "correcta": false,
+                  "feedback": "Revisa la definición."
+                }
+              ]
+            },
+            {
+              "n": 2,
+              "opciones": [
+                {
+                  "texto": "6",
+                  "correcta": true,
+                  "feedback": "Correcto."
+                },
+                {
+                  "texto": "8",
+                  "correcta": false,
+                  "feedback": "Revisa la definición."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mat-i9",
+          "tipo": "error",
+          "enunciado": "Detecta el error al calcular la norma de (3,4).",
+          "pasos": [
+            {
+              "texto": "3 al cuadrado es 9.",
+              "incorrecto": false
+            },
+            {
+              "texto": "4 al cuadrado es 16.",
+              "incorrecto": false
+            },
+            {
+              "texto": "La raíz de 25 es 25.",
+              "incorrecto": true
+            }
+          ],
+          "correccion": "La raíz de 25 es 5."
+        },
+        {
+          "id": "mat-i10",
+          "tipo": "test",
+          "enunciado": "Producto escalar de $(1,0)$ y $(0,1)$",
+          "opciones": [
+            {
+              "texto": "0",
+              "correcta": true,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "1",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "2",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "-1",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "3",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mat-b3",
+      "titulo": "Relaciones geométricas",
+      "peso": 5,
+      "requiere": [
+        "mat-b2"
+      ],
+      "items": [
+        {
+          "id": "mat-i11",
+          "tipo": "vf",
+          "enunciado": "Dos vectores no nulos con producto escalar cero son perpendiculares.",
+          "correcta": true,
+          "relaciona": true
+        },
+        {
+          "id": "mat-i12",
+          "tipo": "flashcard",
+          "anverso": "Relaciona distancia y vectores.",
+          "reverso": "La distancia entre dos puntos es la norma del vector diferencia.",
+          "relaciona": true
+        },
+        {
+          "id": "mat-i13",
+          "tipo": "test",
+          "enunciado": "Distancia entre (0,0) y (0,3)",
+          "opciones": [
+            {
+              "texto": "3",
+              "correcta": true,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "0",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "9",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        },
+        {
+          "id": "mat-i14",
+          "tipo": "vf",
+          "enunciado": "El vector nulo tiene norma cero.",
+          "correcta": true
+        }
+      ]
+    }
+  ]
+}

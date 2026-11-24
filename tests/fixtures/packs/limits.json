@@ -1,0 +1,15 @@
+{
+  "lengths": [
+    { "field": "multi", "min": 3, "max": 6 },
+    { "field": "pairs", "min": 3, "max": 6 },
+    { "field": "gaps", "min": 1, "max": 6 },
+    { "field": "gapOptions", "min": 2, "max": 5 },
+    { "field": "errorSteps", "min": 3, "max": 8 },
+    { "field": "blocks", "min": 1, "max": 60 },
+    { "field": "items", "min": 1, "max": 200 },
+    { "field": "id", "min": 1, "max": 80 }
+  ],
+  "blankFields": ["fuente", "explicacion", "anverso", "reverso"],
+  "badGapNumbers": [0, 3, 1.5],
+  "badVersions": [0, -1, 1.5]
+}

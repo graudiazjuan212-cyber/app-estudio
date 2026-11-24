@@ -1,0 +1,77 @@
+{
+  "schema": "estudio-pack/1",
+  "asignatura": {
+    "id": "ejinf",
+    "nombre": "Informática (ejemplo)"
+  },
+  "capitulo": {
+    "id": "ejinf-c01",
+    "numero": 1,
+    "titulo": "Código básico"
+  },
+  "version": 1,
+  "generado": "2026-11-24",
+  "bloques": [
+    {
+      "id": "inf-b1",
+      "titulo": "Python y SQL",
+      "peso": 1,
+      "requiere": [],
+      "items": [
+        {
+          "id": "inf-i1",
+          "tipo": "info",
+          "titulo": "Literales",
+          "cuerpo": "```python\nprice = \"$5\"\nprint(price)\n```\n```sql\nSELECT '$';\n```"
+        },
+        {
+          "id": "inf-i2",
+          "tipo": "vf",
+          "enunciado": "Este código muestra 2.\n```python\nprint(1 + 1)\n```",
+          "correcta": true
+        },
+        {
+          "id": "inf-i3",
+          "tipo": "huecos",
+          "enunciado": "Completa la consulta para leer todas las columnas.\n```sql\nSELECT {{1}} FROM clientes;\n```",
+          "huecos": [
+            {
+              "n": 1,
+              "opciones": [
+                {
+                  "texto": "*",
+                  "correcta": true,
+                  "feedback": "Correcto."
+                },
+                {
+                  "texto": "ALL COLUMNS",
+                  "correcta": false,
+                  "feedback": "Revisa la definición."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "inf-i4",
+          "tipo": "error",
+          "enunciado": "Detecta el paso que falla en Python.",
+          "pasos": [
+            {
+              "texto": "```python\nx = 1\n```",
+              "incorrecto": false
+            },
+            {
+              "texto": "```python\ny = x + 1\n```",
+              "incorrecto": false
+            },
+            {
+              "texto": "```python\nprint(z)\n```\nLa variable z no está definida.",
+              "incorrecto": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

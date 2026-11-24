@@ -1,0 +1,154 @@
+{
+  "schema": "estudio-pack/1",
+  "asignatura": {
+    "id": "ejioe",
+    "nombre": "Organización de empresas (ejemplo)"
+  },
+  "capitulo": {
+    "id": "ejioe-c01",
+    "numero": 1,
+    "titulo": "La empresa"
+  },
+  "version": 1,
+  "generado": "2026-11-24",
+  "bloques": [
+    {
+      "id": "ioe-b1",
+      "titulo": "Conceptos",
+      "peso": 1,
+      "requiere": [],
+      "items": [
+        {
+          "id": "ioe-i1",
+          "tipo": "info",
+          "titulo": "Empresa",
+          "cuerpo": "Organiza recursos para producir bienes o servicios."
+        },
+        {
+          "id": "ioe-i2",
+          "tipo": "flashcard",
+          "anverso": "¿Qué es un recurso humano?",
+          "reverso": "Una persona que participa en la organización."
+        },
+        {
+          "id": "ioe-i3",
+          "tipo": "test",
+          "enunciado": "Un recurso financiero es…",
+          "opciones": [
+            {
+              "texto": "Dinero disponible",
+              "correcta": true,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "Una máquina",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "Una oficina",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        },
+        {
+          "id": "ioe-i4",
+          "tipo": "multi",
+          "enunciado": "Recursos materiales",
+          "opciones": [
+            {
+              "texto": "Máquinas",
+              "correcta": true
+            },
+            {
+              "texto": "Edificios",
+              "correcta": true
+            },
+            {
+              "texto": "Conocimientos",
+              "correcta": false
+            }
+          ]
+        },
+        {
+          "id": "ioe-i5",
+          "tipo": "vf",
+          "enunciado": "Una empresa puede prestar servicios.",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "id": "ioe-b2",
+      "titulo": "Gestión",
+      "peso": 3,
+      "requiere": [],
+      "items": [
+        {
+          "id": "ioe-i6",
+          "tipo": "ordenar",
+          "enunciado": "Ordena este proceso de planificación.",
+          "pasos": [
+            "Definir objetivos.",
+            "Elegir acciones.",
+            "Asignar recursos."
+          ]
+        },
+        {
+          "id": "ioe-i7",
+          "tipo": "emparejar",
+          "enunciado": "Une función y actividad.",
+          "pares": [
+            {
+              "izquierda": "Planificar",
+              "derecha": "Fijar objetivos"
+            },
+            {
+              "izquierda": "Organizar",
+              "derecha": "Distribuir tareas"
+            },
+            {
+              "izquierda": "Controlar",
+              "derecha": "Comparar resultados"
+            }
+          ]
+        },
+        {
+          "id": "ioe-i8",
+          "tipo": "flashcard",
+          "anverso": "¿Qué es controlar?",
+          "reverso": "Comparar resultados con objetivos y corregir desviaciones."
+        },
+        {
+          "id": "ioe-i9",
+          "tipo": "test",
+          "enunciado": "La producción transforma…",
+          "opciones": [
+            {
+              "texto": "Recursos en bienes o servicios",
+              "correcta": true,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "Objetivos en impuestos",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "Ventas en horarios",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        },
+        {
+          "id": "ioe-i10",
+          "tipo": "vf",
+          "enunciado": "Los objetivos orientan las decisiones.",
+          "correcta": true
+        }
+      ]
+    }
+  ]
+}
