@@ -92,3 +92,15 @@ it('copies shared JSON data without treating it as a cycle or mutating the input
   if (result.ok) result.pack.bloques[0]?.items[0]?.etiquetas?.push('nueva');
   expect(first.etiquetas).toEqual(['compartida']);
 });
+
+it('bounds the work for thousands of unknown fields', () => {
+  const input = fixture() as unknown as Record<string, unknown>;
+  for (let i = 0; i < 10000; i++) input[`bad${String(i)}`] = i;
+  const started = performance.now();
+  const result = validatePack(input);
+  const elapsed = performance.now() - started;
+  if (result.ok) throw new Error('Expected failure');
+  expect(result.errors).toHaveLength(50);
+  expect(result.errors[0]?.message).toContain('Campo desconocido');
+  expect(elapsed).toBeLessThan(1000);
+});

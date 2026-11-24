@@ -39,8 +39,14 @@ export function editDistance(a: string, b: string): number {
   }
   return row[b.length] ?? 0;
 }
+let jsonSchemaCache: unknown;
+/** Built lazily and once: exporting the schema per unknown key made hostile input quadratic. */
+function packJsonSchema(): unknown {
+  jsonSchemaCache ??= z.toJSONSchema(packSchema);
+  return jsonSchemaCache;
+}
 function allowedKeys(input: unknown, path: Path): string[] {
-  let schema: unknown = z.toJSONSchema(packSchema);
+  let schema: unknown = packJsonSchema();
   let value = input;
   function select(node: unknown, data: unknown): unknown {
     const variants = readAt(node, ['oneOf']) ?? readAt(node, ['anyOf']);
@@ -58,7 +64,7 @@ function allowedKeys(input: unknown, path: Path): string[] {
 export function schemaErrors(input: unknown, issues: z.core.$ZodIssue[]): PackError[] {
   return issues.flatMap(issue => {
     const field = String(issue.path.at(-1) ?? 'paquete');
-    if (issue.code === 'unrecognized_keys') return issue.keys.map(key => {
+    if (issue.code === 'unrecognized_keys') return issue.keys.slice(0, packConfig.errorsMax).map(key => {
       if (readAt(input, [...issue.path, 'tipo']) === 'info' && (key === 'relaciona' || key === 'explicacion'))
         return contextualError(input, [...issue.path, key], `\`${key}\` no se puede usar en una tarjeta \`info\` (solo en preguntas evaluables).`);
       const candidates = allowedKeys(input, issue.path).map(name => ({ name, distance: editDistance(key, name) }))
