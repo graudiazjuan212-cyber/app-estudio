@@ -68,3 +68,8 @@ export const renderConfig = {
   hashPrime: 16777619,
   codeIndent: 4,
 } as const;
+
+export const questionConfig = {
+  confidences: [['duda', 'Duda'], ['bastante', 'Bastante seguro'], ['seguro', 'Seguro']],
+  ratings: [['otra', 'Otra vez'], ['dificil', 'Difícil'], ['bien', 'Bien'], ['facil', 'Fácil']],
+} as const;

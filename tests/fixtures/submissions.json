@@ -1,0 +1,565 @@
+[
+  {
+    "id": "mat-i1",
+    "label": "correct",
+    "submission": {
+      "kind": "seen"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i1",
+    "label": "incorrect",
+    "submission": {
+      "kind": "flashcard",
+      "rating": "otra"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i1",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i1",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i2",
+    "label": "correct",
+    "submission": {
+      "kind": "flashcard",
+      "rating": "bien"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i2",
+    "label": "incorrect",
+    "submission": {
+      "kind": "flashcard",
+      "rating": "otra"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i2",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i2",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i3",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i3",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 1
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i3",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i3",
+    "label": "mismatch",
+    "submission": {
+      "kind": "seen"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i4",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "multi",
+        "selected": [
+          0,
+          1
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i4",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "multi",
+        "selected": [
+          2
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i4",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i4",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i5",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "vf",
+        "value": true
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i5",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "vf",
+        "value": false
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i5",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i5",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i6",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "ordenar",
+        "order": [
+          0,
+          1,
+          2
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i6",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "ordenar",
+        "order": [
+          1,
+          0,
+          2
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i6",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i6",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i7",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "emparejar",
+        "pairs": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i7",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "emparejar",
+        "pairs": [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i7",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i7",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i8",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "huecos",
+        "chosen": [
+          0,
+          0
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i8",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "huecos",
+        "chosen": [
+          1,
+          0
+        ]
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i8",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i8",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  },
+  {
+    "id": "mat-i9",
+    "label": "correct",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "error",
+        "step": 2
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": true
+    }
+  },
+  {
+    "id": "mat-i9",
+    "label": "incorrect",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "error",
+        "step": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false
+    }
+  },
+  {
+    "id": "mat-i9",
+    "label": "unknown",
+    "submission": {
+      "kind": "dontKnow"
+    },
+    "expected": {
+      "ok": true,
+      "correct": false,
+      "dontKnow": true,
+      "confidence": null,
+      "rating": null
+    }
+  },
+  {
+    "id": "mat-i9",
+    "label": "mismatch",
+    "submission": {
+      "kind": "answer",
+      "answer": {
+        "tipo": "test",
+        "selected": 0
+      },
+      "confidence": "seguro"
+    },
+    "expected": {
+      "ok": false
+    }
+  }
+]

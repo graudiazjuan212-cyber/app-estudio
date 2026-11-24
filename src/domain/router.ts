@@ -1,10 +1,12 @@
 export type Route =
   | { name: 'home' }
+  | { name: 'demo' }
   | { name: 'subject'; subjectId: string }
   | { name: 'session'; subjectId: string; mode: 'auto' | 'review' | 'exam'; chapterId?: string }
   | { name: 'settings' };
 
-export function parseRoute(hash: string): Route {
+export function parseRoute(hash: string, enableDemo = false): Route {
+  if (enableDemo && hash === '#/demo') return { name: 'demo' };
   if (hash === '#/ajustes') return { name: 'settings' };
   const parts = hash.split('/');
   const [prefix, section, encodedId, action, encodedChapter] = parts;
@@ -26,6 +28,7 @@ export function parseRoute(hash: string): Route {
 
 export function buildHash(route: Route): string {
   switch (route.name) {
+    case 'demo': return '#/demo';
     case 'home': return '#/';
     case 'settings': return '#/ajustes';
     case 'subject': return `#/asignatura/${encodeURIComponent(route.subjectId)}`;

@@ -19,3 +19,6 @@ export { buildSession } from './session.ts';
 export type { ExamSlot, ExamPlan } from './exam.ts';
 export { buildChapterExam, examPassed } from './exam.ts';
 export { previousDay, nextDay, currentStreak, secondsStudiedToday, dailyGoalReached } from './streak.ts';
+
+export { submissionOutcome } from './submission.ts';
+export type { Submission, Outcome } from './submission.ts';
