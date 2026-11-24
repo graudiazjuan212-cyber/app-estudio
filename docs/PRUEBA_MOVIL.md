@@ -49,3 +49,9 @@ Necesitas: el móvil con Chrome, la dirección de la app, y un archivo de ejempl
 - [ ] Abro la app: la racha cuenta 2 días si estudié ayer y hoy; en el Inicio salen los repasos que tocan («N repasos hoy»).
 
 Resultado: ______ de ______ puntos correctos. Observaciones:
+
+- [ ] Con todo lo del día hecho, «Estudiar» muestra «Practicar más»; la sesión dice arriba «Práctica libre: no cambia tu progreso»; al terminar, el % de la asignatura no ha cambiado pero «Hoy» suma los minutos.
+- [ ] En una tarjeta pulsa «No lo sé» sin mostrar la respuesta: se muestra el reverso y cuenta como fallo.
+- [ ] «Comprobar» sin elegir respuesta o seguridad avisa de lo que falta.
+- [ ] En la asignatura, cada bloque muestra «Hoy: X de N preguntas · te faltan Y aciertos…».
+- [ ] Gira el móvil: la app se adapta (si no gira, desinstálala y vuelve a instalarla).

@@ -28,6 +28,7 @@ El contenido lo prepara el proyecto de cada asignatura en Claude: te da un archi
 4. Al terminar ves el **resumen**: aciertos, puntos ciegos nuevos, cómo avanzan los capítulos y tu racha.
 
 **Cómo avanza el progreso.** Un bloque se considera **dominado** cuando en **dos días distintos** aciertas al menos el 80 % de sus preguntas sin «No lo sé» ni fallos estando muy seguro. El % del capítulo cuenta más los bloques difíciles. Un **punto ciego** es una pregunta que fallas estando seguro: es lo primero que se repasa.
+**¿Ya no queda nada pendiente hoy?** «Estudiar» te lo dice y aparece **«Practicar más»**: preguntas al azar de lo que ya has respondido (primero los puntos ciegos, los fallos recientes y lo que contestaste con duda; lo dominado sale menos, pero también sale). Es **práctica libre: no cambia tu progreso** (ni los repasos, ni el dominio de bloques, ni el %), pero **suma minutos y racha**. Las preguntas que falles en la práctica saldrán con más probabilidad en la práctica siguiente.
 En la asignatura tienes también **«Repasar capítulo»** y **«Mini examen»** (5 preguntas de varios capítulos; se aprueba con el 80 %).
 
 En **Ajustes → Duración de la sesión por defecto** puedes elegir 1, 5, 10, 15 o 30 minutos. El selector al empezar solo cambia esa sesión. «Repasar capítulo» usa la duración de Ajustes y «Mini examen» no usa duración. El objetivo diario sigue siendo 5, 10 o 15 minutos.

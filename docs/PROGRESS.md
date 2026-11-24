@@ -15,6 +15,9 @@ Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. **Pr
 | M7 Offline / actualización / instalación | **Cerrado** | `909b475` | 56 E2E (5 de PWA con dos builds reales) |
 | M8 README para Juan + prueba móvil | **Cerrado por Claude** (documentos revisados contra la UI final); la **prueba en el Android de Juan** es suyo | ver `RESULTADO-M8.md` | revisión estática + capturas |
 | M9 Pulido (a11y, rendimiento, integridad, capturas) | **Cerrado** (adversarial de M9-3: aprobado, sin hallazgos) | `c2598ce` (M9-2), `459dde0` (M9-3), `7dbe6c4` | `npm run check`: 1340 tests; E2E 149 |
+| M11-1 Exportación en Android (descarga directa, detalle técnico) | **Cerrado y PUBLICADO** | `8aca14e` | check 1402 tests; E2E 158 |
+| M11-2 Mejoras de la prueba (No lo sé en tarjetas, aviso en Comprobar, progreso del bloque, 48 px, giro) | **Cerrado, SIN PUBLICAR** (a la espera de autorización de Juan) | `972eddd` | check 1460; E2E 169 |
+| M11-3 «Practicar más» (tabla `practiceAttempts`, IndexedDB v2 con copia previa) | **Cerrado, SIN PUBLICAR**; adversarial-review: 1 hallazgo medio, corregido | `1c728dd`, `cf6a86c` | check 1525 tests; E2E 174 (0 fallos); migración probada con `tests/fixtures/backups/v1-real.json` |
 | M10-1 Duración de sesión al empezar (1/5/10/15/30 min, 10 por defecto) | **Cerrado** | `6b0a265` | `npm run check`: 1379 tests + 16 node + 4 dist; E2E: 153 pasan, 2 omitidos, 0 fallos |
 
 Informes: `docs/results/RESULTADO-M0…M9.md`, `PARA-REVISAR-*.md`, `RESULTADO-FINAL.md`, `M9-1.md` (informe de Codex), `capturas/` (PNG claro/oscuro).
@@ -26,6 +29,7 @@ Nada de código pendiente salvo la **pregunta 7** de `docs/QUESTIONS.md` (sesió
 4. Importar sus paquetes reales y hacer la primera copia.
 
 ## Siguiente paso exacto
+- **Pendiente de publicar (local, sin push):** M11-2 y M11-3 (`git log origin/main..HEAD`). M11-3 trae migración v1→v2: tras publicar, la app de Juan migra sola y guarda `estudio-premigration-v1`. M10 (imágenes y paquetes) NO empezado: espera orden de Juan.
 - **Publicado.** Para cambios futuros: commit → `git push` → vigilar `gh run list` (tarda ~6 min). Un E2E rojo en CI bloquea el despliegue (la web anterior sigue en línea). Lección del primer despliegue: `ubuntu-latest` pasó a 26.04 y Playwright no instala ffmpeg ahí → ejecutor fijado a `ubuntu-24.04`; un E2E con carrera (ajuste sin esperar a guardarse) solo falló en CI, más lento.
 - **Si Juan encuentra fallos en el móvil:** abrir una tarea `docs/tasks/<hito>-<n>.md` con el fallo concreto y seguir el flujo de `CLAUDE.md`.
 - **Opcional:** `adversarial-review` solo de M9-3 (`--base c2598ce`); no se ha hecho (solo rendimiento, con equivalencia probada).
