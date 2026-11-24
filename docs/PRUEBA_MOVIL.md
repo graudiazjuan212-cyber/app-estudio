@@ -32,7 +32,12 @@ Necesitas: el móvil con Chrome, la dirección de la app, y un archivo de ejempl
 
 ## D. Copias y progreso
 - [ ] Ajustes → «Exportar copia» → se abre la hoja de compartir → la guardo en Drive.
+- [ ] Ajustes → «Descargar copia» → encuentro `backup_estudio_….json` en **Descargas**.
+- [ ] «Restaurar copia» → elijo ese mismo archivo descargado → confirmo → veo «Copia restaurada» y coinciden las preguntas y los intentos. Puedo «Deshacer última restauración».
 - [ ] En la asignatura: «Exportar progreso para Claude» → la guardo en Drive; abro el archivo y se ve texto con mi asignatura.
+- [ ] En la asignatura: «Descargar progreso» → encuentro `progreso_….json` en **Descargas** y puedo subirlo al proyecto de Claude.
+- [ ] Si la hoja de compartir falla al exportar, aparece «hemos descargado el archivo» y encuentro el archivo en **Descargas**.
+- [ ] Si algo falla, abro «Detalle técnico» → «Copiar detalle» → lo pego para enviarlo a Claude Code. Si aparece «No se ha podido copiar; selecciónalo a mano», selecciono y copio el texto visible.
 - [ ] (Opcional, con cuidado) Ajustes → «Restaurar copia» con la copia que acabo de hacer → «Copia restaurada»; luego «Deshacer última restauración».
 
 ## E. Aspecto

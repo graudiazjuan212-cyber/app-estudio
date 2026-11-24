@@ -35,14 +35,19 @@ En **Ajustes → Duración de la sesión por defecto** puedes elegir 1, 5, 10, 1
 ## 4. Mandar tu progreso a Claude
 En la pantalla de la asignatura pulsa **«Exportar progreso para Claude»**. Se abre la hoja de compartir de Android: guárdalo en **Drive** (o envíatelo) y súbelo al proyecto de esa asignatura. Así Claude sabe qué dominas, qué fallas y qué toca repasar. Esto **no** es una copia de seguridad.
 
+También puedes pulsar **«Descargar progreso»** para guardarlo directamente en **Descargas** y subir ese archivo a Claude. Si al exportar no se puede abrir la hoja de compartir, el archivo se descarga automáticamente.
+
 ## 5. Copias de seguridad (importante)
 Tus respuestas viven **solo en tu móvil**. Si lo cambias, desinstalas la app o borras los datos de Chrome, se pierden… salvo que tengas copia.
 - **Hacer copia:** Ajustes → **«Exportar copia»** → guárdala en Drive. La app te recuerda hacerla si pasa una semana.
+- **Descargar copia:** guarda el archivo `.json` directamente en la carpeta **Descargas** de tu móvil. Si «Exportar copia» no consigue abrir la hoja de compartir, también lo descarga automáticamente. Conserva ese archivo en un lugar seguro.
 - **Restaurar:** Ajustes → **«Restaurar copia»** → elige el archivo → confirma. Antes de restaurar la app guarda tu estado actual: si te equivocas, **«Deshacer última restauración»**.
 
 ## 6. Si algo falla
 | Qué ves | Qué hacer |
 |---|---|
+| «No se pudo abrir la hoja de compartir» | El archivo se ha descargado: búscalo en **Descargas**. |
+| Un error al exportar o importar | Abre **«Detalle técnico»** y pulsa **«Copiar detalle»** para pasárselo a Claude Code. Si no se copia, selecciona el texto a mano. No incluye el contenido del archivo. |
 | «Hay una versión nueva de la app» | Pulsa **«Actualizar»** cuando no estés en una sesión. Nunca se actualiza sola mientras estudias; si la actualizas desde otra pestaña, la sesión abierta no se recarga hasta que salgas de ella. |
 | «La app se ha actualizado en otra ventana» | Pulsa **«Recargar»**. |
 | «Cierra las demás pestañas de la app» | Cierra las otras pestañas o ventanas de Estudio y pulsa «Reintentar». |

@@ -92,3 +92,15 @@ export const progressConfig = {
 } as const;
 
 export const fingerprintConfig = { radix: 16, hexLength: 8, pattern: /^[0-9a-f]{8}:[1-9]\d*$/ };
+
+export const fileConfig = {
+  type: 'application/json', accept: '.json,application/json,text/plain,application/octet-stream',
+  help: 'Descargar guarda el archivo en la carpeta Descargas de tu móvil.',
+  fallback: 'No se pudo abrir la hoja de compartir en este móvil; hemos descargado el archivo',
+  summary: 'Detalle técnico', copy: 'Copiar detalle', copied: 'Detalle copiado',
+  copyFailed: 'No se ha podido copiar; selecciónalo a mano',
+  unavailable: 'n/d', yes: 'sí', no: 'no',
+  labels: { operation: 'Operación', error: 'Error', file: 'Archivo', browser: 'Navegador', time: 'Hora' },
+  operations: { share: 'Compartir archivo', download: 'Descargar archivo', backup: 'Exportar copia',
+    restore: 'Restaurar copia', progress: 'Exportar progreso', import: 'Importar paquete' },
+} as const;

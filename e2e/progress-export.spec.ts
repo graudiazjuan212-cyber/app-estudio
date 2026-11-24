@@ -80,7 +80,7 @@ test('settings exports a subject without attempts in Madrid winter time', async 
   await expect(page.getByText(/Esto no sustituye a la copia de seguridad/)).toBeVisible();
 });
 for (const outcome of ['shared', 'cancelled', 'error'] as const) {
-  test(`share ${outcome} holds the button disabled and never downloads`, async ({ page }) => {
+  test(`share ${outcome} holds the button disabled and downloads only on failure`, async ({ page }) => {
     await importFixture(page, 'mat-ejemplo-c01');
     let downloads = 0;
     page.on('download', () => { downloads++; });
@@ -109,12 +109,16 @@ for (const outcome of ['shared', 'cancelled', 'error'] as const) {
       finish(result);
     }, outcome);
     await expect(button).toBeEnabled();
-    if (outcome === 'error') await expect(page.getByRole('alert')).toContainText('Tus datos se conservan');
+    if (outcome === 'error') {
+      await expect(page.getByRole('status').filter({ hasText: 'hemos descargado el archivo' })).toBeVisible();
+      await expect(page.getByRole('alert')).toHaveCount(0);
+      await expect.poll(() => downloads).toBe(1);
+    }
     else {
       await expect(page.getByRole('alert')).toHaveCount(0);
       await expect(page.getByRole('status').filter({ hasText: outcome === 'shared' ? 'Progreso exportado:' : 'Exportación cancelada.' })).toBeVisible();
     }
-    expect(downloads).toBe(0);
+    expect(downloads).toBe(outcome === 'error' ? 1 : 0);
   });
 }
 for (const invalid of ['missing-subject', 'invalid-clock'] as const) {
