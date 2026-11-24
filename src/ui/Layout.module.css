@@ -1,0 +1,6 @@
+.layout {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+.header { font-weight: 700; border-bottom: 1px solid var(--border); padding-block: 1rem; }
