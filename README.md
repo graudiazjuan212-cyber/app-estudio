@@ -3,7 +3,7 @@
 Andamiaje de una PWA personal con React y TypeScript. Usa Node 22.12 o superior (CI: Node 22).
 
 - Instalar dependencias: `npm ci`.
-- Instalar solo Chromium para las pruebas: `npx playwright install chromium` (Linux CI: añadir `--with-deps`).
+- Las pruebas E2E usan el Chrome instalado en el equipo (`channel: 'chrome'`); no se descarga Chromium. En CI: `npx playwright install --with-deps chrome`.
 - Desarrollo accesible desde el móvil: `npm run dev -- --host`.
 - Tipos, lint, tests unitarios y build: `npm run check`.
 - Prueba Android Pixel 7 sobre el build de producción: `npm run e2e`.
