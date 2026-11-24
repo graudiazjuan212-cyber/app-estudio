@@ -16,3 +16,6 @@ Cada pregunta lleva la opción por defecto. Si no contestas, se sigue con ella. 
 
 5. **Duración de sesión por defecto.**
    Por defecto: **10 minutos**. Se puede cambiar en Ajustes a 5 o 15.
+
+6. **¿Publico la app en GitHub Pages? (necesita `git push`)**
+   Por defecto: **no publicar hasta que contestes**. Todo está listo: build, pruebas en verde y el flujo de publicación (`.github/workflows/deploy.yml`). Si dices que sí, hay que hacer `git push` y activar Pages con origen «GitHub Actions»; la dirección sería `https://graudiazjuan212-cyber.github.io/app-estudio/`. Una vez publicada, cualquier cambio de la base de datos exige migración con copia previa.

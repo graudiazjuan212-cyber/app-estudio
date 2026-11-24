@@ -1,10 +1,10 @@
-:root { font-family: system-ui, sans-serif; font-size: 18px; color-scheme: light dark; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; }
+:root { font-family: system-ui, sans-serif; font-size: 18px; color-scheme: light dark; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; --button-bg: #205c52; --button-text: #ffffff; }
 @media (prefers-color-scheme: dark) {
-  :root { --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; }
+  :root { --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; --button-bg: #9bdbca; --button-text: #14211e; }
 }
 * { box-sizing: border-box; touch-action: manipulation; }
-:root[data-theme="light"] { color-scheme: light; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; }
-:root[data-theme="dark"] { color-scheme: dark; --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; }
+:root[data-theme="light"] { color-scheme: light; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; --button-bg: #205c52; --button-text: #ffffff; }
+:root[data-theme="dark"] { color-scheme: dark; --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; --button-bg: #9bdbca; --button-text: #14211e; }
 body { margin: 0; background: var(--background); color: var(--text); line-height: 1.5; }
 a { color: var(--link); display: inline-block; padding-block: 0.5rem; }
 /* Keyboard focus also covers native preference radios and controls outside cards. */
@@ -12,3 +12,6 @@ a { color: var(--link); display: inline-block; padding-block: 0.5rem; }
 button, select, textarea, input:not([type="radio"]):not([type="checkbox"]) { min-height: 44px; min-width: 44px; }
 a[href] { min-height: 44px; min-width: 44px; }
 label:has(input[type="radio"]), label:has(input[type="checkbox"]) { min-height: 44px; min-width: 44px; padding-block: .5rem; }
+/* Plain action buttons (no own class) share one look; question controls keep theirs. */
+:where(button):not([class]) { background: var(--button-bg); color: var(--button-text); border: 2px solid var(--button-bg); border-radius: .5rem; font: inherit; font-weight: 600; cursor: pointer; }
+progress { accent-color: var(--link); width: 100%; max-width: 24rem; }

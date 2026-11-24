@@ -41,9 +41,11 @@ Tus respuestas viven **solo en tu móvil**. Si lo cambias, desinstalas la app o 
 ## 6. Si algo falla
 | Qué ves | Qué hacer |
 |---|---|
-| «Hay una versión nueva de la app» | Pulsa **«Actualizar»** cuando no estés en una sesión. Nunca se actualiza sola mientras estudias. |
+| «Hay una versión nueva de la app» | Pulsa **«Actualizar»** cuando no estés en una sesión. Nunca se actualiza sola mientras estudias; si la actualizas desde otra pestaña, la sesión abierta no se recarga hasta que salgas de ella. |
 | «La app se ha actualizado en otra ventana» | Pulsa **«Recargar»**. |
 | «Cierra las demás pestañas de la app» | Cierra las otras pestañas o ventanas de Estudio y pulsa «Reintentar». |
+| «Esta pregunta ya se respondió en otra ventana» | Tenías la misma sesión abierta en dos pestañas. Tu respuesta no se duplica: la app pasa a la siguiente. |
+| «Esta pregunta ha cambiado en otra ventana» | Importaste una versión nueva mientras respondías. La app recarga la pregunta: respóndela de nuevo. |
 | Un archivo no se importa | Lee el mensaje: dice la pregunta y el campo que fallan. Pásaselo al proyecto de la asignatura. |
 | «No se ha podido guardar» al responder | Pulsa **«Reintentar»**: se guarda la misma respuesta (no se duplica). |
 | Cambié de móvil | Instala la app, **Ajustes → Restaurar copia** con tu última copia. |
