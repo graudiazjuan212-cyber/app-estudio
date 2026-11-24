@@ -25,6 +25,6 @@ export const attempt: Attempt = {
 };
 export const storedCard = {
   due: '2026-11-27T10:00:00.000Z', stability: 3.2602, difficulty: 2,
-  scheduled_days: 3, learning_steps: 0, reps: 1, lapses: 0, state: 2,
+  elapsed_days: 0, scheduled_days: 3, learning_steps: 0, reps: 1, lapses: 0, state: 2,
   last_review: '2026-11-24T10:00:00.000Z',
 } as const;
