@@ -16,6 +16,20 @@ async function storedMinutes(page: Page): Promise<number[]> {
     };
   }));
 }
+async function savedDefault(page: Page): Promise<number | null> {
+  return page.evaluate(() => new Promise<number | null>((resolve, reject) => {
+    const request = indexedDB.open('estudio');
+    request.onerror = () => { reject(new Error('Cannot open database')); };
+    request.onsuccess = () => {
+      const db = request.result;
+      const row = db.transaction('settings').objectStore('settings').get('sessionMinutes');
+      row.onsuccess = () => {
+        db.close(); resolve((row.result as { value: number } | undefined)?.value ?? null);
+      };
+      row.onerror = () => { db.close(); reject(new Error('Cannot read settings')); };
+    };
+  }));
+}
 test.beforeEach(async ({ page }) => {
   await importFixture(page, 'mat-ejemplo-c01');
   await page.goto('./');
@@ -39,7 +53,8 @@ test('saved thirty minute default initializes selector and a five minute overrid
   await expect(group.getByRole('radio')).toHaveCount(5);
   await expect(page.getByRole('radiogroup', { name: 'Objetivo diario', exact: true }).getByRole('radio')).toHaveCount(3);
   await group.getByRole('radio', { name: '30 min', exact: true }).check();
-  await expect(group).toBeEnabled();
+  // The radio is optimistic: wait until the value is really stored before leaving the page.
+  await expect.poll(() => savedDefault(page)).toBe(30);
   await page.goto('./');
   const selector = page.getByRole('combobox');
   await expect(selector).toHaveValue('30');
@@ -57,7 +72,8 @@ test('chapter review uses the saved duration without another selector', async ({
   await page.goto('./#/ajustes');
   const group = page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto', exact: true });
   await group.getByRole('radio', { name: '30 min', exact: true }).check();
-  await expect(group).toBeEnabled();
+  // The radio is optimistic: wait until the value is really stored before leaving the page.
+  await expect.poll(() => savedDefault(page)).toBe(30);
   await page.goto('./#/asignatura/ejmat');
   await expect(page.getByRole('combobox')).toHaveCount(1);
   await page.getByRole('button', { name: 'Repasar capítulo', exact: true }).click();
