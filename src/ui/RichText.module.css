@@ -1,0 +1,14 @@
+.richText { min-width: 0; overflow-wrap: anywhere; color: var(--text); }
+.richText pre {
+  overflow-x: auto;
+  white-space: pre;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+.richText code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.richText :global(.katex-display) { overflow-x: auto; overflow-y: hidden; padding-block: 0.25rem; }
+.richText table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.richText th, .richText td { border: 1px solid var(--border); padding: 0.5rem; }
+.richText img { max-width: 100%; height: auto; }
+.richText :global(.katex-error) { color: var(--error) !important; }

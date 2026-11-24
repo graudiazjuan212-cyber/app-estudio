@@ -57,3 +57,13 @@ export const studyConfig = {
   millisecondsPerDay: 86400000,
   cutoffSearchDays: 2,
 } as const;
+
+export const renderConfig = {
+  cacheMax: 500,
+  markdown: { html: false, linkify: false, typographer: false, breaks: false },
+  mathOutput: 'htmlAndMathml',
+  orderRetries: 10,
+  hashOffset: 2166136261,
+  hashPrime: 16777619,
+  codeIndent: 4,
+} as const;
