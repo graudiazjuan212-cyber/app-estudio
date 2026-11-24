@@ -7,3 +7,8 @@
 :root[data-theme="dark"] { color-scheme: dark; --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; }
 body { margin: 0; background: var(--background); color: var(--text); line-height: 1.5; }
 a { color: var(--link); display: inline-block; padding-block: 0.5rem; }
+/* Keyboard focus also covers native preference radios and controls outside cards. */
+:focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
+button, select, textarea, input:not([type="radio"]):not([type="checkbox"]) { min-height: 44px; min-width: 44px; }
+a[href] { min-height: 44px; min-width: 44px; }
+label:has(input[type="radio"]), label:has(input[type="checkbox"]) { min-height: 44px; min-width: 44px; padding-block: .5rem; }

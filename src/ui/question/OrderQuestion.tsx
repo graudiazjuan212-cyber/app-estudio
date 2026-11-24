@@ -7,7 +7,7 @@ export function OrderQuestion({ item, seed, disabled, onChange }: InputProps) {
   const [order, setOrder] = useState<number[]>([]);
   if (item.tipo !== 'ordenar') return null;
   const update = (next: number[]) => { setOrder(next); onChange(next.length === item.pasos.length ? { tipo: 'ordenar', order: next } : null); };
-  return <><div aria-label="Pasos disponibles">{displayOrder(item.pasos.length, seed, { avoidIdentity: true }).filter(i => !order.includes(i)).map(i =>
+  return <><div role="group" aria-label="Pasos disponibles">{displayOrder(item.pasos.length, seed, { avoidIdentity: true }).filter(i => !order.includes(i)).map(i =>
     <button key={i} disabled={disabled} onClick={() => { update(placeStep(order, i)); }}><RichText inline text={required(item.pasos[i])} /></button>)}</div>
     <h3>Tu orden</h3><ol>{order.map(i => <li key={i}><button disabled={disabled} onClick={() => { update(unplaceStep(order, i)); }}>
       <RichText inline text={required(item.pasos[i])} /></button></li>)}</ol>
