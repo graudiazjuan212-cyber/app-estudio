@@ -148,3 +148,12 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 - **Validación de intentos:** `studyDay` debe ser fecha de calendario real y `tz` zona IANA admitida; el `studyDay` guardado no se recalcula.
 - **Puntos ciegos:** un fallo `seguro` posterior a otro aún pendiente no cambia su `since`; se resuelve con acierto `bastante`/`seguro` en un `studyDay` posterior; las flashcards no los generan.
 - **Sesión:** relleno voraz por grupo (se salta lo que no cabe y se sigue); garantía de ≥ 1 ítem con preferencia bloque actual → vencidos → intercalado; no se incluye lo respondido hoy.
+
+## ADR-024 · Riesgo asumido: copia previa a una migración y pestañas antiguas
+- **Contexto (revisión adversarial de M3):** la copia previa (`<bd>-premigration-v<n>`) se hace antes de abrir la versión nueva. Otra pestaña con la versión antigua podría guardar una respuesta en ese intervalo: entra en la BD que se migra, pero no en la copia de recuperación.
+- **Decisión:** se **asume** el riesgo. Hoy no existe ninguna migración (solo v1), las futuras serán **aditivas** (ADR-013) y las respuestas nunca se pierden de la BD principal; solo faltarían en la copia de recuperación si una migración defectuosa obligara a usarla. Cerrarlo del todo exigiría un bloqueo entre pestañas (Web Locks) que añade complejidad sin beneficio actual.
+- **Condición para reabrirlo:** cuando se escriba la primera migración no aditiva (que borre o transforme datos), añadir el bloqueo y una prueba de carrera antes de publicarla.
+
+## ADR-025 · KaTeX y fórmulas inválidas
+- `katex` 0.19.1 con `throwOnError: false` **no** emite la clase `katex-error` para un comando desconocido: lo pinta en rojo (`color:#cc0000`) como texto. El validador de paquetes (M1) ya rechaza esos paquetes al importar, así que en pantalla solo puede aparecer por un paquete antiguo o editado a mano; el contraste del rojo se revisa en M9.
+- `\href` y `\url` no generan enlaces (KaTeX no confía en ellos por defecto; no activar `trust`).
