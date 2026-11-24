@@ -138,3 +138,13 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 - **Contexto:** `ts-fsrs` 6.x marca `fsrs()`, `createEmptyCard` y `Card` como obsoletos; su `DefaultScheduler` es asíncrono y usa **FSRS-7** por defecto. El BRIEF y ADR-002 piden FSRS-6, función pura y planificador versionado.
 - **Decisión:** versión exacta **5.4.2** (FSRS-6, 21 parámetros, API síncrona no obsoleta). Los parámetros viven en `studyConfig.fsrs` y `schedulerVersion = 1`. Un test fija 5 vencimientos (`tests/fixtures/study/fsrs-golden.json`); coinciden con los de 6.0.1 en modo FSRS-6.
 - **Consecuencias:** subir a otra versión o a FSRS-7 es una migración deliberada (subir `schedulerVersion`, recalcular la caché desde los intentos; los intentos no cambian).
+
+## ADR-023 · Detalles de ADR-009 fijados en la implementación de M2
+- **Día del fallo tras dominio:** si un bloque ya consolidado pierde el dominio por un fallo en un día posterior, **ese mismo día no cuenta** como día válido (reinicio a 0). Los días siguientes cuentan de nuevo.
+- **Intentos que cuentan:** solo ítems evaluables, no archivados, de la generación `itemGen` actual y que **ahora** pertenecen al bloque. `info` nunca cuenta.
+- **Bloque sin ítems evaluables** (solo `info`): siempre «pendiente» y fuera del % del capítulo.
+- **% de capítulo:** `floor(100 × Σ pesos dominados / Σ pesos con ítems evaluables)`.
+- **Orden total de intentos:** (instante, `attemptId`). El estado FSRS guarda `lastAttemptId`; un intento anterior en ese orden pide reconstrucción; el mismo `attemptId` es idempotente. La reconstrucción aplica una sola vez los duplicados idénticos y descarta todos los que tengan el mismo `attemptId` con contenido distinto.
+- **Validación de intentos:** `studyDay` debe ser fecha de calendario real y `tz` zona IANA admitida; el `studyDay` guardado no se recalcula.
+- **Puntos ciegos:** un fallo `seguro` posterior a otro aún pendiente no cambia su `since`; se resuelve con acierto `bastante`/`seguro` en un `studyDay` posterior; las flashcards no los generan.
+- **Sesión:** relleno voraz por grupo (se salta lo que no cabe y se sigue); garantía de ≥ 1 ítem con preferencia bloque actual → vencidos → intercalado; no se incluye lo respondido hoy.
