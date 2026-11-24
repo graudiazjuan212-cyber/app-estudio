@@ -10,7 +10,7 @@ const input = { fingerprint: fingerprints['mat-i3'], sessionId: 'run', itemId: '
 beforeEach(async () => { db = await testDb(); await importPackText(db, packText(), context); await startStudySession(db, startInput, context); });
 afterEach(async () => { vi.restoreAllMocks(); await db.delete(); });
 it('saves current metadata and returns duplicate without another attempt', async () => {
-  expect(await submitAnswer(db, input, context)).toEqual({ status: 'saved', correct: true, blockStatus: 'en_curso' });
+  expect(await submitAnswer(db, input, context)).toMatchObject({ status: 'saved', correct: true, blockStatus: 'en_curso' });
   expect(await db.attempts.get('answer')).toMatchObject({ attemptId: 'answer', itemId: 'mat-i3', itemGen: 1,
     subjectId: 'ejmat', chapterId: 'ejmat-c01', blockId: 'mat-b1', tipo: 'test', at: context.now,
     studyDay: '2026-11-24', tz: 'Europe/Madrid', packVersion: 1, schedulerVersion: 1, correct: true, confidence: 'seguro' });

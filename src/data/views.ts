@@ -1,5 +1,5 @@
 import { studyConfig } from '../config.ts';
-import { chapterPercent, currentStreak, dailyGoalReached, evaluableIds, isDueBefore, dueCutoffMs,
+import { blockDayProgress, chapterPercent, currentStreak, dailyGoalReached, evaluableIds, isDueBefore, dueCutoffMs,
   secondsStudiedToday, studyDay } from '../domain/study/index.ts';
 import type { BlockState, Catalog } from '../domain/study/index.ts';
 import type { StudyDb } from './db.ts';
@@ -63,22 +63,25 @@ export async function getHomeView(db: StudyDb, ctx: DataContext): Promise<HomeVi
   });
 }
 export async function getSubjectView(db: StudyDb, subjectId: string, ctx: DataContext): Promise<SubjectView | null> {
-  return db.transaction('r', [db.subjects, db.chapters, db.blocks, db.items, db.blockState], async () => {
-    studyDay(ctx.now, ctx.tz);
+  return db.transaction('r', [db.subjects, db.chapters, db.blocks, db.items, db.blockState, db.attempts], async () => {
+    const today = studyDay(ctx.now, ctx.tz);
     const subject = await db.subjects.get(subjectId);
     if (!subject) return null;
     const catalog = await loadMetadataCatalog(db, subjectId);
     const states = new Map((await db.blockState.where('subjectId').equals(subjectId).toArray()).map(s => [s.blockId, s]));
+    const attempts = await db.attempts.where('[subjectId+studyDay]').equals([subjectId, today]).toArray();
     const blocks = (await db.blocks.where('subjectId').equals(subjectId).toArray()).filter(b => !b.archived);
     const chapters = (await db.chapters.where('subjectId').equals(subjectId).toArray())
       .sort((a, b) => a.numero - b.numero || a.id.localeCompare(b.id)).map(chapter => {
         const chapterBlocks = blocks.filter(b => b.chapterId === chapter.id).sort((a, b) => a.order - b.order).map(block => {
           const catalogBlock = catalog.blocks.get(block.id);
           const state = states.get(block.id);
-          return { id: block.id, titulo: block.titulo, peso: block.peso, requiere: block.requiere,
+          const status = state?.status ?? 'pendiente';
+          const locked = state?.locked ?? block.requiere.some(id => !['dominado', 'graduado'].includes(states.get(id)?.status ?? ''));
+          return { dayProgress: catalogBlock && !locked && (status === 'pendiente' || status === 'en_curso')
+            ? blockDayProgress({ block: catalogBlock, catalog, attempts, today, state }) : null, id: block.id, titulo: block.titulo, peso: block.peso, requiere: block.requiere,
             evaluables: catalogBlock ? evaluableIds(catalogBlock, catalog).length : 0,
-            status: state?.status ?? 'pendiente' as const,
-            locked: state?.locked ?? block.requiere.some(id => !['dominado', 'graduado'].includes(states.get(id)?.status ?? '')) };
+            status, locked };
         });
         const entry = catalog.chapters.get(chapter.id);
         return { id: chapter.id, numero: chapter.numero, titulo: chapter.titulo,

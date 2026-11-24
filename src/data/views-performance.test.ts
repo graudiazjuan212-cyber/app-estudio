@@ -14,7 +14,12 @@ it.each(viewScenarios)('preserves exact home and subject outputs: %s', async sce
   expect(await getHomeView(db, context)).toEqual(await referenceHomeView(db, context));
   expect(await getHomeView(db, context)).toMatchObject(viewExpected[scenario]);
   for (const id of ['alpha', 'beta', 'missing'])
-    expect(await getSubjectView(db, id, context)).toEqual(await referenceSubjectView(db, id, context));
+    {
+      const actual = await getSubjectView(db, id, context);
+      const legacy = actual && { ...actual, chapters: actual.chapters.map(ch => ({ ...ch,
+        blocks: ch.blocks.map(block => { const { dayProgress, ...rest } = block; void dayProgress; return rest; }) })) };
+      expect(legacy).toEqual(await referenceSubjectView(db, id, context));
+    }
   const due = scenario === 'history' || scenario === 'open-gap' ? 1 : 0;
   if (scenario !== 'empty') expect((await getHomeView(db, context)).subjects[0]?.dueToday).toBe(due);
 });

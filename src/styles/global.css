@@ -1,4 +1,4 @@
-:root { font-family: system-ui, sans-serif; font-size: 18px; color-scheme: light dark; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; --button-bg: #205c52; --button-text: #ffffff; }
+:root { --touch-min: 48px; font-family: system-ui, sans-serif; font-size: 18px; color-scheme: light dark; --error: #a31919; --background: #f5f7f6; --text: #172522; --link: #205c52; --border: #bacbc6; --button-bg: #205c52; --button-text: #ffffff; }
 @media (prefers-color-scheme: dark) {
   :root { --error: #ffaaaa; --background: #14211e; --text: #e7f0ed; --link: #9bdbca; --border: #526b63; --button-bg: #9bdbca; --button-text: #14211e; }
 }
@@ -9,9 +9,19 @@ body { margin: 0; background: var(--background); color: var(--text); line-height
 a { color: var(--link); display: inline-block; padding-block: 0.5rem; }
 /* Keyboard focus also covers native preference radios and controls outside cards. */
 :focus-visible { outline: 3px solid var(--link); outline-offset: 3px; }
-button, select, textarea, input:not([type="radio"]):not([type="checkbox"]) { min-height: 44px; min-width: 44px; }
-a[href] { min-height: 44px; min-width: 44px; }
-label:has(input[type="radio"]), label:has(input[type="checkbox"]) { min-height: 44px; min-width: 44px; padding-block: .5rem; }
+button, select, textarea, input:not([type="radio"]):not([type="checkbox"]) { min-height: var(--touch-min); min-width: var(--touch-min); }
+a[href] { min-height: var(--touch-min); min-width: var(--touch-min); }
+label:has(input[type="radio"]), label:has(input[type="checkbox"]) { min-height: var(--touch-min); min-width: var(--touch-min); padding-block: .5rem; }
 /* Plain action buttons (no own class) share one look; question controls keep theirs. */
 :where(button):not([class]) { background: var(--button-bg); color: var(--button-text); border: 2px solid var(--button-bg); border-radius: .5rem; font: inherit; font-weight: 600; cursor: pointer; }
 progress { accent-color: var(--link); width: 100%; max-width: 24rem; }
+
+button, select, summary, [role="radio"], input:not([type="radio"]):not([type="checkbox"]), a[href] { margin: 4px; max-width: calc(100% - 8px); }
+summary, [role="radio"] { min-width: var(--touch-min); min-height: var(--touch-min); }
+p a[href] { min-width: 0; min-height: 0; margin: 0; padding: 0; display: inline; }
+input[type="radio"], input[type="checkbox"] { width: 24px; height: 24px; min-height: 24px; min-width: 24px; accent-color: var(--link); flex-shrink: 0; }
+label:has(input[type="radio"]), label:has(input[type="checkbox"]) { display: flex; align-items: center; gap: 8px; width: 100%; margin-block: 8px; }
+button, a, label { overflow-wrap: anywhere; }
+select, input, textarea { max-width: 100%; }
+
+fieldset { min-inline-size: 0; }

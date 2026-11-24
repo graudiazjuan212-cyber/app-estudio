@@ -54,7 +54,7 @@ for (const scheme of ['light', 'dark'] as const) for (const forced of [false, tr
           await audit(page);
           await answerCorrectly(page, item, correct);
           await expect(page.locator('article').getByRole('status')).toContainText(
-            ['info', 'flashcard'].includes(item.tipo) ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
+            item.tipo === 'info' ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
           await audit(page);
         });
       }

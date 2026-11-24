@@ -51,7 +51,7 @@ export async function referenceHomeView(db: StudyDb, ctx: DataContext): Promise<
       openSession: open ? { id: open.id, subjectId: open.subjectId, kind: open.kind } : null };
   });
 }
-export async function referenceSubjectView(db: StudyDb, subjectId: string, ctx: DataContext): Promise<SubjectView | null> {
+export async function referenceSubjectView(db: StudyDb, subjectId: string, ctx: DataContext): Promise<(Omit<SubjectView, 'chapters'> & { chapters: { id: string; numero: number; titulo: string; percent: number; hasEvaluables: boolean; blocks: Omit<SubjectView['chapters'][number]['blocks'][number], 'dayProgress'>[] }[] }) | null> {
   return db.transaction('r', [db.subjects, db.chapters, db.blocks, db.items, db.blockState], async () => {
     studyDay(ctx.now, ctx.tz);
     const subject = await db.subjects.get(subjectId);

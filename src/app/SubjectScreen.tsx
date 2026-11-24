@@ -1,3 +1,4 @@
+import { BlockDayProgress } from '../ui/BlockDayProgress';
 import { useData } from './DataProvider.tsx';
 import { useAsync } from './useAsync.ts';
 import { getSubjectView } from '../data/index.ts';
@@ -24,6 +25,6 @@ export function SubjectScreen({ subjectId }: { subjectId: string }) {
         <StudyButton subjectId={subjectId} chapterId={ch.id} kind="exam" label="Mini examen" disabled={!ch.hasEvaluables} />
         {!ch.hasEvaluables && <p>Este capítulo aún no tiene preguntas</p>}
         {ch.blocks.map(b => <article key={b.id}><h3>{b.titulo}</h3><p>{b.peso === 1 ? 'Básico' : b.peso === 3 ? 'Intermedio' : 'Tipo examen'}</p>
-          <StatusBadge status={b.status} />{b.locked && <p>{blockRequirementText(b.requiere.map(id => titles.get(id) ?? id))}</p>}</article>)}</section>)}</>}
+          <StatusBadge status={b.status} /><BlockDayProgress progress={b.dayProgress} />{b.locked && <p>{blockRequirementText(b.requiere.map(id => titles.get(id) ?? id))}</p>}</article>)}</section>)}</>}
   </div>;
 }

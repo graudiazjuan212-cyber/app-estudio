@@ -77,13 +77,15 @@ export const renderConfig = {
 } as const;
 
 export const questionConfig = {
+  missingAnswer: 'Falta tu respuesta: elige o completa la respuesta antes de comprobar.',
+  missingConfidence: 'Falta indicar tu seguridad: Duda, Bastante seguro o Seguro.',
   confidences: [['duda', 'Duda'], ['bastante', 'Bastante seguro'], ['seguro', 'Seguro']],
   ratings: [['otra', 'Otra vez'], ['dificil', 'Difícil'], ['bien', 'Bien'], ['facil', 'Fácil']],
 } as const;
 
 export const routerConfig = { idPattern: /^[a-z0-9][a-z0-9_-]{0,79}$/ };
 
-export const screenConfig = { bytesPerMegabyte: 1024 * 1024, percentMax: 100, decimalPlaces: 1 };
+export const screenConfig = { touchMinPx: 48, bytesPerMegabyte: 1024 * 1024, percentMax: 100, decimalPlaces: 1 };
 
 export const progressConfig = {
   schema: 'estudio-progreso/1', sessionsMax: 60, windowDays: 30, shortTextMax: 80,
@@ -103,4 +105,12 @@ export const fileConfig = {
   labels: { operation: 'Operación', error: 'Error', file: 'Archivo', browser: 'Navegador', time: 'Hora' },
   operations: { share: 'Compartir archivo', download: 'Descargar archivo', backup: 'Exportar copia',
     restore: 'Restaurar copia', progress: 'Exportar progreso', import: 'Importar paquete' },
+} as const;
+
+export const dayProgressConfig = {
+  normal: 'Hoy: {answered} de {total} preguntas · {missingText} para validar el día ({validDays} de {requiredDays} días válidos)',
+  singular: 'te falta 1 acierto', plural: 'te faltan {missing} aciertos',
+  valid: 'Día de hoy válido ✓ ({validDays} de {requiredDays} días válidos)',
+  voided: 'Hoy este bloque no puede validar el día (hubo un «No lo sé» o un fallo con «Seguro»). Mañana vuelve a intentarlo.',
+  impossible: 'Hoy ya no se puede validar este bloque: faltan {missing} aciertos y solo quedan {remaining} preguntas. Mañana vuelve a intentarlo.',
 } as const;

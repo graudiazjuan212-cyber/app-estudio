@@ -63,3 +63,5 @@ Todo se guarda en tu móvil. El código de la app es público pero **nunca** inc
 
 ---
 Para quien programa: `docs/DESARROLLO.md`. Formato de los archivos de contenido y de progreso: `docs/FORMATO_PAQUETE.md`.
+
+Si tu app instalada sigue sin girar, desinstálala y vuélvela a instalar: Android refresca el manifiesto de forma irregular.

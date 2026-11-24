@@ -1,6 +1,6 @@
-:global(button) { min-height: 44px; min-width: 44px; }
-.screen button, .screen input, .screen a, .dialog button { min-height: 44px; }
-.screen button, .dialog button { padding: .6rem 1rem; margin: .25rem; }
+:global(button) { min-height: var(--touch-min); min-width: var(--touch-min); }
+.screen button, .screen input:not([type="radio"]):not([type="checkbox"]), .screen a, .dialog button { min-height: var(--touch-min); }
+.screen button, .dialog button { padding: .6rem 1rem; margin: 4px; }
 .screen a { display: inline-flex; align-items: center; margin-inline-end: .75rem; }
 .screen section, .screen article { border: 1px solid var(--border); border-radius: .75rem; padding: 1rem; margin-block: 1rem; }
 .screen textarea { display: block; width: 100%; min-height: 8rem; }

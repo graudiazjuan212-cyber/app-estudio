@@ -13,7 +13,7 @@ export function fixtureItems(name = 'mat-ejemplo-c01'): DemoItem[] {
   const fixture = JSON.parse(readFileSync(new URL(`../../tests/fixtures/packs/${name}.json`, import.meta.url), 'utf8')) as Fixture;
   return fixture.bloques.flatMap(block => block.items);
 }
-export async function answerCorrectly(page: Page, item: DemoItem, correct = true, submit: 'click' | 'dblclick' = 'click') {
+export async function answerCorrectly(page: Page, item: DemoItem, correct = true, submit: 'click' | 'dblclick' | 'answer-only' = 'click') {
   await page.locator('article button').evaluateAll(nodes => {
     for (const node of nodes) {
       const clone = node.cloneNode(true) as HTMLElement;
@@ -59,7 +59,8 @@ export async function answerCorrectly(page: Page, item: DemoItem, correct = true
       await card.getByRole('radio').nth(index).click(); break;
     }
   }
-  await expect(card.getByRole('button', { name: 'Comprobar', exact: true })).toBeDisabled();
+  if (submit === 'answer-only') return;
+  await expect(card.getByRole('button', { name: 'Comprobar', exact: true })).toBeEnabled();
   await card.getByRole('radio', { name: 'Seguro', exact: true }).click();
   await card.getByRole('button', { name: 'Comprobar', exact: true })[submit]();
 }

@@ -1,5 +1,5 @@
 .card { padding: 1rem; border: 1px solid var(--border); border-radius: .5rem; }
-.card button { min-height: 44px; min-width: 44px; padding: .5rem; margin: .2rem; color: var(--text); background: var(--background); border: 1px solid var(--border); border-radius: .3rem; }
+.card button { min-height: var(--touch-min); min-width: var(--touch-min); padding: .5rem; margin: 4px; color: var(--text); background: var(--background); border: 1px solid var(--border); border-radius: .3rem; }
 .card button[aria-checked="true"], .card button[aria-pressed="true"] { outline: 2px solid var(--link); font-weight: bold; }
 .card button:disabled { cursor: default; }
 .card button:focus-visible { outline: 3px solid var(--link); }

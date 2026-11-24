@@ -33,7 +33,7 @@ export default function DemoScreen() {
         if (fail.current) { fail.current = false; setError('No se ha podido guardar.'); throw new Error('No se ha podido guardar.'); }
         const outcome = submissionOutcome(item, submission);
         if (!outcome.ok) { setError(outcome.reason); throw new Error(outcome.reason); }
-        setError(null); setFeedback({ correct: item.tipo === 'info' || item.tipo === 'flashcard' ? null : outcome.correct });
+        setError(null); setFeedback({ correct: item.tipo === 'info' ? null : outcome.correct });
       }} />
   </>;
 }

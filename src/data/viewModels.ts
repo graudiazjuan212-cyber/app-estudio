@@ -1,4 +1,4 @@
-import type { BlockStatus } from '../domain/study/index.ts';
+import type { BlockDayProgress, BlockStatus } from '../domain/study/index.ts';
 import type { SessionRow } from './schema.ts';
 
 export interface HomeView {
@@ -10,5 +10,5 @@ export interface SubjectView {
   id: string; nombre: string; percent: number;
   chapters: { id: string; numero: number; titulo: string; percent: number; hasEvaluables: boolean;
     blocks: { id: string; titulo: string; peso: number; status: BlockStatus; locked: boolean;
-      evaluables: number; requiere: string[] }[] }[];
+      evaluables: number; requiere: string[]; dayProgress: BlockDayProgress | null }[] }[];
 }

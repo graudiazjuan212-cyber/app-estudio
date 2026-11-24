@@ -23,3 +23,5 @@ export { previousDay, nextDay, currentStreak, secondsStudiedToday, dailyGoalReac
 export { submissionOutcome } from './submission.ts';
 export type { Submission, Outcome } from './submission.ts';
 export { groupAttempts } from './duplicates.ts';
+export { blockDayProgress } from './dayProgress.ts';
+export type { BlockDayProgress } from './dayProgress.ts';

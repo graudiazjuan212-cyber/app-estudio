@@ -5,6 +5,8 @@ import { buildHash } from '../domain/router';
 import { seedFor } from '../domain/render/order';
 import { QuestionCard } from '../ui/question/QuestionCard';
 import type { QuestionFeedback } from '../ui/question/QuestionCard';
+import { BlockDayProgress } from '../ui/BlockDayProgress';
+import type { BlockDayProgress as DayProgress } from '../domain/study/index';
 import { Dialog } from '../ui/Dialog';
 import { LoadError } from '../ui/LoadState';
 import { useData } from './DataProvider';
@@ -33,6 +35,7 @@ function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
 }) {
   const { db, ctx, bump } = useData();
   const [index, setIndex] = useState(startIndex ?? run.nextIndex);
+  const [dayProgress, setDayProgress] = useState<DayProgress | null>(null);
   const [feedback, setFeedback] = useState<QuestionFeedback | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
@@ -80,9 +83,11 @@ function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
             onNotice('Esta pregunta ha cambiado en otra ventana. La hemos vuelto a cargar: respóndela de nuevo.');
             reloadAt(index); return;
           }
+          setDayProgress(result.dayProgress);
           setFeedback({ correct: result.correct }); bump();
         } catch { setError('No se ha podido guardar la respuesta.'); throw new Error('No se ha podido guardar la respuesta.'); }
       }} onNext={() => { setFeedback(null); setError(null); setIndex(n => n + 1); }} /></div>}
+    <BlockDayProgress progress={dayProgress} />
     {!current && error && <div role="alert">{error}<button disabled={busy} onClick={() => { void end(); }}>Reintentar</button></div>}
     {confirm && <Dialog title="¿Terminar la sesión?" returnFocus={exit} onClose={() => { if (!busy) setConfirm(false); }}>
       <p>Se conservarán las respuestas guardadas.</p>

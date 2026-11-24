@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { screenConfig } from '../src/config';
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 interface Option { texto: string; correcta: boolean; feedback?: string }
@@ -55,7 +56,7 @@ async function respond(page: Page, item: DemoItem, correct: boolean) {
       await card.getByRole('radio').nth(index).click(); break;
     }
   }
-  await expect(card.getByRole('button', { name: 'Comprobar', exact: true })).toBeDisabled();
+  await expect(card.getByRole('button', { name: 'Comprobar', exact: true })).toBeEnabled();
   await card.getByRole('radio', { name: 'Seguro', exact: true }).click();
   await card.getByRole('button', { name: 'Comprobar', exact: true }).click();
 }
@@ -70,14 +71,14 @@ for (const tipo of ['info', 'flashcard', 'test', 'multi', 'vf', 'ordenar', 'empa
     test(`${tipo}: ${correct ? 'correct' : 'incorrect'}`, async ({ page }) => {
       const item = required(demoItems.find(entry => entry.tipo === tipo));
       await select(page, item);
-      // Buttons (including radio/checkbox roles) must meet both 44px dimensions.
+      // Buttons (including radio/checkbox roles) must meet both 48px dimensions.
       for (const target of await page.locator('article button').all()) {
         const box = required(await target.boundingBox());
-        expect(box.width).toBeGreaterThanOrEqual(44);
-        expect(box.height).toBeGreaterThanOrEqual(44);
+        expect(box.width).toBeGreaterThanOrEqual(screenConfig.touchMinPx);
+        expect(box.height).toBeGreaterThanOrEqual(screenConfig.touchMinPx);
       }
       await respond(page, item, correct);
-      await expect(page.locator('article').getByRole('status')).toContainText(tipo === 'info' || tipo === 'flashcard' ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
+      await expect(page.locator('article').getByRole('status')).toContainText(tipo === 'info' ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
       if (!correct && item.opciones) {
         for (const option of item.opciones.filter(o => !o.correcta && o.feedback)) {
           if (tipo === 'test' && option !== item.opciones.find(o => !o.correcta)) continue;
@@ -95,10 +96,12 @@ test('unknown answer', async ({ page }) => {
   await page.getByRole('button', { name: 'No lo sé', exact: true }).click();
   await expect(page.locator('article').getByRole('status')).toContainText('Incorrecto');
 });
-test('incomplete answer stays disabled even with confidence', async ({ page }) => {
+test('incomplete answer explains the missing answer even with confidence', async ({ page }) => {
   await select(page, required(demoItems.find(i => i.tipo === 'ordenar')));
   await page.getByRole('radio', { name: 'Seguro', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'Comprobar', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Comprobar', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('Falta tu respuesta');
+  await expect(page.getByTestId('submissions')).toHaveText('0');
 });
 test('failed save has no feedback and retries the same submission', async ({ page }) => {
   await select(page, required(demoItems.find(i => i.tipo === 'test')));
@@ -124,12 +127,12 @@ test('rapid double click submits once', async ({ page }) => {
 test('math renders and touch targets are large enough', async ({ page }) => {
   await select(page, required(items('mat').find(i => i.id === 'mat-i3')));
   await expect(page.locator('article .katex').first()).toBeVisible();
-  // All interactive controls are buttons, including labelled radios: both dimensions >= 44px.
+  // All interactive controls are buttons, including labelled radios: both dimensions >= 48px.
   for (const target of await page.locator('article button, article input, article [role="radio"], article [role="checkbox"]').all()) {
     if (!await target.isVisible()) continue;
     const box = await target.boundingBox();
-    expect(required(box).width).toBeGreaterThanOrEqual(44);
-    expect(required(box).height).toBeGreaterThanOrEqual(44);
+    expect(required(box).width).toBeGreaterThanOrEqual(screenConfig.touchMinPx);
+    expect(required(box).height).toBeGreaterThanOrEqual(screenConfig.touchMinPx);
   }
 });
 

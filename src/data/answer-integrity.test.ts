@@ -25,7 +25,7 @@ it('A1/A3: saves once, preserves all state and counts only one answer', async ()
   expect(await submitAnswer(db, first, context)).toMatchObject({ status: 'saved', correct: true });
   const before = await dump(db);
   expect(await submitAnswer(db, { ...first, attemptId: 'a2', submission: { kind: 'dontKnow' } }, context))
-    .toEqual({ status: 'already-answered', correct: true, blockStatus: null });
+    .toMatchObject({ status: 'already-answered', correct: true, blockStatus: null });
   expect(await dump(db)).toEqual(before);
   expect(await db.attempts.count()).toBe(1);
   expect((await submitAnswer(db, first, context)).status).toBe('duplicate');
@@ -54,14 +54,14 @@ it('returns null correctness for an info answer already saved in another window'
   await submitAnswer(db, first, context);
   const before = await dump(db);
   expect(await submitAnswer(db, { ...first, attemptId: 'a2' }, context))
-    .toEqual({ status: 'already-answered', correct: null, blockStatus: null });
+    .toMatchObject({ status: 'already-answered', correct: null, blockStatus: null });
   expect(await dump(db)).toEqual(before);
 });
 it('B2: refuses stale content then corrects refreshed content with its active version', async () => {
   const first = await input();
   await importPackText(db, packText('fp-v2'), context);
   const before = await dump(db);
-  expect(await submitAnswer(db, first, context)).toEqual({ status: 'changed', correct: null, blockStatus: null });
+  expect(await submitAnswer(db, first, context)).toEqual({ status: 'changed', correct: null, blockStatus: null, dayProgress: null });
   expect(await dump(db)).toEqual(before);
   expect(await db.attempts.count()).toBe(0);
   const refreshed = await input();
@@ -99,6 +99,6 @@ it('returns stored correctness for retries even if the content has since changed
   const before = await dump(db);
   expect(await submitAnswer(db, first, context)).toMatchObject({ status: 'duplicate', correct: true });
   expect(await submitAnswer(db, { ...first, attemptId: 'a2' }, context))
-    .toEqual({ status: 'already-answered', correct: true, blockStatus: null });
+    .toMatchObject({ status: 'already-answered', correct: true, blockStatus: null });
   expect(await dump(db)).toEqual(before);
 });

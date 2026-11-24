@@ -12,7 +12,7 @@ export default defineConfig(({ command, isPreview }) => {
       registerType: 'prompt',
       injectRegister: false,
       manifest: {
-        id: appConfig.productionBase, categories: ['education'], description: 'Estudia y repasa sin conexión en tu móvil.', orientation: 'portrait',
+        id: appConfig.productionBase, categories: ['education'], description: 'Estudia y repasa sin conexión en tu móvil.', orientation: 'any',
         name: appConfig.title, short_name: appConfig.title, lang: 'es', display: 'standalone',
         start_url: base, scope: base, theme_color: appConfig.themeColor,
         background_color: appConfig.backgroundColor,

@@ -4,8 +4,10 @@ import { submissionOutcome, studyDay } from '../domain/study/index.ts';
 import type { BlockStatus, Submission } from '../domain/study/index.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
+import { readBlockDayProgress } from './dayProgress.ts';
+import type { BlockDayProgress } from '../domain/study/index.ts';
 import { recordAttempt } from './attempts.ts';
-export interface AnswerResult { status: 'saved' | 'duplicate' | 'already-answered' | 'changed'; correct: boolean | null; blockStatus: BlockStatus | null }
+export interface AnswerResult { status: 'saved' | 'duplicate' | 'already-answered' | 'changed'; correct: boolean | null; blockStatus: BlockStatus | null; dayProgress: BlockDayProgress | null }
 export interface SubmitAnswerInput {
   fingerprint: string; sessionId: string; itemId: string; attemptId: string; submission: Submission; durationMs: number;
 }
@@ -22,11 +24,12 @@ export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: D
     const previous = await db.attempts.get(input.attemptId);
     if (previous && (previous.sessionId !== session.id || previous.itemId !== item.id))
       throw new Error('El identificador del intento pertenece a otra respuesta.');
-    if (previous) return { status: 'duplicate', correct: previous.tipo === 'info' ? null : previous.correct,
+    const progress = () => readBlockDayProgress(db, item.subjectId, item.blockId, ctx);
+    if (previous) return { status: 'duplicate', dayProgress: await progress(), correct: previous.tipo === 'info' ? null : previous.correct,
       blockStatus: (await db.blockState.get(previous.blockId))?.status ?? null };
     const answered = await db.attempts.where('sessionId').equals(session.id).filter(a => a.itemId === item.id).first();
-    if (answered) return { status: 'already-answered', correct: answered.tipo === 'info' ? null : answered.correct, blockStatus: null };
-    if (itemFingerprint(item.data) !== input.fingerprint) return { status: 'changed', correct: null, blockStatus: null };
+    if (answered) return { status: 'already-answered', dayProgress: await progress(), correct: answered.tipo === 'info' ? null : answered.correct, blockStatus: null };
+    if (itemFingerprint(item.data) !== input.fingerprint) return { status: 'changed', dayProgress: null, correct: null, blockStatus: null };
     const outcome = submissionOutcome(item.data, input.submission);
     if (!outcome.ok) throw new Error(outcome.reason);
     if (session.endedAt !== null) throw new Error('La sesión ya ha terminado.');
@@ -38,7 +41,7 @@ export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: D
       correct: outcome.correct, dontKnow: outcome.dontKnow, confidence: outcome.confidence, rating: outcome.rating,
       durationMs: Math.min(input.durationMs, studyConfig.maxAttemptMs), packVersion: chapter.version,
       schedulerVersion: studyConfig.schedulerVersion }, ctx);
-    return { status: result.status, correct: item.tipo === 'info' ? null : outcome.correct,
+    return { status: result.status, dayProgress: await progress(), correct: item.tipo === 'info' ? null : outcome.correct,
       blockStatus: result.blockState?.status ?? null };
   });
 }

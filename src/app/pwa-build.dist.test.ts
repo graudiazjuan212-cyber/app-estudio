@@ -10,7 +10,7 @@ buildTest('checks production precache (skipped when dist does not exist)', () =>
 });
 buildTest('checks production manifest and icons (skipped when dist does not exist)', () => {
   const manifest: unknown = JSON.parse(readFileSync(new URL('manifest.webmanifest', dist), 'utf8'));
-  expect(manifest).toMatchObject({ id: '/app-estudio/', scope: '/app-estudio/', start_url: '/app-estudio/',
+  expect(manifest).toMatchObject({ orientation: 'any', id: '/app-estudio/', scope: '/app-estudio/', start_url: '/app-estudio/',
     icons: [
       { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
