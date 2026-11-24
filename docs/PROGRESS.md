@@ -1,6 +1,6 @@
 # PROGRESS
 
-Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. Último commit: `8a26915` (M9-1 en curso). `main`, **sin push** (no se hace hasta que Juan autorice; ver «Publicación»).
+Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. Último commit de código: `8a26915` (M9-1 en curso); después solo documentación. `main`, **sin push** (no se hace hasta que Juan autorice; ver «Publicación»).
 
 ## Estado por hito
 | Hito | Estado | Commit de cierre | Verificación |
@@ -25,16 +25,31 @@ Hecho y verificado (E2E reales con `npm run e2e`):
 
 **FALLO ABIERTO (real, no del test): el Inicio tarda ~9,7 s con 6 000 preguntas y 20 000 intentos** (objetivo 1,5 s; `e2e/performance.spec.ts`, paso `home`). Antes de ese paso no se había medido nada más (abrir asignatura, «Estudiar» con 2 000 ítems, responder con historial completo, exportar copia/progreso): el test se detiene en el primer fallo. Sospecha: `getHomeView`/`getSubjectView` (`src/data/views.ts`, `viewModels.ts`) cargan el catálogo completo (6 000 filas con su `data` JSON) y leen todos los intentos para calcular racha, último día y repasos de hoy.
 
+## Revisión adversarial de la capa de aplicación (M4–M7): leída, 3 hallazgos ALTOS
+Salida completa en `$TEMP/adv-app.txt` (si se pierde, relanzar con `node ~/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs adversarial-review --wait --base 6ae5e65 "foco"` en segundo plano). Resumen:
+1. Dos pestañas con la misma sesión guardan **dos** intentos de la misma pregunta (`attemptId` distintos; `studyAnswer.ts:21-24`).
+2. La respuesta se corrige contra el contenido **releído**, no contra lo que Juan vio, si otra pestaña importa una versión mientras tanto (`studyAnswer.ts:16-19`).
+3. «Actualizar» en otra pestaña **recarga la sesión activa** (listener `controlling` de `registerSW`, `pwa.ts:25-27`): se pierde la respuesta elegida y no enviada.
+→ Se corrigen en **M9-2**. Ningún otro hallazgo.
+
+## Tareas especificadas, listas para delegar (no se ha programado nada de ellas)
+| Tarea | Qué | Esfuerzo | Criterios de aceptación (resumen) |
+|---|---|---|---|
+| **M9-2** `docs/tasks/M9-2.md` | Integridad: una respuesta por sesión+pregunta (`already-answered`), huella del contenido mostrado (`changed`), recarga entre pestañas controlada (`swRegister.ts` propio, `shouldReloadNow`) | **high** | Vitest A1–A4, B1–B4, C1–C2 con valores a mano; 3 E2E nuevos (dos pestañas misma sesión → 1 intento; contenido cambiado → 0 intentos y recarga de la pregunta; otra pestaña actualiza → la que estudia no recarga, conserva la elección y recarga al salir); los 145 E2E anteriores y axe siguen en verde |
+| **M9-3** `docs/tasks/M9-3.md` | Rendimiento: corte de las 04:00 una sola vez (`isDueBefore`), vistas sin `toArray()` de 20 000 intentos ni `loadCatalog`, ítems evaluables por bloque sin leer `data`, cadena `home→subject→session→answer→exports` | **high** | Equivalencia exacta con la implementación actual en 5 estados semilla (E1), `isDueBefore` = `isDue` (E2), test de presupuesto de lecturas (E4); `e2e/performance.spec.ts` llega al final con 6 000 preguntas / 20 000 intentos: Inicio < 1,5 s, Asignatura < 1,5 s, «Estudiar» < 1,5 s, responder < 0,5 s, copia < 10 s, progreso < 3 s |
+Orden: **M9-2 primero** (datos de Juan), verificar y comitear; después **M9-3** (ambas tocan `src/data/` y `src/config.ts`: no en paralelo).
+
 ## Qué falta (en este orden)
-1. **Arreglar el rendimiento del Inicio** (nueva tarea `docs/tasks/M9-2.md`, esfuerzo high, a Codex): leer solo lo necesario — `blockState`/`itemState` cacheados (ya coherentes con la reconstrucción), pesos de bloques sin cargar `data`, `studyDay` de los intentos con índices (`attempts.orderBy('studyDay').uniqueKeys()`, `[subjectId+studyDay]` para el último día), repasos de hoy recorriendo `itemState` por `due`. Sin cambiar resultados (los tests de `views` deben seguir iguales y añadir uno de equivalencia con 20 000 intentos). Después medir con `npx playwright test e2e/performance.spec.ts` (los pasos `subject`, `session`, `answer`, `exports` aún sin medir; si «Estudiar» o responder superan su presupuesto, optimizar `startStudySession`/`recordAttempt`: ya existen el camino incremental y la opción de catálogo precargado).
-2. **Revisión adversarial de la capa de aplicación**: salida en `$TEMP/adv-app.txt` (se lanzó con `--base 6ae5e65`; si no existe, relanzar con `node ~/.claude/plugins/cache/openai-codex/codex/1.0.6/scripts/codex-companion.mjs adversarial-review --wait --base 6ae5e65 "foco"` en segundo plano). Corregir los hallazgos reales con una tarea nueva.
-3. **Revisión visual**: `E2E_SCREENSHOTS=1 npx playwright test e2e/screenshots.spec.ts` genera PNG en `docs/results/capturas/` (claro y oscuro); mirarlas con la herramienta de lectura de imágenes y corregir lo feo/ilegible (contraste del rojo de KaTeX en oscuro, ADR-025).
-4. **Cierre de M9**: `docs/results/RESULTADO-M9.md` (tiempos reales medidos, accesibilidad, capturas) y `PARA-REVISAR-M9.md`; actualizar este archivo.
-5. **Cierre del proyecto**: `docs/results/RESULTADO-FINAL.md` con la URL (`https://graudiazjuan212-cyber.github.io/app-estudio/`) y cómo instalar en Android (copiar del `README.md`); añadir en `docs/QUESTIONS.md` la pregunta de publicación (opción por defecto: no publicar hasta que conteste); `docs/PENDIENTE-JUAN.md` con: autorizar `git push`, activar Pages (origen «GitHub Actions»), hacer `docs/PRUEBA_MOVIL.md` en su Android, importar sus paquetes reales.
-6. **Último `npm run check` + `npm run e2e` en verde** antes del cierre y dejar `git status` limpio.
+1. Delegar, verificar y comitear **M9-2**.
+2. Delegar, verificar y comitear **M9-3** (el E2E de rendimiento debe pasar entero).
+3. Si lo pide M9-2/M9-3 o aparece algo nuevo: otra pasada de `adversarial-review` solo sobre lo cambiado (no hace falta si solo toca rendimiento con equivalencia probada).
+4. **Revisión visual**: `E2E_SCREENSHOTS=1 npx playwright test e2e/screenshots.spec.ts` genera PNG en `docs/results/capturas/` (claro y oscuro); mirarlas con la herramienta de lectura de imágenes y corregir lo feo/ilegible (contraste del rojo de KaTeX en oscuro, ADR-025).
+5. **CIERRE DE HITO M9 — PENDIENTE (no hecho)**: `docs/results/RESULTADO-M9.md` (tiempos reales medidos, accesibilidad, capturas, hallazgos adversariales y su corrección) y `docs/results/PARA-REVISAR-M9.md` (preguntas a), b), c)…); actualizar este archivo con el commit de cierre.
+6. **CIERRE DEL PROYECTO — PENDIENTE (no hecho)**: `docs/results/RESULTADO-FINAL.md` con la URL (`https://graudiazjuan212-cyber.github.io/app-estudio/`) y cómo instalar en Android (tomarlo del `README.md`); añadir en `docs/QUESTIONS.md` la pregunta de publicación (opción por defecto: no publicar hasta que conteste); `docs/PENDIENTE-JUAN.md` con: autorizar `git push`, activar Pages (origen «GitHub Actions»), hacer `docs/PRUEBA_MOVIL.md` en su Android, importar sus paquetes reales.
+7. **Último `npm run check` + `npm run e2e` en verde** antes del cierre y dejar `git status` limpio.
 
 ## Siguiente paso exacto
-Escribir `docs/tasks/M9-2.md` (rendimiento del Inicio y la Asignatura, ver punto 1; incluir los números medidos arriba y el criterio «mismas salidas, menos lecturas»), delegarlo con el agente `codex:codex-rescue` (`--write --effort high`), verificar con `npm run check` y `npm run e2e` (el E2E de rendimiento debe llegar al final sin fallar), y comitear.
+Cuando vuelva Codex: delegar **`docs/tasks/M9-2.md`** con el agente `codex:codex-rescue` (`--write --effort high`; pasar el texto de la tarea y la nota «no te detengas a preguntar; no ejecutes npm; guarda sin BOM y con acentos reales»), esperar su informe, verificar con `npm run check` y `npm run e2e` (esperar fallos de lint/E2E que Codex no puede ver y corregirlos o devolverlos con el fallo concreto), comitear con `feat(app): …(M9-2)` y pasar a M9-3. Hasta entonces **no programar**.
 
 ## Publicación (límite: sin push sin autorización de Juan)
 El workflow `.github/workflows/deploy.yml` está listo (check + e2e + Pages). **Hay que revisar antes de publicar:** instala Chrome con `npx playwright install --with-deps chrome`; el proyecto `pwa` de Playwright compila dos builds extra y tarda unos minutos; el E2E de rendimiento y los de capturas no deben ser flaky en CI (los de capturas solo corren con `E2E_SCREENSHOTS=1`). WebKit/iPhone **no se ha podido probar** (la descarga de navegadores de Playwright falla en este equipo).
@@ -52,7 +67,8 @@ El workflow `.github/workflows/deploy.yml` está listo (check + e2e + Pages). **
 - Desde la primera publicación, cualquier cambio de tablas/índices exige versión nueva y migración con copia previa (ADR-013, ADR-024).
 
 ## Fallos abiertos
-1. Rendimiento del Inicio con 6 000 preguntas / 20 000 intentos (~9,7 s vs 1,5 s). Ver arriba.
+1. Rendimiento del Inicio con 6 000 preguntas / 20 000 intentos (~9,7 s vs 1,5 s). Causa localizada (`loadCatalog` por asignatura + `isDue` recalcula el corte por ítem + `attempts.toArray()`); se arregla en **M9-3**.
+2. Tres hallazgos altos de la revisión adversarial de la capa de aplicación (duplicado de respuestas entre pestañas, corrección contra contenido no mostrado, recarga de sesión por actualización en otra pestaña); se arreglan en **M9-2**.
 
 ## Pendientes de Juan
 Ver `docs/PENDIENTE-JUAN.md` y `docs/QUESTIONS.md`.
