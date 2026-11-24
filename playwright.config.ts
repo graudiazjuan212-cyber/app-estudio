@@ -7,7 +7,8 @@ function configuration() {
     use: { baseURL: previewUrl() },
     projects: [{ name: 'android', use: { ...devices['Pixel 7'], channel: 'chrome' } }],
     webServer: {
-      command: `npm run build && npm run preview -- --port ${String(appConfig.previewPort)} --strictPort`,
+      command: `npm run build:e2e && npm run preview:e2e -- --port ${String(appConfig.previewPort)} --strictPort`,
+      env: { VITE_ENABLE_DEMO: 'true' },
       url: previewUrl(),
       reuseExistingServer: !process.env.CI,
     },

@@ -35,6 +35,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "build:e2e": "tsc -b && vite build --outDir dist-e2e --emptyOutDir",
+    "preview:e2e": "vite preview --outDir dist-e2e",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",

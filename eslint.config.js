@@ -4,7 +4,7 @@ import hooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'coverage/**'] },
+  { ignores: ['dist/**', 'dist-e2e/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', 'coverage/**'] },
   js.configs.recommended,
   { files: ['**/*.js', '**/*.mjs'], languageOptions: { globals: globals.node } },
   ...ts.configs.strictTypeChecked.map(config => ({ ...config, files: ['**/*.ts', '**/*.tsx'] })),
