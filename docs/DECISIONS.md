@@ -157,3 +157,9 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 ## ADR-025 · KaTeX y fórmulas inválidas
 - `katex` 0.19.1 con `throwOnError: false` **no** emite la clase `katex-error` para un comando desconocido: lo pinta en rojo (`color:#cc0000`) como texto. El validador de paquetes (M1) ya rechaza esos paquetes al importar, así que en pantalla solo puede aparecer por un paquete antiguo o editado a mano; el contraste del rojo se revisa en M9.
 - `\href` y `\url` no generan enlaces (KaTeX no confía en ellos por defecto; no activar `trust`).
+
+## ADR-026 · `@axe-core/playwright` como dependencia de desarrollo
+- **Contexto:** BRIEF §5.8 y PLAN M9 exigen contraste AA, nombres accesibles y roles correctos en claro y oscuro; revisarlo a ojo en cada pantalla y estado no es fiable.
+- **Decisión:** `@axe-core/playwright` (dev, versión exacta, MIT, mantenido por Deque) para ejecutar axe en los E2E de `e2e/a11y.spec.ts`. No entra en el bundle de la app.
+- **Alternativas:** comprobaciones manuales de contraste (frágiles), Lighthouse (v12 ya no incluye la categoría PWA y su accesibilidad es un subconjunto de axe).
+- **Consecuencias:** una dependencia de desarrollo más; los falsos positivos se excluyen por selector y con comentario, nunca por regla completa.
