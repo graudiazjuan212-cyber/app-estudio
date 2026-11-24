@@ -27,9 +27,9 @@ export function PreferencesPanel() {
   return <section><h2>Preferencias</h2>{state.status === 'error' && <LoadError retry={bump} />}
     {error && <p role="alert">{error}</p>}
     {state.data && <>
-      {(['sessionMinutes', 'dailyGoalMinutes'] as const).map(key => <fieldset key={key} disabled={busy} role="radiogroup" aria-label={key === 'sessionMinutes' ? 'Duración de la sesión' : 'Objetivo diario'}>
-        <legend>{key === 'sessionMinutes' ? 'Duración de la sesión' : 'Objetivo diario'}</legend>
-        {studyConfig.dailyGoalMinutes.map(value => <label key={value}><input type="radio" name={key} checked={(chosen[key] ?? state.data?.[key]) === value} onChange={() => { void change(key, value); }} />{value} min</label>)}
+      {(['sessionMinutes', 'dailyGoalMinutes'] as const).map(key => <fieldset key={key} disabled={busy} role="radiogroup" aria-label={key === 'sessionMinutes' ? 'Duración de la sesión por defecto' : 'Objetivo diario'}>
+        <legend>{key === 'sessionMinutes' ? 'Duración de la sesión por defecto' : 'Objetivo diario'}</legend>
+        {(key === 'sessionMinutes' ? studyConfig.sessionMinutesOptions : studyConfig.dailyGoalMinutes).map(value => <label key={value}><input type="radio" name={key} checked={(chosen[key] ?? state.data?.[key]) === value} onChange={() => { void (key === 'sessionMinutes' ? change(key, value) : change(key, value as Settings['dailyGoalMinutes'])); }} />{value} min</label>)}
       </fieldset>)}
       <fieldset disabled={busy} role="radiogroup" aria-label="Tema"><legend>Tema</legend>{studyConfig.themes.map(value => <label key={value}>
         <input type="radio" name="theme" checked={(chosen.theme ?? state.data?.theme) === value} onChange={() => { void change('theme', value); }} />{value === 'system' ? 'Sistema' : value === 'light' ? 'Claro' : 'Oscuro'}</label>)}</fieldset>

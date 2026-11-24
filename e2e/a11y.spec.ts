@@ -62,7 +62,7 @@ for (const scheme of ['light', 'dark'] as const) for (const forced of [false, tr
     for (const kind of ['study', 'exam']) test(`real ${kind} session and summary`, async ({ page }) => {
       test.setTimeout(c.testMs);
       await importFixture(page, 'mat-ejemplo-c01');
-      await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true }).check();
+      await page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '5 min', exact: true }).check();
       await page.goto('./#/asignatura/ejmat');
       await page.getByRole('button', { name: kind === 'study' ? 'Estudiar' : 'Mini examen', exact: true }).click();
       await expect(page.getByRole('article', { name: 'Pregunta', exact: true })).toBeVisible();

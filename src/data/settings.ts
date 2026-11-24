@@ -2,14 +2,14 @@ import { studyConfig } from '../config.ts';
 import type { StudyDb } from './db.ts';
 
 export interface Settings {
-  sessionMinutes: 5 | 10 | 15;
+  sessionMinutes: (typeof studyConfig.sessionMinutesOptions)[number];
   dailyGoalMinutes: 5 | 10 | 15;
   theme: 'system' | 'light' | 'dark';
 }
 function valid(key: string, value: unknown): boolean {
   if (!(key === 'theme' || key === 'sessionMinutes' || key === 'dailyGoalMinutes')) return false;
   return key === 'theme' ? studyConfig.themes.some(theme => theme === value)
-    : studyConfig.dailyGoalMinutes.some(minutes => minutes === value);
+    : (key === 'sessionMinutes' ? studyConfig.sessionMinutesOptions : studyConfig.dailyGoalMinutes).some(minutes => minutes === value);
 }
 export async function getSettings(db: StudyDb): Promise<Settings> {
   const rows = new Map((await db.settings.toArray()).map(row => [row.key, row.value]));

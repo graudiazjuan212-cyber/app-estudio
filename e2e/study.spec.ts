@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }, testInfo) => {
   });
   await importFixture(page, testInfo.title === 'a changed question is reloaded before an answer can be saved'
     ? 'fp-v1' : 'mat-ejemplo-c01');
-  await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true }).check();
+  await page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '5 min', exact: true }).check();
   await page.goto('./');
 });
 test.afterEach(({ page }) => { expect(errors.get(page)).toEqual([]); });
@@ -107,7 +107,7 @@ for (const correct of [4, 3]) test(`exam with ${String(correct)} correct answers
 });
 test('two days master the first block and later reviews are due', async ({ page }) => {
   await page.goto('./#/ajustes');
-  await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '15 min', exact: true }).check();
+  await page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '15 min', exact: true }).check();
   await page.goto('./'); await start(page); await complete(page);
   await setClock(page, '2026-11-25T10:00:00Z');
   await page.goto('./'); await start(page); await complete(page);

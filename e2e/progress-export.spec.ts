@@ -50,7 +50,7 @@ async function downloadProgress(page: Page) {
 test('exports only the studied subject with a completed short session', async ({ page }) => {
   await importFixture(page, 'mat-ejemplo-c01');
   await importFixture(page, 'ioe-ejemplo-c01');
-  await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true }).check();
+  await page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '5 min', exact: true }).check();
   await page.goto('./#/asignatura/ejmat');
   await page.getByRole('button', { name: 'Estudiar', exact: true }).click();
   while (!page.url().includes('#/resumen/')) {

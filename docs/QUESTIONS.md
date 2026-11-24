@@ -19,3 +19,9 @@ Cada pregunta lleva la opción por defecto. Si no contestas, se sigue con ella. 
 
 6. **¿Publico la app en GitHub Pages? (necesita `git push`)**
    Por defecto: **no publicar hasta que contestes**. Todo está listo: build, pruebas en verde y el flujo de publicación (`.github/workflows/deploy.yml`). Si dices que sí, hay que hacer `git push` y activar Pages con origen «GitHub Actions»; la dirección sería `https://graudiazjuan212-cyber.github.io/app-estudio/`. Una vez publicada, cualquier cambio de la base de datos exige migración con copia previa.
+
+7. **Sesión sin terminar: ¿que no cuente hasta que la termines?**
+   Hoy (comprobado en el código): cada respuesta se guarda al momento y **cuenta ya** para el dominio de bloques, los repasos (FSRS), los puntos ciegos, la racha y los minutos de hoy, aunque la sesión quede sin terminar. Salir de la sesión la deja abierta («Continuar»), pero nada depende de que se cierre.
+   Propuesta: las respuestas se siguen guardando al momento (no se pierde nada), pero **solo cuentan cuando la sesión se termina**. Si no quieres retomarla, un botón «Descartar sesión» hace que sus respuestas no cuenten nunca (quedan en el registro, sin efecto). Mientras hay una sesión abierta, el Inicio ofrece «Continuar» o «Descartar» en vez de empezar otra. Sin cambio de formato de copias ni de base de datos.
+   Efecto visible: durante la sesión no verás «bloque dominado» a mitad; aparecerá en el resumen final.
+   Por defecto: **no cambiar** hasta que contestes «sí» (toca el núcleo de repasos y conviene revisarlo con adversarial-review antes de publicar).

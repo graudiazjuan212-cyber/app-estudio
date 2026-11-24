@@ -21,6 +21,8 @@ Necesitas: el móvil con Chrome, la dirección de la app, y un archivo de ejempl
 - [ ] Salgo a mitad (botón «Salir»), cierro Chrome del todo, abro la app: en el Inicio sale **«Continuar»** y retoma donde lo dejé.
 - [ ] Termino la sesión: el resumen muestra aciertos y progreso.
 
+- [ ] En Inicio elijo «1 min» antes de «Estudiar» y compruebo que la sesión es corta. En Ajustes sigue la duración por defecto anterior.
+
 ## C. Sin conexión (lo más importante)
 - [ ] Activo el **modo avión**.
 - [ ] Cierro la app del todo (la quito de las apps recientes) y la abro de nuevo desde el icono.

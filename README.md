@@ -1,6 +1,6 @@
 # Estudio — tu app para estudiar en el móvil
 
-Preguntas cortas para los ratos muertos (5, 10 o 15 minutos): la app sabe qué toca estudiar hoy, te repasa lo que estás a punto de olvidar y guarda todo en tu móvil. **No necesita internet** una vez instalada y **no envía tus datos a ningún sitio**.
+Preguntas cortas para los ratos muertos (1, 5, 10, 15 o 30 minutos): la app sabe qué toca estudiar hoy, te repasa lo que estás a punto de olvidar y guarda todo en tu móvil. **No necesita internet** una vez instalada y **no envía tus datos a ningún sitio**.
 
 > Dirección de la app (cuando esté publicada): **https://graudiazjuan212-cyber.github.io/app-estudio/**
 
@@ -22,13 +22,15 @@ El contenido lo prepara el proyecto de cada asignatura en Claude: te da un archi
 **Versiones nuevas del mismo capítulo:** importa el archivo nuevo encima. Tu progreso en las preguntas que se mantienen **se conserva**; las preguntas nuevas entran como nuevas y las que desaparecen se guardan aparte (no se pierde su historial).
 
 ## 3. Estudiar
-1. En el **Inicio** pulsa **«Estudiar»** en la asignatura. La app elige las preguntas: primero las que fallaste estando seguro, luego los repasos que tocan y después lo nuevo.
+1. Antes de pulsar “Estudiar” puedes elegir cuántos minutos (1, 5, 10, 15 o 30); por defecto 10. En el **Inicio** pulsa **«Estudiar»** en la asignatura. La app elige las preguntas: primero las que fallaste estando seguro, luego los repasos que tocan y después lo nuevo.
 2. En cada pregunta: elige tu respuesta → di **cuánta seguridad tienes** (Duda / Bastante seguro / Seguro) → **«Comprobar»**. Si no lo sabes, pulsa **«No lo sé»**. Verás si has acertado y por qué.
 3. Puedes **salir** cuando quieras: lo que ya has respondido está guardado. Al volver, en el Inicio aparece **«Continuar»**.
 4. Al terminar ves el **resumen**: aciertos, puntos ciegos nuevos, cómo avanzan los capítulos y tu racha.
 
 **Cómo avanza el progreso.** Un bloque se considera **dominado** cuando en **dos días distintos** aciertas al menos el 80 % de sus preguntas sin «No lo sé» ni fallos estando muy seguro. El % del capítulo cuenta más los bloques difíciles. Un **punto ciego** es una pregunta que fallas estando seguro: es lo primero que se repasa.
 En la asignatura tienes también **«Repasar capítulo»** y **«Mini examen»** (5 preguntas de varios capítulos; se aprueba con el 80 %).
+
+En **Ajustes → Duración de la sesión por defecto** puedes elegir 1, 5, 10, 15 o 30 minutos. El selector al empezar solo cambia esa sesión. «Repasar capítulo» usa la duración de Ajustes y «Mini examen» no usa duración. El objetivo diario sigue siendo 5, 10 o 15 minutos.
 
 ## 4. Mandar tu progreso a Claude
 En la pantalla de la asignatura pulsa **«Exportar progreso para Claude»**. Se abre la hoja de compartir de Android: guárdalo en **Drive** (o envíatelo) y súbelo al proyecto de esa asignatura. Así Claude sabe qué dominas, qué fallas y qué toca repasar. Esto **no** es una copia de seguridad.

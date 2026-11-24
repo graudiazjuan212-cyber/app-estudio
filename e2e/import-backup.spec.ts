@@ -81,12 +81,12 @@ test('versions and accessible confirmation', async ({ page }) => {
 });
 test('preferences persist', async ({ page }) => {
   await settings(page);
-  await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true }).check();
+  await page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '5 min', exact: true }).check();
   await page.getByRole('radiogroup', { name: 'Objetivo diario' }).getByRole('radio', { name: '15 min', exact: true }).check();
   await page.getByRole('radio', { name: 'Oscuro' }).check();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.reload(); await expect(page.getByRole('radio', { name: 'Oscuro' })).toBeChecked();
-  await expect(page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true })).toBeChecked();
+  await expect(page.getByRole('radiogroup', { name: 'Duración de la sesión por defecto' }).getByRole('radio', { name: '5 min', exact: true })).toBeChecked();
   await expect(page.getByRole('radiogroup', { name: 'Objetivo diario' }).getByRole('radio', { name: '15 min', exact: true })).toBeChecked();
 });
 test('export restore undo and corrupt backup', async ({ page }) => {

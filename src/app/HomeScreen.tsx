@@ -24,6 +24,6 @@ export function HomeScreen() {
       {data.openSession && <section><h2>Tienes una sesión sin terminar</h2><a href={buildHash({ name: 'session', sessionId: data.openSession.id })}>Continuar</a></section>}
       {data.subjects.map(subject => <article key={subject.id}><h2>{subject.nombre}</h2><ProgressBar percent={subject.percent} label={`Progreso de ${subject.nombre}`} />
         <p>{subject.dueToday ? `${String(subject.dueToday)} repasos hoy` : 'Sin repasos hoy'}</p><p>Último día: {formatStudyDay(subject.lastStudyDay)}</p>
-        <StudyButton subjectId={subject.id} /><a href={buildHash({ name: 'subject', subjectId: subject.id })}>Ver asignatura</a></article>)}</>}
+        <StudyButton subjectId={subject.id} subjectName={subject.nombre} /><a href={buildHash({ name: 'subject', subjectId: subject.id })}>Ver asignatura</a></article>)}</>}
   </div>;
 }

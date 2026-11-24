@@ -1,7 +1,7 @@
 import { buildSession, buildChapterExam, rebuildFromAttempts, studyDay, chapterPercent, pendingBlindSpots, validateAttempt } from '../domain/study/index.ts';
 import type { Catalog } from '../domain/study/index.ts';
 import { itemFingerprint } from '../domain/pack/index.ts';
-import { routerConfig } from '../config.ts';
+import { routerConfig, studyConfig } from '../config.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
 import type { SessionRow } from './schema.ts';
@@ -26,8 +26,10 @@ export async function startStudySession(db: StudyDb, input: StartStudyInput, ctx
     return await db.transaction('rw', [db.sessions, db.subjects, db.chapters, db.blocks, db.items, db.attempts, db.itemState, db.blockState], async () => {
       if (routerConfig.idPattern.exec(input.sessionId)?.[0] !== input.sessionId ||
         routerConfig.idPattern.exec(input.subjectId)?.[0] !== input.subjectId ||
-        !['study', 'review', 'exam'].includes(input.kind) || !Number.isFinite(input.minutes) || input.minutes <= 0 ||
+        !['study', 'review', 'exam'].includes(input.kind) ||
         !Number.isSafeInteger(input.seed)) throw new Error('Los datos de la sesión no son válidos.');
+      if (input.kind !== 'exam' && !studyConfig.sessionMinutesOptions.some(minutes => minutes === input.minutes))
+        throw new Error('La duración de la sesión debe ser 1, 5, 10, 15 o 30 minutos.');
       if (await db.sessions.get(input.sessionId)) throw new Error('La sesión ya existe.');
       if (!await db.subjects.get(input.subjectId)) throw new Error('La asignatura no existe.');
       const catalog = await loadCatalog(db, input.subjectId);
@@ -50,7 +52,8 @@ export async function startStudySession(db: StudyDb, input: StartStudyInput, ctx
       const percentBefore = Object.fromEntries([...catalog.chapters.values()].map(ch =>
         [ch.id, chapterPercent(ch, catalog, derived.blocks)]));
       await startSession(db, { id: input.sessionId, subjectId: input.subjectId, kind: input.kind,
-        chapterId: input.chapterId, minutes: input.minutes, startedAt: ctx.now, itemIds: plan.itemIds, percentBefore });
+        chapterId: input.chapterId, minutes: input.kind === 'exam' ? studyConfig.defaultSessionMinutes : input.minutes,
+        startedAt: ctx.now, itemIds: plan.itemIds, percentBefore });
       return { status: 'started', sessionId: input.sessionId };
     });
   } catch (error) {

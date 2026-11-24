@@ -40,6 +40,7 @@ export const studyConfig = {
   blindSpotBudgetPercent: 40,
   examSize: { current: 2, previous: 1, earlier: 1, relaciona: 1 },
   examPassPercent: 80,
+  sessionMinutesOptions: [1, 5, 10, 15, 30],
   dailyGoalMinutes: [5, 10, 15],
   defaultSessionMinutes: 10,
   defaultDailyGoalMinutes: 10,
