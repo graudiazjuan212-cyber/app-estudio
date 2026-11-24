@@ -2,6 +2,20 @@ import { context, packText, sequence } from './helpers.ts';
 import type { StudyDb } from '../../../src/data/db.ts';
 import { importPackText } from '../../../src/data/importPack.ts';
 import { rebuildCache } from '../../../src/data/cache.ts';
+import base from './integrity-backup.json';
+import type { Backup } from '../../../src/data/backupSchema.ts';
+
+export function changedBackup(change: (backup: Backup) => void = () => undefined): string {
+  const backup = JSON.parse(JSON.stringify(base)) as Backup;
+  change(backup);
+  return JSON.stringify(backup);
+}
+
+export function requiredRow<T>(rows: T[], index = 0): T {
+  const row = rows[index];
+  if (row === undefined) throw new Error('Falta una fila de prueba fija.');
+  return row;
+}
 
 export const backupContext = { ...context, now: '2026-11-27T10:00:00.000Z' };
 export const exportContext = { now: '2026-11-24T10:00:00Z' };

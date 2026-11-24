@@ -1,0 +1,203 @@
+{
+  "schema": "estudio-backup/1",
+  "createdAt": "2026-11-24T10:00:00.000Z",
+  "dbVersion": 1,
+  "schedulerVersion": 1,
+  "data": {
+    "subjects": [
+      {
+        "id": "s",
+        "nombre": "Asignatura"
+      }
+    ],
+    "chapters": [
+      {
+        "id": "c1",
+        "numero": 1,
+        "titulo": "Cap?tulo",
+        "subjectId": "s",
+        "version": 1
+      },
+      {
+        "id": "c2",
+        "numero": 2,
+        "titulo": "Cap?tulo",
+        "subjectId": "s",
+        "version": 1
+      }
+    ],
+    "blocks": [
+      {
+        "id": "b1",
+        "titulo": "Bloque fijo",
+        "peso": 1,
+        "requiere": [],
+        "subjectId": "s",
+        "chapterId": "c1",
+        "order": 0,
+        "archived": false
+      },
+      {
+        "id": "b2",
+        "titulo": "Bloque fijo",
+        "peso": 1,
+        "requiere": [
+          "b1"
+        ],
+        "subjectId": "s",
+        "chapterId": "c1",
+        "order": 1,
+        "archived": false
+      },
+      {
+        "id": "b3",
+        "titulo": "Bloque fijo",
+        "peso": 1,
+        "requiere": [
+          "b2"
+        ],
+        "subjectId": "s",
+        "chapterId": "c1",
+        "order": 2,
+        "archived": false
+      },
+      {
+        "id": "b4",
+        "titulo": "Bloque fijo",
+        "peso": 1,
+        "requiere": [],
+        "subjectId": "s",
+        "chapterId": "c2",
+        "order": 0,
+        "archived": false
+      }
+    ],
+    "items": [
+      {
+        "id": "i1",
+        "subjectId": "s",
+        "chapterId": "c1",
+        "blockId": "b1",
+        "tipo": "vf",
+        "itemGen": 1,
+        "archived": false,
+        "relaciona": false,
+        "order": 0,
+        "data": {
+          "id": "i1",
+          "tipo": "vf",
+          "enunciado": "Pregunta fija",
+          "correcta": true
+        }
+      },
+      {
+        "id": "i2",
+        "subjectId": "s",
+        "chapterId": "c1",
+        "blockId": "b2",
+        "tipo": "vf",
+        "itemGen": 1,
+        "archived": false,
+        "relaciona": false,
+        "order": 0,
+        "data": {
+          "id": "i2",
+          "tipo": "vf",
+          "enunciado": "Pregunta fija",
+          "correcta": true
+        }
+      },
+      {
+        "id": "i3",
+        "subjectId": "s",
+        "chapterId": "c1",
+        "blockId": "b3",
+        "tipo": "vf",
+        "itemGen": 1,
+        "archived": false,
+        "relaciona": false,
+        "order": 0,
+        "data": {
+          "id": "i3",
+          "tipo": "vf",
+          "enunciado": "Pregunta fija",
+          "correcta": true
+        }
+      },
+      {
+        "id": "i4",
+        "subjectId": "s",
+        "chapterId": "c2",
+        "blockId": "b4",
+        "tipo": "vf",
+        "itemGen": 1,
+        "archived": false,
+        "relaciona": false,
+        "order": 0,
+        "data": {
+          "id": "i4",
+          "tipo": "vf",
+          "enunciado": "Pregunta fija",
+          "correcta": true
+        }
+      }
+    ],
+    "packs": [
+      {
+        "key": "s|c1|1",
+        "subjectId": "s",
+        "chapterId": "c1",
+        "version": 1,
+        "importedAt": "2026-11-24T10:00:00.000Z",
+        "json": "{\"schema\": \"estudio-pack/1\", \"asignatura\": {\"id\": \"s\", \"nombre\": \"Asignatura\"}, \"capitulo\": {\"id\": \"c1\", \"numero\": 1, \"titulo\": \"Cap?tulo\"}, \"version\": 1, \"generado\": \"2026-11-24\", \"bloques\": [{\"id\": \"b1\", \"titulo\": \"Bloque fijo\", \"peso\": 1, \"requiere\": [], \"items\": [{\"id\": \"i1\", \"tipo\": \"vf\", \"enunciado\": \"Pregunta fija\", \"correcta\": true}]}, {\"id\": \"b2\", \"titulo\": \"Bloque fijo\", \"peso\": 1, \"requiere\": [\"b1\"], \"items\": [{\"id\": \"i2\", \"tipo\": \"vf\", \"enunciado\": \"Pregunta fija\", \"correcta\": true}]}, {\"id\": \"b3\", \"titulo\": \"Bloque fijo\", \"peso\": 1, \"requiere\": [\"b2\"], \"items\": [{\"id\": \"i3\", \"tipo\": \"vf\", \"enunciado\": \"Pregunta fija\", \"correcta\": true}]}]}"
+      },
+      {
+        "key": "s|c2|1",
+        "subjectId": "s",
+        "chapterId": "c2",
+        "version": 1,
+        "importedAt": "2026-11-24T10:00:00.000Z",
+        "json": "{\"schema\": \"estudio-pack/1\", \"asignatura\": {\"id\": \"s\", \"nombre\": \"Asignatura\"}, \"capitulo\": {\"id\": \"c2\", \"numero\": 2, \"titulo\": \"Cap?tulo\"}, \"version\": 1, \"generado\": \"2026-11-24\", \"bloques\": [{\"id\": \"b4\", \"titulo\": \"Bloque fijo\", \"peso\": 1, \"requiere\": [], \"items\": [{\"id\": \"i4\", \"tipo\": \"vf\", \"enunciado\": \"Pregunta fija\", \"correcta\": true}]}]}"
+      }
+    ],
+    "attempts": [
+      {
+        "attemptId": "base",
+        "itemId": "i1",
+        "itemGen": 1,
+        "subjectId": "s",
+        "chapterId": "c1",
+        "blockId": "b1",
+        "tipo": "vf",
+        "at": "2026-11-24T10:00:00.000Z",
+        "studyDay": "2026-11-24",
+        "tz": "Europe/Madrid",
+        "correct": true,
+        "dontKnow": false,
+        "confidence": "seguro",
+        "rating": null,
+        "durationMs": 1000,
+        "sessionId": "session",
+        "packVersion": 1,
+        "schedulerVersion": 1
+      }
+    ],
+    "sessions": [
+      {
+        "id": "session",
+        "subjectId": "s",
+        "kind": "study",
+        "chapterId": "c1",
+        "startedAt": "2026-11-24T10:00:00.000Z",
+        "endedAt": null,
+        "itemIds": [
+          "i1"
+        ],
+        "minutes": 10,
+        "percentBefore": {},
+        "result": null
+      }
+    ],
+    "settings": []
+  }
+}

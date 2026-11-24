@@ -55,6 +55,9 @@ export async function openStudyDb(name: string, handlers: OpenHandlers = {}, ver
     }
     if (exists && source.verno < target) {
       migrating = true;
+      // ADR-024: another tab may save answers between this snapshot and the new version opening.
+      // Those answers remain in the database but are absent from the recovery snapshot.
+      // Accepted risk while no real migrations exist and future migrations remain additive.
       await savePremigration(name, source);
     }
     source.close();

@@ -19,7 +19,7 @@ const attempt = z.strictObject({ attemptId: id, itemId: id, itemGen: version, ..
   blockId: id, tipo: z.enum(packConfig.itemTypes), at: instant, studyDay: z.string(), tz: z.string(),
   correct: z.boolean(), dontKnow: z.boolean(), confidence: z.enum(['duda', 'bastante', 'seguro']).nullable(),
   rating: z.enum(['otra', 'dificil', 'bien', 'facil']).nullable(), durationMs: z.int().nonnegative(),
-  sessionId: id, packVersion: version, schedulerVersion: version,
+  sessionId: id, packVersion: version, schedulerVersion: z.int().nonnegative(),
 }).superRefine((row, ctx) => {
   if (validateAttempt(row).length) ctx.addIssue({ code: 'custom', message: 'La copia contiene un intento inválido.' });
 });
@@ -30,25 +30,8 @@ const session = z.strictObject({ id, subjectId: id, kind: z.enum(['study', 'revi
 const setting = z.strictObject({ key: id, value: z.json() });
 export const backupDataSchema = z.strictObject({ subjects: z.array(subject), chapters: z.array(chapter),
   blocks: z.array(block), items: z.array(item), packs: z.array(pack), attempts: z.array(attempt),
-  sessions: z.array(session), settings: z.array(setting) }).superRefine((data, ctx) => {
-  const tables = [data.subjects, data.chapters, data.blocks, data.items, data.packs, data.attempts,
-    data.sessions, data.settings];
-  for (const rows of tables) {
-    const keys = rows.map(row => 'id' in row ? row.id : 'key' in row ? row.key : row.attemptId);
-    if (new Set(keys).size !== keys.length)
-      ctx.addIssue({ code: 'custom', message: 'La copia contiene claves duplicadas.' });
-  }
-  const subjects = new Set(data.subjects.map(row => row.id));
-  const chapters = new Set(data.chapters.map(row => row.id));
-  const blocks = new Set(data.blocks.map(row => row.id));
-  const items = new Set(data.items.map(row => row.id));
-  if (data.chapters.some(row => !subjects.has(row.subjectId)) ||
-    data.blocks.some(row => !chapters.has(row.chapterId)) ||
-    data.items.some(row => !blocks.has(row.blockId)) ||
-    data.attempts.some(row => !items.has(row.itemId)))
-    ctx.addIssue({ code: 'custom', message: 'La copia contiene referencias a datos inexistentes.' });
-});
+  sessions: z.array(session), settings: z.array(setting) });
 export const backupSchema = z.strictObject({ schema: z.literal(dataConfig.backupSchema),
-  createdAt: instant, dbVersion: version, schedulerVersion: version, data: backupDataSchema });
+  createdAt: instant, dbVersion: version, schedulerVersion: z.int().nonnegative(), data: backupDataSchema });
 export type Backup = z.infer<typeof backupSchema>;
 export type BackupData = Backup['data'];

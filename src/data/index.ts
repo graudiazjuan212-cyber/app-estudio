@@ -13,6 +13,7 @@ export { startSession, finishSession, listOpenSessions, sessionAttempts } from '
 export type { DataContext } from './cache.ts';
 export { backupSchema, backupDataSchema } from './backupSchema.ts';
 export type { Backup, BackupData } from './backupSchema.ts';
+export { validateBackupIntegrity } from './backupIntegrity.ts';
 export { migrateBackup } from './backupMigrations.ts';
 export type { BackupMigration } from './backupMigrations.ts';
 export { exportBackup, restoreBackup, undoRestore, listSnapshots } from './backup.ts';

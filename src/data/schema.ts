@@ -30,6 +30,6 @@ export const studyVersions: DbVersion[] = [{ version: 1, stores: {
   subjects: 'id', chapters: 'id, subjectId', blocks: 'id, chapterId, subjectId',
   items: 'id, blockId, chapterId, subjectId, archived', packs: 'key, [subjectId+chapterId]',
   attempts: 'attemptId, itemId, subjectId, studyDay, sessionId, at, [subjectId+studyDay]',
-  itemState: 'itemId', blockState: 'blockId', sessions: 'id, subjectId, startedAt',
+  itemState: 'itemId', blockState: 'blockId, subjectId', sessions: 'id, subjectId, startedAt',
   settings: 'key', snapshots: '++id', meta: 'key',
 } }];

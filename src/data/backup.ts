@@ -4,6 +4,7 @@ import { normalizeJson } from '../domain/pack/index.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
 import { backupSchema } from './backupSchema.ts';
+import { validateBackupIntegrity } from './backupIntegrity.ts';
 import { migrateBackup } from './backupMigrations.ts';
 import type { BackupMigration } from './backupMigrations.ts';
 import { backupCounts, backupJson, deriveBackup, readBackup } from './backupData.ts';
@@ -32,6 +33,13 @@ export async function restoreBackup(db: StudyDb, text: string, ctx: DataContext,
       return { status: 'rejected', message: 'Actualiza la app antes de restaurar esta copia' };
     const backup = backupSchema.parse(normalizeJson(migrateBackup(raw, header.data.dbVersion, db.verno, migrations)));
     if (backup.dbVersion !== db.verno) throw new Error('La migración no produjo la versión actual.');
+    if (backup.schedulerVersion > studyConfig.schedulerVersion)
+      return { status: 'rejected', message: 'Actualiza la app antes de restaurar esta copia' };
+    if (backup.schedulerVersion < studyConfig.schedulerVersion)
+      return { status: 'rejected', message: 'Esta copia usa un planificador antiguo y todavía no se puede restaurar' };
+    const errors = validateBackupIntegrity(backup.data);
+    if (errors.length) return { status: 'rejected', message: errors.join('; ') };
+    // Derive with the current scheduler only after verifying the backup uses that same version.
     const derived = deriveBackup(backup.data, ctx);
     const counts = backupCounts(backup.data);
     return await db.transaction('rw', db.tables, async () => {
@@ -53,7 +61,7 @@ export async function restoreBackup(db: StudyDb, text: string, ctx: DataContext,
       await db.itemState.bulkAdd(derived.items);
       await db.blockState.bulkAdd(derived.blocks);
       await db.meta.bulkPut([{ key: 'schemaVersion', value: db.verno },
-        { key: 'schedulerVersion', value: studyConfig.schedulerVersion }]);
+        { key: 'schedulerVersion', value: backup.schedulerVersion }]);
       return { status: 'restored', counts, snapshotId };
     });
   } catch (error) {
