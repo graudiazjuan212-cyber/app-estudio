@@ -28,3 +28,4 @@ export type { HomeView, SubjectView } from './viewModels.ts';
 export { startStudySession, loadSessionRun, submitAnswer, finishStudySession, getSessionSummary } from './study.ts';
 export type { StartStudyInput, StartStudyResult, SessionRun, SubmitAnswerInput, AnswerResult, SessionSummary } from './study.ts';
 export { getAppStorageStatus, getOpenSessions } from './appStorage.ts';
+export { exportProgress } from './progressExport.ts';
