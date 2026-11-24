@@ -24,7 +24,11 @@ export async function readBackup(db: StudyDb, now: string): Promise<Backup> {
   return backupSchema.parse({ schema: dataConfig.backupSchema, createdAt: now, dbVersion: db.verno,
     schedulerVersion: studyConfig.schedulerVersion, data: {
       subjects: await db.subjects.toArray(), chapters: await db.chapters.toArray(),
-      blocks: await db.blocks.toArray(), items: await db.items.toArray(), packs: await db.packs.toArray(),
+      blocks: await db.blocks.toArray(), items: (await db.items.toArray()).map(row => {
+        const { metadataKey: derivedKey, ...item } = row;
+        void derivedKey;
+        return item;
+      }), packs: await db.packs.toArray(),
       attempts: await db.attempts.toArray(), sessions: await db.sessions.toArray(), settings: await db.settings.toArray(),
     } });
 }

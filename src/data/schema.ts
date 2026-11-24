@@ -10,8 +10,10 @@ export interface BlockRow {
 }
 export interface ItemRow {
   id: string; subjectId: string; chapterId: string; blockId: string; tipo: Item['tipo'];
-  itemGen: number; archived: boolean; relaciona: boolean; order: number; data: Item;
+  itemGen: number; archived: boolean; relaciona: boolean; order: number; data: Item; metadataKey?: ItemMetadataKey;
 }
+export type ItemMetadataKey = [subjectId: string, order: number, id: string, blockId: string,
+  tipo: Item['tipo'], itemGen: number, archived: number, relaciona: number];
 export interface PackRow {
   key: string; subjectId: string; chapterId: string; version: number; importedAt: string; json: string;
 }
@@ -28,7 +30,7 @@ export interface DbVersion {
 }
 export const studyVersions: DbVersion[] = [{ version: 1, stores: {
   subjects: 'id', chapters: 'id, subjectId', blocks: 'id, chapterId, subjectId',
-  items: 'id, blockId, chapterId, subjectId, archived', packs: 'key, [subjectId+chapterId]',
+  items: 'id, blockId, chapterId, subjectId, archived, metadataKey', packs: 'key, [subjectId+chapterId]',
   attempts: 'attemptId, itemId, subjectId, studyDay, sessionId, at, [subjectId+studyDay]',
   itemState: 'itemId', blockState: 'blockId, subjectId', sessions: 'id, subjectId, startedAt',
   settings: 'key', snapshots: '++id', meta: 'key',

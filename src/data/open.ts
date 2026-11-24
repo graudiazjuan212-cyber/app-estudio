@@ -1,5 +1,6 @@
 import { Dexie } from 'dexie';
 import { dataConfig, studyConfig } from '../config.ts';
+import { itemMetadataKey } from './itemMetadata.ts';
 import { defineDb } from './db.ts';
 import type { StudyDb } from './db.ts';
 import { studyVersions } from './schema.ts';
@@ -50,10 +51,19 @@ export async function openStudyDb(name: string, handlers: OpenHandlers = {}, ver
       if (error instanceof Error && error.name === 'NoSuchDatabaseError') exists = false;
       else throw error;
     }
-    if (exists && source.verno > target) {
+    // Dexie's pre-publication index patch increments the native version by one;
+    // its dynamic connection reports that as a fractional application version.
+    const itemTable = source.tables.find(table => table.name === 'items');
+    const sourceVersion = source.verno === target + dataConfig.nativeSchemaPatchIncrement &&
+      itemTable?.schema.idxByName.metadataKey ? target : source.verno;
+    if (exists && sourceVersion > target) {
       return { ok: false, reason: 'version-newer', message: 'Recarga para actualizar' };
     }
-    if (exists && source.verno < target) {
+    // Pre-publication v1 extension: snapshot before Dexie adds the covering index.
+    // After publication, schema extensions must use a new studyVersions entry.
+    const needsMetadata = exists && itemTable !== undefined && (!itemTable.schema.idxByName.metadataKey ||
+      await itemTable.orderBy('metadataKey').count() !== await itemTable.count());
+    if (exists && (sourceVersion < target || needsMetadata)) {
       migrating = true;
       // ADR-024: another tab may save answers between this snapshot and the new version opening.
       // Those answers remain in the database but are absent from the recovery snapshot.
@@ -84,11 +94,14 @@ export async function openStudyDb(name: string, handlers: OpenHandlers = {}, ver
         timeout({ ok: false, reason: 'blocked', message: 'Cierra las otras pestañas para actualizar.' });
       }, dataConfig.blockedTimeoutMs);
     });
-    const opening = db.open().then<OpenResult>(() => {
+    const opening = db.open().then<OpenResult>(async () => {
       if (timedOut) {
         connection.close();
         return { ok: false, reason: 'blocked', message: 'Cierra las otras pestañas para actualizar.' };
       }
+      if (needsMetadata) await connection.transaction('rw', connection.items, async () => {
+        await connection.items.toCollection().modify(row => { row.metadataKey = itemMetadataKey(row); });
+      });
       return { ok: true, db: connection };
     });
     return await Promise.race([opening, blocked]);

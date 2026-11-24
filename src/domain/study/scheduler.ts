@@ -53,5 +53,15 @@ export function applyAttempt(prev: ItemState | null, a: Attempt): MaybeApplied {
     card: toStoredCard(next) }, needsRebuild: false };
 }
 export function isDue(state: ItemState, now: string, tz: string): boolean {
-  return fromStoredCard(state.card).due.getTime() < new Date(nextCutoff(now, tz)).getTime();
+  return isDueBefore(state, dueCutoffMs(now, tz));
+}
+
+export function dueCutoffMs(now: string, tz: string): number {
+  return Date.parse(nextCutoff(now, tz));
+}
+export function isDueBefore(state: ItemState, cutoffMs: number): boolean {
+  // Preserve rejection of invalid stored dates, including last_review.
+  fromStoredCard(state.card);
+  if (!Number.isFinite(cutoffMs)) throw new Error('Invalid cutoff');
+  return Date.parse(state.card.due) < cutoffMs;
 }

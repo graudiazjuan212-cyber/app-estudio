@@ -163,3 +163,10 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 - **Decisión:** `@axe-core/playwright` (dev, versión exacta, MIT, mantenido por Deque) para ejecutar axe en los E2E de `e2e/a11y.spec.ts`. No entra en el bundle de la app.
 - **Alternativas:** comprobaciones manuales de contraste (frágiles), Lighthouse (v12 ya no incluye la categoría PWA y su accesibilidad es un subconjunto de axe).
 - **Consecuencias:** una dependencia de desarrollo más; los falsos positivos se excluyen por selector y con comentario, nunca por regla completa.
+
+## ADR-027 · Índice derivado `metadataKey` en `items` para las vistas (M9-3)
+- **Contexto:** con 6 000 preguntas y 20 000 intentos el Inicio tardaba 11,6 s porque cada vista leía las filas completas de `items` (con su `data` JSON) y todos los intentos. Medido tras el cambio: Inicio 0,42 s, Asignatura 0,12 s, «Estudiar» 0,37 s, responder 0,12 s.
+- **Decisión:** `items` lleva un índice compuesto `metadataKey` = `[subjectId, order, id, blockId, tipo, itemGen, archived, relaciona]`. Las vistas leen solo las **claves** del índice (sin tocar `data`). Es un campo **derivado**: se mantiene con hooks de Dexie al crear/actualizar, se repara en `rebuildCache`, **no** forma parte de la copia (`estudio-backup/1` no cambia) y se recalcula al restaurar. Si falta o está incompleto, la lectura falla con mensaje claro en vez de dar datos erróneos.
+- **Esquema:** se amplió `studyVersions` v1 en lugar de añadir v2 porque la app no está publicada. `openStudyDb` detecta bases v1 antiguas, hace antes la copia `-premigration-v1` y rellena el índice (probado). **Desde la primera publicación, cualquier cambio de índices exige una versión nueva (ADR-013).**
+- **Alternativas descartadas:** campo `evaluables` por bloque (no resuelve los repasos de hoy por ítem); consultas con `count()` por bloque (miles de consultas).
+- **Consecuencias:** el índice duplica metadatos pequeños por pregunta; `startStudySession` usa las cachés `itemState`/`blockState` (coherentes con la reconstrucción, M3-3) y solo reconstruye si falta algún bloque.

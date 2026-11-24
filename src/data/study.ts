@@ -1,4 +1,4 @@
-import { buildSession, buildChapterExam, rebuildFromAttempts, studyDay, chapterPercent } from '../domain/study/index.ts';
+import { buildSession, buildChapterExam, rebuildFromAttempts, studyDay, chapterPercent, pendingBlindSpots, validateAttempt } from '../domain/study/index.ts';
 import type { Catalog } from '../domain/study/index.ts';
 import { itemFingerprint } from '../domain/pack/index.ts';
 import { routerConfig } from '../config.ts';
@@ -23,7 +23,7 @@ function chapterCatalog(catalog: Catalog, chapterId: string): Catalog {
 }
 export async function startStudySession(db: StudyDb, input: StartStudyInput, ctx: DataContext): Promise<StartStudyResult> {
   try {
-    return await db.transaction('rw', [db.sessions, db.subjects, db.chapters, db.blocks, db.items, db.attempts], async () => {
+    return await db.transaction('rw', [db.sessions, db.subjects, db.chapters, db.blocks, db.items, db.attempts, db.itemState, db.blockState], async () => {
       if (routerConfig.idPattern.exec(input.sessionId)?.[0] !== input.sessionId ||
         routerConfig.idPattern.exec(input.subjectId)?.[0] !== input.subjectId ||
         !['study', 'review', 'exam'].includes(input.kind) || !Number.isFinite(input.minutes) || input.minutes <= 0 ||
@@ -34,7 +34,14 @@ export async function startStudySession(db: StudyDb, input: StartStudyInput, ctx
       if (input.kind !== 'study' && (!input.chapterId || !catalog.chapters.has(input.chapterId)))
         throw new Error('El capítulo no existe en esta asignatura.');
       const attempts = await db.attempts.where('subjectId').equals(input.subjectId).toArray();
-      const derived = rebuildFromAttempts(attempts, catalog, studyDay(ctx.now, ctx.tz));
+      const cachedBlocks = await db.blockState.where('subjectId').equals(input.subjectId).toArray();
+      const blocks = new Map(cachedBlocks.map(row => [row.blockId, row]));
+      const derived = [...catalog.blocks.keys()].some(id => !blocks.has(id))
+        ? rebuildFromAttempts(attempts, catalog, studyDay(ctx.now, ctx.tz))
+        : { blocks, items: new Map((await db.itemState.toArray())
+          .filter(state => catalog.items.has(state.itemId)).map(state => [state.itemId, state])),
+        blindSpots: pendingBlindSpots(catalog, attempts.filter(a => !validateAttempt(a).length &&
+          catalog.items.get(a.itemId)?.itemGen === a.itemGen)), skipped: [] };
       const plan = input.kind === 'exam' ? buildChapterExam({ ...input, chapterId: input.chapterId ?? '', catalog })
         : buildSession({ ...input, ...ctx, catalog: input.kind === 'review'
           ? chapterCatalog(catalog, input.chapterId ?? '') : catalog, attempts, derived });

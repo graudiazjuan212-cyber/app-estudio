@@ -11,7 +11,7 @@ export const appConfig = {
 
 export const dataConfig = {
   dbName: 'estudio', schemaVersion: 1, snapshotKeep: 3, premigrationKeep: 2,
-  blockedTimeoutMs: 8000,
+  blockedTimeoutMs: 8000, nativeSchemaPatchIncrement: 0.1,
   maxBackupRows: 2000000, maxImportBytes: 5 * 1024 * 1024,
   backupSchema: 'estudio-backup/1' as const, backupReminderDays: 7,
 };

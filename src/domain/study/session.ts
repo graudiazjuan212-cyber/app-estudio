@@ -3,7 +3,8 @@ import type { Catalog, CatalogItem } from './catalog.ts';
 import type { DerivedState } from './rebuild.ts';
 import type { Attempt } from './types.ts';
 import { fromStoredCard } from './types.ts';
-import { nextCutoff, studyDay } from './time.ts';
+import { studyDay } from './time.ts';
+import { dueCutoffMs, isDueBefore } from './scheduler.ts';
 import { estimateSeconds } from './estimate.ts';
 import { shuffle } from './random.ts';
 import { compareText } from './history.ts';
@@ -22,7 +23,7 @@ export function buildSession(input: SessionInput): SessionPlan {
   if (!Number.isFinite(minutes) || minutes <= 0) throw new Error('Duración de sesión inválida.');
   const today = studyDay(now, tz);
   // Same strict boundary as isDue, computed once rather than once per card.
-  const cutoff = Date.parse(nextCutoff(now, tz));
+  const cutoff = dueCutoffMs(now, tz);
   const budget = minutes * config.secondsPerMinute;
   const costs = new Map(packConfig.itemTypes.map(tipo => [tipo, estimateSeconds(tipo, attempts)]));
   const answered = new Set<string>();
@@ -47,7 +48,7 @@ export function buildSession(input: SessionInput): SessionPlan {
     const state = derived.items.get(item.id);
     if (item.tipo === 'info' || !state) continue;
     const due = fromStoredCard(state.card).due.getTime();
-    if (due < cutoff) dueTimes.set(item.id, due);
+    if (isDueBefore(state, cutoff)) dueTimes.set(item.id, due);
   }
   const due = [...dueTimes.keys()].sort((a, b) =>
     (dueTimes.get(a) ?? 0) - (dueTimes.get(b) ?? 0) || compareText(a, b));

@@ -1,3 +1,4 @@
+import { installItemMetadata } from './itemMetadata.ts';
 import { Dexie } from 'dexie';
 import type { Table } from 'dexie';
 import type { Attempt, ItemState } from '../domain/study/index.ts';
@@ -24,5 +25,6 @@ export function defineDb(name: string, versions: DbVersion[]): StudyDb {
     const declared = db.version(version.version).stores(version.stores);
     if (version.upgrade) declared.upgrade(version.upgrade);
   }
+  installItemMetadata(db);
   return db;
 }

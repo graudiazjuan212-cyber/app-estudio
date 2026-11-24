@@ -3,7 +3,7 @@ export { toStoredCard, fromStoredCard, validateAttempt } from './types.ts';
 export { studyDay, nextCutoff } from './time.ts';
 export type { Answer, GradeResult } from './grade.ts';
 export { grade, ratingToCorrect } from './grade.ts';
-export { fsrsRating, newItemState, applyAttempt, isDue } from './scheduler.ts';
+export { fsrsRating, newItemState, applyAttempt, isDue, isDueBefore, dueCutoffMs } from './scheduler.ts';
 export type { Catalog, CatalogItem, CatalogBlock, CatalogChapter } from './catalog.ts';
 export { buildCatalog, evaluableIds } from './catalog.ts';
 export type { BlockStatus, BlockState } from './mastery.ts';

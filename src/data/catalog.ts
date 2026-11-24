@@ -1,11 +1,12 @@
 import type { Catalog } from '../domain/study/index.ts';
+import { readItemMetadata } from './itemMetadata.ts';
 import type { StudyDb } from './db.ts';
 
-export async function loadCatalog(db: StudyDb, subjectId?: string): Promise<Catalog> {
+export async function loadMetadataCatalog(db: StudyDb, subjectId?: string): Promise<Catalog> {
   return db.transaction('r', [db.items, db.blocks, db.chapters], async () => {
-    const chapters = await db.chapters.toArray();
-    const blocks = (await db.blocks.toArray()).sort((a, b) => a.order - b.order);
-    const items = (await db.items.toArray()).sort((a, b) => a.order - b.order);
+    const chapters = await (subjectId === undefined ? db.chapters : db.chapters.where('subjectId').equals(subjectId)).toArray();
+    const blocks = (await (subjectId === undefined ? db.blocks : db.blocks.where('subjectId').equals(subjectId)).toArray()).sort((a, b) => a.order - b.order);
+    const items = (await readItemMetadata(db, subjectId)).sort((a, b) => a.order - b.order);
     const catalog: Catalog = { items: new Map(), blocks: new Map(), chapters: new Map() };
     for (const chapter of chapters) {
       if (subjectId !== undefined && chapter.subjectId !== subjectId) continue;
@@ -26,4 +27,8 @@ export async function loadCatalog(db: StudyDb, subjectId?: string): Promise<Cata
     }
     return catalog;
   });
+}
+
+export async function loadCatalog(db: StudyDb, subjectId?: string): Promise<Catalog> {
+  return loadMetadataCatalog(db, subjectId);
 }
