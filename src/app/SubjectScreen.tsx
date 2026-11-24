@@ -6,6 +6,7 @@ import { StatusBadge } from '../ui/StatusBadge.tsx';
 import { blockRequirementText } from '../ui/format.ts';
 import { LoadError } from '../ui/LoadState.tsx';
 import { StudyButton } from './StudyButton.tsx';
+import { ProgressExportButton } from './ProgressExportButton.tsx';
 import styles from '../ui/Screens.module.css';
 export function SubjectScreen({ subjectId }: { subjectId: string }) {
   const { db, ctx, revision, bump } = useData();
@@ -17,6 +18,7 @@ export function SubjectScreen({ subjectId }: { subjectId: string }) {
     {view.status === 'error' && <LoadError retry={bump} />}
     {data === null && <p>No encuentro esta asignatura.</p>}
     {data && <><h1>{data.nombre}</h1><ProgressBar percent={data.percent} label="Progreso global" /><StudyButton subjectId={subjectId} />
+      <ProgressExportButton subjectId={subjectId} />
       {data.chapters.map(ch => <section key={ch.id}><h2>{ch.numero}. {ch.titulo}</h2><ProgressBar percent={ch.percent} label={`Progreso de ${ch.titulo}`} />
         <StudyButton subjectId={subjectId} chapterId={ch.id} kind="review" label="Repasar capítulo" />
         <StudyButton subjectId={subjectId} chapterId={ch.id} kind="exam" label="Mini examen" disabled={!ch.hasEvaluables} />
