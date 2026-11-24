@@ -1,0 +1,7 @@
+[
+  { "at": "2026-11-24T10:00:00.000Z", "correct": true, "confidence": "bastante", "scheduled_days": 3, "due": "2026-11-27T10:00:00.000Z", "reps": 1, "lapses": 0 },
+  { "at": "2026-11-27T10:00:00.000Z", "correct": true, "confidence": "bastante", "scheduled_days": 14, "due": "2026-12-11T10:00:00.000Z", "reps": 2, "lapses": 0 },
+  { "at": "2026-12-11T10:00:00.000Z", "correct": true, "confidence": "seguro", "scheduled_days": 95, "due": "2027-03-16T10:00:00.000Z", "reps": 3, "lapses": 0 },
+  { "at": "2027-03-16T10:00:00.000Z", "correct": false, "confidence": "bastante", "scheduled_days": 4, "due": "2027-03-20T10:00:00.000Z", "reps": 4, "lapses": 1 },
+  { "at": "2027-03-20T10:00:00.000Z", "correct": true, "confidence": "bastante", "scheduled_days": 11, "due": "2027-03-31T10:00:00.000Z", "reps": 5, "lapses": 1 }
+]

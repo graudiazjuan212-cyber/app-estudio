@@ -22,3 +22,16 @@ export const packConfig = {
   weights: [1, 3, 5], testOptions: [3, 5], multiOptions: [3, 6],
   gapOptions: [2, 5], steps: [3, 8], pairs: [3, 6], gaps: [1, 6],
 } as const;
+
+export const studyConfig = {
+  dayCutoffHour: 4,
+  schedulerVersion: 1,
+  fsrs: {
+    request_retention: 0.9, maximum_interval: 36500,
+    enable_fuzz: false, enable_short_term: false,
+  },
+  masteryThresholdPercent: 80,
+  emptyCardInstant: '1970-01-01T00:00:00.000Z',
+  millisecondsPerDay: 86400000,
+  cutoffSearchDays: 2,
+} as const;

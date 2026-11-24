@@ -133,3 +133,8 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 
 ## ADR-021 · JSON Schema orientativo y validación como fuente de verdad
 - **Decisión:** `docs/estudio-pack-1.schema.json` se exporta en modo **entrada** (`io: 'input'`) y es orientativo: no expresa las reglas semánticas (exactamente 1 correcta, textos distintos, marcadores `{{n}}`, ids únicos, ciclos de `requiere`, LaTeX). La fuente de verdad es `validatePack`. El validador normaliza el input a JSON puro (límite de profundidad, sin propiedades heredadas) y nunca lanza.
+
+## ADR-022 · `ts-fsrs` fijado en 5.4.2 (FSRS-6, API síncrona)
+- **Contexto:** `ts-fsrs` 6.x marca `fsrs()`, `createEmptyCard` y `Card` como obsoletos; su `DefaultScheduler` es asíncrono y usa **FSRS-7** por defecto. El BRIEF y ADR-002 piden FSRS-6, función pura y planificador versionado.
+- **Decisión:** versión exacta **5.4.2** (FSRS-6, 21 parámetros, API síncrona no obsoleta). Los parámetros viven en `studyConfig.fsrs` y `schedulerVersion = 1`. Un test fija 5 vencimientos (`tests/fixtures/study/fsrs-golden.json`); coinciden con los de 6.0.1 en modo FSRS-6.
+- **Consecuencias:** subir a otra versión o a FSRS-7 es una migración deliberada (subir `schedulerVersion`, recalcular la caché desde los intentos; los intentos no cambian).
