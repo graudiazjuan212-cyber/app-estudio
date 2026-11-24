@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { answerCorrectly, importFixture, idbCount, visibleItem } from './support/study';
 import type { Page } from '@playwright/test';
 const errors = new WeakMap<Page, string[]>();
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
   const messages: string[] = []; errors.set(page, messages);
   page.on('pageerror', error => { messages.push(error.message); });
   page.on('console', message => { if (message.type() === 'error') messages.push(message.text()); });
@@ -11,7 +11,8 @@ test.beforeEach(async ({ page }) => {
     // A reload keeps the fake clock set with setClock(); the first load starts on day 1.
     Object.assign(window, { __ESTUDIO_NOW__: sessionStorage.getItem('estudio-test-now') ?? '2026-11-24T10:00:00Z' });
   });
-  await importFixture(page, 'mat-ejemplo-c01');
+  await importFixture(page, testInfo.title === 'a changed question is reloaded before an answer can be saved'
+    ? 'fp-v1' : 'mat-ejemplo-c01');
   await page.getByRole('radiogroup', { name: 'Duración de la sesión' }).getByRole('radio', { name: '5 min', exact: true }).check();
   await page.goto('./');
 });
@@ -152,4 +153,33 @@ test('production assets exclude the injected clock', () => {
   const files = readdirSync('dist/assets').filter(name => name.endsWith('.js'));
   expect(files.length).toBeGreaterThan(0);
   for (const file of files) expect(readFileSync(`dist/assets/${file}`, 'utf8')).not.toContain('__ESTUDIO_NOW__');
+});
+
+test('two windows answer the same session question only once', async ({ page, context }) => {
+  await start(page);
+  const item = await visibleItem(page);
+  const other = await context.newPage();
+  await other.goto(page.url());
+  await expect(other.getByRole('article', { name: 'Pregunta', exact: true })).toBeVisible();
+  await answerCorrectly(page, item);
+  await answerCorrectly(other, item);
+  await expect(other.getByRole('status').filter({ hasText: 'ya se respondió en otra ventana' })).toBeVisible();
+  expect(await idbCount(other, 'attempts')).toBe(1);
+  expect((await visibleItem(other)).id).not.toBe(item.id);
+  await expect(other.getByRole('button', { name: 'Siguiente', exact: true })).toHaveCount(0);
+});
+
+test('a changed question is reloaded before an answer can be saved', async ({ page, context }) => {
+  await start(page);
+  const old = await visibleItem(page, 'fp-v1');
+  expect(old.id).toBe('mat-i3');
+  const other = await context.newPage();
+  await other.goto(page.url());
+  await importFixture(other, 'fp-v2');
+  await answerCorrectly(page, old);
+  await expect(page.getByRole('status').filter({ hasText: 'ha cambiado en otra ventana' })).toBeVisible();
+  expect(await idbCount(page, 'attempts')).toBe(0);
+  await answerCorrectly(page, await visibleItem(page, 'fp-v2'));
+  await expect(page.getByRole('button', { name: 'Siguiente', exact: true })).toBeVisible();
+  expect(await idbCount(page, 'attempts')).toBe(1);
 });

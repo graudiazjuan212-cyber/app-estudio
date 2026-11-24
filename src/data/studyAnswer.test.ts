@@ -1,3 +1,4 @@
+import fingerprints from '../../tests/fixtures/data/fingerprints.json';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { context, dump, packText, testDb } from '../../tests/fixtures/data/helpers.ts';
 import { correctTest, startInput } from '../../tests/fixtures/data/services.ts';
@@ -5,7 +6,7 @@ import type { StudyDb } from './db.ts';
 import { importPackText } from './importPack.ts';
 import { startStudySession, submitAnswer, finishStudySession } from './study.ts';
 let db: StudyDb;
-const input = { sessionId: 'run', itemId: 'mat-i3', attemptId: 'answer', submission: correctTest, durationMs: 1000 };
+const input = { fingerprint: fingerprints['mat-i3'], sessionId: 'run', itemId: 'mat-i3', attemptId: 'answer', submission: correctTest, durationMs: 1000 };
 beforeEach(async () => { db = await testDb(); await importPackText(db, packText(), context); await startStudySession(db, startInput, context); });
 afterEach(async () => { vi.restoreAllMocks(); await db.delete(); });
 it('saves current metadata and returns duplicate without another attempt', async () => {
@@ -44,14 +45,14 @@ it('rejects a failed write and permits retry with the same attempt id', async ()
   expect((await submitAnswer(db, input, context)).status).toBe('saved');
 });
 it('records info without FSRS or evaluable summary credit', async () => {
-  expect(await submitAnswer(db, { ...input, itemId: 'mat-i1', submission: { kind: 'seen' } }, context))
+  expect(await submitAnswer(db, { ...input, itemId: 'mat-i1', fingerprint: fingerprints['mat-i1'], submission: { kind: 'seen' } }, context))
     .toMatchObject({ status: 'saved', correct: null });
   expect((await db.attempts.get('answer'))?.tipo).toBe('info');
   expect(await db.itemState.get('mat-i1')).toBeUndefined();
   expect(await finishStudySession(db, 'run', context)).toMatchObject({ correct: 0, total: 0 });
 });
 it('keeps flashcard correctness', async () => {
-  expect(await submitAnswer(db, { ...input, itemId: 'mat-i2', submission: { kind: 'flashcard', rating: 'otra' } }, context))
+  expect(await submitAnswer(db, { ...input, itemId: 'mat-i2', fingerprint: fingerprints['mat-i2'], submission: { kind: 'flashcard', rating: 'otra' } }, context))
     .toMatchObject({ correct: false });
 });
 it.each([{ sessionId: 'missing' }, { itemId: 'mat-i10' }, { attemptId: '' }])('rejects invalid context %j', async patch => {
@@ -63,7 +64,9 @@ it('rejects new answers after finishing but allows an existing retry', async () 
   await submitAnswer(db, input, context);
   await finishStudySession(db, 'run', context);
   expect((await submitAnswer(db, input, context)).status).toBe('duplicate');
-  await expect(submitAnswer(db, { ...input, attemptId: 'new' }, context)).rejects.toThrow();
+  expect((await submitAnswer(db, { ...input, attemptId: 'new' }, context)).status).toBe('already-answered');
+  await expect(submitAnswer(db, { ...input, attemptId: 'unanswered', itemId: 'mat-i2',
+    fingerprint: fingerprints['mat-i2'], submission: { kind: 'flashcard', rating: 'facil' } }, context)).rejects.toThrow();
 });
 it('rejects archived items without writing', async () => {
   await db.items.update('mat-i3', { archived: true });

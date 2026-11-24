@@ -1,3 +1,4 @@
+import fingerprints from '../../tests/fixtures/data/fingerprints.json';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { context, packText, testDb } from '../../tests/fixtures/data/helpers.ts';
 import { correctTest, firstAnswers, firstPlan, startInput } from '../../tests/fixtures/data/services-m5.ts';
@@ -8,7 +9,7 @@ import { loadSessionRun, startStudySession, submitAnswer } from './study.ts';
 let db: StudyDb;
 beforeEach(async () => { db = await testDb(); await importPackText(db, packText(), context); });
 afterEach(async () => { vi.restoreAllMocks(); await db.delete(); });
-const input = () => ({ sessionId: 'run', itemId: 'mat-i3', attemptId: 'answer', submission: correctTest, durationMs: 1000 });
+const input = () => ({ fingerprint: fingerprints['mat-i3'], sessionId: 'run', itemId: 'mat-i3', attemptId: 'answer', submission: correctTest, durationMs: 1000 });
 it('starts with the fixed initial plan and chapter percentages', async () => {
   expect(await startStudySession(db, startInput, context)).toEqual({ status: 'started', sessionId: 'run' });
   expect(await db.sessions.get('run')).toMatchObject({ itemIds: firstPlan, percentBefore: { 'ejmat-c01': 0 }, kind: 'study' });
@@ -110,7 +111,7 @@ it('propagates write failure and preserves a retry with the same id', async () =
 });
 it('records info as seen without scheduler state', async () => {
   await startStudySession(db, startInput, context);
-  expect(await submitAnswer(db, { ...input(), itemId: 'mat-i1', submission: { kind: 'seen' } }, context))
+  expect(await submitAnswer(db, { ...input(), itemId: 'mat-i1', fingerprint: fingerprints['mat-i1'], submission: { kind: 'seen' } }, context))
     .toMatchObject({ status: 'saved', correct: null });
   expect(await db.attempts.get('answer')).toMatchObject({ tipo: 'info' });
   expect(await db.itemState.get('mat-i1')).toBeUndefined();

@@ -43,7 +43,7 @@ test('real A to B update waits for consent and preserves the open session offlin
   await page.evaluate(() => { Object.assign(window, { __updateMarker: 'still A' }); });
   await expect(updateNotice(page)).toHaveCount(0);
   await offerUpdate(page, server, variants.B);
-  await page.waitForTimeout(config.noReloadMs); // The one intentional time delay: no automatic reload for 2 s.
+  await page.waitForTimeout(config.noReloadMs); // Observe the absence of an automatic reload.
   expect(await page.evaluate(() => Reflect.get(window, '__updateMarker') as unknown)).toBe('still A');
   await start(page); await expect(updateNotice(page)).toHaveCount(0); await answer(page);
   await page.getByRole('link', { name: 'Salir', exact: true }).click();
@@ -80,16 +80,47 @@ test('another tab remains functional after an update with the same database sche
   await page.getByRole('link', { name: 'Volver', exact: true }).click();
   const other = await context.newPage(); await other.goto(server.url); await ready(other);
   await start(other); await answer(other);
+  await other.evaluate(() => { Object.assign(window, { __sessionMarker: 'preserved' }); });
   const session = other.url();
   await offerUpdate(page, server, variants.B);
   await Promise.all([page.waitForEvent('load'), updateNotice(page).getByRole('button', { name: 'Actualizar', exact: true }).click()]);
   await version(page, 'B');
-  // Workbox may reload controlled clients; in either case the session route must be preserved.
+  expect(await other.evaluate(() => Reflect.get(window, '__sessionMarker') as unknown)).toBe('preserved');
+  // The active session stays in the same document until Juan leaves it.
   await expect(other).toHaveURL(session);
   await expect(other.getByRole('article', { name: 'Pregunta', exact: true })).toBeVisible();
   await expect(other.getByText('La app se ha actualizado en otra ventana. Recarga.', { exact: true })).toHaveCount(0);
   await answer(other); expect(await idbCount(other, 'attempts')).toBe(2);
   expect(await idbCount(page, 'attempts')).toBe(2);
+});
+
+test('updating in Home preserves an unsent choice in the other tab until exit', async ({ page, context, server, variants }) => {
+  await page.goto('./'); await ready(page); await importFixture(page, config.fixture);
+  await page.getByRole('link', { name: 'Volver', exact: true }).click();
+  const studying = await context.newPage(); await studying.goto(server.url); await ready(studying);
+  await start(studying); await answer(studying);
+  await studying.getByRole('button', { name: 'Mostrar respuesta', exact: true }).click();
+  await studying.getByRole('button', { name: 'Bien', exact: true }).click();
+  await studying.getByRole('button', { name: 'Siguiente', exact: true }).click();
+  const choice = studying.getByRole('article', { name: 'Pregunta', exact: true }).getByRole('radio').first();
+  await choice.click();
+  await studying.getByRole('radio', { name: 'Seguro', exact: true }).click();
+  const selectedText = await choice.textContent();
+  await studying.evaluate(() => { Object.assign(window, { __unsentMarker: 'preserved' }); });
+  const before = await idbCount(studying, 'attempts');
+  await offerUpdate(page, server, variants.B);
+  await Promise.all([page.waitForEvent('load'), updateNotice(page).getByRole('button', { name: 'Actualizar', exact: true }).click()]);
+  await version(page, 'B');
+  await studying.waitForTimeout(config.noReloadMs);
+  expect(await studying.evaluate(() => Reflect.get(window, '__unsentMarker') as unknown)).toBe('preserved');
+  await expect(choice).toHaveAttribute('aria-checked', 'true');
+  await expect(choice).toHaveText(selectedText ?? '');
+  await studying.getByRole('button', { name: 'Comprobar', exact: true }).click();
+  await expect(studying.getByRole('button', { name: 'Siguiente', exact: true })).toBeVisible();
+  expect(await idbCount(studying, 'attempts')).toBe(before + 1);
+  await Promise.all([studying.waitForEvent('load'), studying.getByRole('link', { name: 'Salir', exact: true }).click()]);
+  expect(await studying.evaluate(() => Reflect.get(window, '__unsentMarker') as unknown)).toBeUndefined();
+  await version(studying, 'B');
 });
 
 // Juan recibe el resultado de protección una sola vez y encuentra instrucciones Android en Ajustes.

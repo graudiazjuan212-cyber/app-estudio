@@ -1,5 +1,6 @@
 import { buildSession, buildChapterExam, rebuildFromAttempts, studyDay, chapterPercent } from '../domain/study/index.ts';
 import type { Catalog } from '../domain/study/index.ts';
+import { itemFingerprint } from '../domain/pack/index.ts';
 import { routerConfig } from '../config.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
@@ -51,7 +52,7 @@ export async function startStudySession(db: StudyDb, input: StartStudyInput, ctx
 }
 export interface SessionRun {
   session: SessionRow;
-  items: { id: string; item: Item; blockId: string; chapterId: string; itemGen: number }[];
+  items: { id: string; item: Item; fingerprint: string; blockId: string; chapterId: string; itemGen: number }[];
   answered: string[]; nextIndex: number;
 }
 export async function loadSessionRun(db: StudyDb, sessionId: string): Promise<SessionRun | null> {
@@ -59,7 +60,7 @@ export async function loadSessionRun(db: StudyDb, sessionId: string): Promise<Se
     const session = await db.sessions.get(sessionId);
     if (!session) return null;
     const rows = await db.items.bulkGet(session.itemIds);
-    const items = rows.flatMap(row => row && !row.archived ? [{ id: row.id, item: row.data,
+    const items = rows.flatMap(row => row && !row.archived ? [{ id: row.id, item: row.data, fingerprint: itemFingerprint(row.data),
       blockId: row.blockId, chapterId: row.chapterId, itemGen: row.itemGen }] : []);
     const answered = [...new Set((await sessionAttempts(db, sessionId)).map(a => a.itemId))];
     const index = items.findIndex(item => !answered.includes(item.id));

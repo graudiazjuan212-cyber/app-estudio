@@ -1,3 +1,4 @@
+import fingerprints from '../../tests/fixtures/data/fingerprints.json';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { attempt, context, dump, packText, testDb } from '../../tests/fixtures/data/helpers.ts';
 import { firstAnswers, secondContext, startInput } from '../../tests/fixtures/data/services-m5.ts';
@@ -44,7 +45,7 @@ it('includes only changed chapter percentages after mastery', async () => {
 });
 it('does not count dontKnow answers as blind spots', async () => {
   await startStudySession(db, startInput, context);
-  await submitAnswer(db, { sessionId: 'run', itemId: 'mat-i3', attemptId: 'unknown', submission: { kind: 'dontKnow' }, durationMs: 600000 }, context);
+  await submitAnswer(db, { fingerprint: fingerprints['mat-i3'], sessionId: 'run', itemId: 'mat-i3', attemptId: 'unknown', submission: { kind: 'dontKnow' }, durationMs: 600000 }, context);
   expect(await finishStudySession(db, 'run', context)).toMatchObject({ correct: 0, total: 1, blindSpotsCreated: 0,
     goalReached: true, secondsToday: 600 });
 });

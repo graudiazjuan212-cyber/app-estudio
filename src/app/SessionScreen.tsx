@@ -13,6 +13,8 @@ import { sessionHeaderText } from './studyText';
 
 export function SessionScreen({ sessionId }: { sessionId: string }) {
   const { db, ctx, bump } = useData();
+  const [notice, setNotice] = useState<string | null>(null);
+  const [position, setPosition] = useState<number | null>(null);
   const [reload, setReload] = useState(0);
   const view = useAsync(() => loadSessionRun(db, sessionId), [db, sessionId, reload]);
   const finish = useCallback(async () => {
@@ -22,11 +24,15 @@ export function SessionScreen({ sessionId }: { sessionId: string }) {
   if (view.status === 'loading') return <p role="status">Cargando…</p>;
   if (view.status === 'error') return <LoadError retry={() => { setReload(n => n + 1); }} />;
   if (!view.data) return <><p>No encuentro esta sesión.</p><a href="#/">Volver al inicio</a></>;
-  return <SessionRunScreen key={`${sessionId}-${String(reload)}`} run={view.data} finish={finish} />;
+  return <>{notice && <p role="status">{notice}</p>}<SessionRunScreen startIndex={position} onNotice={setNotice}
+    reloadAt={index => { setPosition(index); setReload(n => n + 1); }} key={`${sessionId}-${String(reload)}`} run={view.data} finish={finish} /></>;
 }
-function SessionRunScreen({ run, finish }: { run: SessionRun; finish: () => Promise<void> }) {
+function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
+  run: SessionRun; finish: () => Promise<void>; startIndex: number | null;
+  reloadAt: (index: number) => void; onNotice: (message: string) => void;
+}) {
   const { db, ctx, bump } = useData();
-  const [index, setIndex] = useState(run.nextIndex);
+  const [index, setIndex] = useState(startIndex ?? run.nextIndex);
   const [feedback, setFeedback] = useState<QuestionFeedback | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirm, setConfirm] = useState(false);
@@ -65,7 +71,15 @@ function SessionRunScreen({ run, finish }: { run: SessionRun; finish: () => Prom
         setError(null);
         try {
           const result = await submitAnswer(db, { sessionId: run.session.id, itemId: current.id,
-            attemptId: attempt.id, submission, durationMs: Math.max(0, Math.round(performance.now() - attempt.start)) }, ctx());
+            attemptId: attempt.id, fingerprint: current.fingerprint, submission, durationMs: Math.max(0, Math.round(performance.now() - attempt.start)) }, ctx());
+          if (result.status === 'already-answered') {
+            onNotice('Esta pregunta ya se respondió en otra ventana. Pasamos a la siguiente.');
+            setFeedback(null); setIndex(n => n + 1); return;
+          }
+          if (result.status === 'changed') {
+            onNotice('Esta pregunta ha cambiado en otra ventana. La hemos vuelto a cargar: respóndela de nuevo.');
+            reloadAt(index); return;
+          }
           setFeedback({ correct: result.correct }); bump();
         } catch { setError('No se ha podido guardar la respuesta.'); throw new Error('No se ha podido guardar la respuesta.'); }
       }} onNext={() => { setFeedback(null); setError(null); setIndex(n => n + 1); }} /></div>}

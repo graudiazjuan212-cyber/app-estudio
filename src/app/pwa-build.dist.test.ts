@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { expect, it } from 'vitest';
 const dist = new URL('../../dist/', import.meta.url);
 const buildTest = existsSync(dist) ? it : it.skip;
@@ -17,4 +17,19 @@ buildTest('checks production manifest and icons (skipped when dist does not exis
       { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ] });
   for (const name of ['icon-192.png', 'icon-512.png', 'maskable-512.png']) expect(existsSync(new URL(`icons/${name}`, dist))).toBe(true);
+});
+
+buildTest('C2: generated worker accepts explicit activation and dist excludes virtual registration', () => {
+  expect(readFileSync(new URL('sw.js', dist), 'utf8')).toContain('SKIP_WAITING');
+  const inspect = (directory: URL): void => {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      expect(entry.name).not.toMatch(/virtual[:_]pwa-register/);
+      const path = new URL(entry.name + (entry.isDirectory() ? '/' : ''), directory);
+      if (entry.isDirectory()) inspect(path);
+      else if (/\.(js|html|json)$/.test(entry.name)) {
+        expect(readFileSync(path, 'utf8')).not.toMatch(/virtual[:_]pwa-register/);
+      }
+    }
+  };
+  inspect(dist);
 });

@@ -1,14 +1,17 @@
-import { studyConfig } from '../config.ts';
+import { itemFingerprint } from '../domain/pack/index.ts';
+import { fingerprintConfig, studyConfig } from '../config.ts';
 import { submissionOutcome, studyDay } from '../domain/study/index.ts';
 import type { BlockStatus, Submission } from '../domain/study/index.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
 import { recordAttempt } from './attempts.ts';
-export interface AnswerResult { status: 'saved' | 'duplicate'; correct: boolean | null; blockStatus: BlockStatus | null }
+export interface AnswerResult { status: 'saved' | 'duplicate' | 'already-answered' | 'changed'; correct: boolean | null; blockStatus: BlockStatus | null }
 export interface SubmitAnswerInput {
-  sessionId: string; itemId: string; attemptId: string; submission: Submission; durationMs: number;
+  fingerprint: string; sessionId: string; itemId: string; attemptId: string; submission: Submission; durationMs: number;
 }
 export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: DataContext): Promise<AnswerResult> {
+  if (typeof input.fingerprint !== 'string' || fingerprintConfig.pattern.exec(input.fingerprint)?.[0] !== input.fingerprint)
+    throw new Error('La huella de la pregunta no es válida. Vuelve a cargar la sesión.');
   if (!Number.isInteger(input.durationMs) || input.durationMs < 0) throw new Error('La duración no es válida.');
   if (!input.attemptId) throw new Error('Falta el identificador del intento.');
   return db.transaction('rw', [db.sessions, db.items, db.chapters, db.blocks, db.attempts, db.itemState, db.blockState], async () => {
@@ -16,12 +19,17 @@ export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: D
     const item = await db.items.get(input.itemId);
     if (!session || !item || item.archived || item.subjectId !== session.subjectId || !session.itemIds.includes(item.id))
       throw new Error('La pregunta no pertenece a esta sesión o ya no está disponible.');
-    const outcome = submissionOutcome(item.data, input.submission);
-    if (!outcome.ok) throw new Error(outcome.reason);
     const previous = await db.attempts.get(input.attemptId);
     if (previous && (previous.sessionId !== session.id || previous.itemId !== item.id))
       throw new Error('El identificador del intento pertenece a otra respuesta.');
-    if (session.endedAt !== null && !previous) throw new Error('La sesión ya ha terminado.');
+    if (previous) return { status: 'duplicate', correct: previous.tipo === 'info' ? null : previous.correct,
+      blockStatus: (await db.blockState.get(previous.blockId))?.status ?? null };
+    const answered = await db.attempts.where('sessionId').equals(session.id).filter(a => a.itemId === item.id).first();
+    if (answered) return { status: 'already-answered', correct: answered.tipo === 'info' ? null : answered.correct, blockStatus: null };
+    if (itemFingerprint(item.data) !== input.fingerprint) return { status: 'changed', correct: null, blockStatus: null };
+    const outcome = submissionOutcome(item.data, input.submission);
+    if (!outcome.ok) throw new Error(outcome.reason);
+    if (session.endedAt !== null) throw new Error('La sesión ya ha terminado.');
     const chapter = await db.chapters.get(item.chapterId);
     if (!chapter) throw new Error('El capítulo no está disponible.');
     const result = await recordAttempt(db, { attemptId: input.attemptId, sessionId: session.id,

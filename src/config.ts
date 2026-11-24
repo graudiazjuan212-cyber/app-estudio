@@ -89,3 +89,5 @@ export const progressConfig = {
   decimalScale: 10, minimumFailures: 2,
   semanticDescription: 'Reglas semánticas: aciertos no supera preguntas; minutos tiene un decimal; solo datos de la asignatura; sesiones terminadas con intentos, ordenadas y limitadas a las últimas 60; estados reconstruidos del registro; se excluyen archivados; vencimiento mínimo FSRS; fallos de la generación actual en los últimos 30 días de estudio; textos abreviados a 80 caracteres más elipsis.',
 } as const;
+
+export const fingerprintConfig = { radix: 16, hexLength: 8, pattern: /^[0-9a-f]{8}:[1-9]\d*$/ };

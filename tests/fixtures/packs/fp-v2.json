@@ -1,0 +1,71 @@
+{
+  "schema": "estudio-pack/1",
+  "asignatura": {
+    "id": "ejmat",
+    "nombre": "Matemáticas (ejemplo)"
+  },
+  "capitulo": {
+    "id": "ejmat-c01",
+    "numero": 1,
+    "titulo": "Vectores en el plano"
+  },
+  "version": 2,
+  "generado": "2026-11-24",
+  "bloques": [
+    {
+      "id": "mat-b1",
+      "titulo": "Componentes y norma",
+      "peso": 1,
+      "requiere": [],
+      "items": [
+        {
+          "id": "mat-i3",
+          "tipo": "test",
+          "enunciado": "Norma de $(3,4)$",
+          "opciones": [
+            {
+              "texto": "$5$",
+              "correcta": false,
+              "feedback": "Correcto."
+            },
+            {
+              "texto": "$7$",
+              "correcta": true,
+              "feedback": "Revisa la definición."
+            },
+            {
+              "texto": "$25$",
+              "correcta": false,
+              "feedback": "Revisa la definición."
+            }
+          ]
+        },
+        {
+          "id": "mat-i4",
+          "tipo": "multi",
+          "enunciado": "Vectores unitarios",
+          "opciones": [
+            {
+              "texto": "$(1,0)$",
+              "correcta": true
+            },
+            {
+              "texto": "$(0,1)$",
+              "correcta": true
+            },
+            {
+              "texto": "$(1,1)$",
+              "correcta": false
+            }
+          ]
+        },
+        {
+          "id": "mat-i5",
+          "tipo": "vf",
+          "enunciado": "La norma nunca es negativa.",
+          "correcta": true
+        }
+      ]
+    }
+  ]
+}

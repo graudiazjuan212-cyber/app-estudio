@@ -9,3 +9,5 @@ export type { PackDiff } from './diff.ts';
 export { extractMath } from './latex.ts';
 export type { MathFragment } from './latex.ts';
 export { normalizeJson } from './normalize.ts';
+
+export { itemFingerprint } from './fingerprint.ts';

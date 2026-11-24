@@ -1,6 +1,6 @@
 export const pwaTestConfig = {
   basePath: '/app-estudio/', host: '127.0.0.1',
-  waitMs: 15000, testMs: 90000, buildMs: 180000, noReloadMs: 2000,
+  waitMs: 15000, testMs: 90000, buildMs: 180000, noReloadMs: 3000,
   clock: '2026-11-24T10:00:00Z', fixture: 'mat-ejemplo-c01',
   variants: { A: 'dist-e2e-a', B: 'dist-e2e-b' },
   mime: {
