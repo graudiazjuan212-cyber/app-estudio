@@ -6,3 +6,4 @@
 - [ ] Contestar la pregunta 6 de `docs/QUESTIONS.md` (publicar o no) y, si es que sí, autorizar el `git push`.
 - [ ] Importar tus paquetes reales y hacer la primera copia de seguridad (Ajustes → Exportar copia).
 - [ ] Si algún día quieres mirar iPhone/Safari: no se ha podido probar aquí.
+- [x] (2026-11-24) Publicada: push autorizado, repo público `graudiazjuan212-cyber/app-estudio`, Pages activo. Queda: instalar en tu Android y seguir `docs/PRUEBA_MOVIL.md`.

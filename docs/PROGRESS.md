@@ -1,6 +1,6 @@
 # PROGRESS
 
-Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. **Proyecto terminado y verificado en local.** `main`, **sin push** (no se hace hasta que Juan autorice; pregunta 6 de `docs/QUESTIONS.md`).
+Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. **Proyecto terminado y PUBLICADO (2026-11-24, autorizado por Juan):** https://graudiazjuan212-cyber.github.io/app-estudio/ — repo público `graudiazjuan212-cyber/app-estudio`, rama `main`; cada `git push` a `main` despliega (Actions: check + e2e + Pages; ejecutor `ubuntu-24.04`). Último despliegue verde: `cad14ee`.
 
 ## Estado por hito
 | Hito | Estado | Commit de cierre | Verificación |
@@ -21,13 +21,12 @@ Informes: `docs/results/RESULTADO-M0…M9.md`, `PARA-REVISAR-*.md`, `RESULTADO-F
 
 ## Qué falta
 Nada de código pendiente salvo la **pregunta 7** de `docs/QUESTIONS.md` (sesión sin terminar: hoy las respuestas cuentan al momento; propuesta de que cuenten solo al terminar). Si Juan dice «sí», es la tarea M10-2 (domino/repasos: revisar con `adversarial-review` antes de publicar). Y Juan (ver `docs/PENDIENTE-JUAN.md` y `docs/QUESTIONS.md`):
-1. Contestar la pregunta 6 (publicar o no) y autorizar el `git push`.
-2. Activar Pages con origen «GitHub Actions».
+1. (Hecho) Publicación: Juan autorizó el push y Pages está activo con origen «GitHub Actions».
 3. Probar `docs/PRUEBA_MOVIL.md` en su Android.
 4. Importar sus paquetes reales y hacer la primera copia.
 
 ## Siguiente paso exacto
-- **Si Juan autoriza publicar:** `git push origin main` (el workflow `.github/workflows/deploy.yml` ejecuta check + e2e + Pages), comprobar que la dirección `https://graudiazjuan212-cyber.github.io/app-estudio/` carga e instala; después anotarlo en `RESULTADO-FINAL.md`. Revisar antes el workflow: instala Chrome con `npx playwright install --with-deps chrome`; el proyecto `pwa` compila dos builds extra y tarda unos minutos.
+- **Publicado.** Para cambios futuros: commit → `git push` → vigilar `gh run list` (tarda ~6 min). Un E2E rojo en CI bloquea el despliegue (la web anterior sigue en línea). Lección del primer despliegue: `ubuntu-latest` pasó a 26.04 y Playwright no instala ffmpeg ahí → ejecutor fijado a `ubuntu-24.04`; un E2E con carrera (ajuste sin esperar a guardarse) solo falló en CI, más lento.
 - **Si Juan encuentra fallos en el móvil:** abrir una tarea `docs/tasks/<hito>-<n>.md` con el fallo concreto y seguir el flujo de `CLAUDE.md`.
 - **Opcional:** `adversarial-review` solo de M9-3 (`--base c2598ce`); no se ha hecho (solo rendimiento, con equivalencia probada).
 - **Desde la primera publicación** cualquier cambio de tablas/índices de IndexedDB exige versión nueva y migración con copia previa (ADR-013, ADR-024, ADR-027).

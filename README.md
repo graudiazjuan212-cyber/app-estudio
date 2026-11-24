@@ -2,7 +2,7 @@
 
 Preguntas cortas para los ratos muertos (1, 5, 10, 15 o 30 minutos): la app sabe qué toca estudiar hoy, te repasa lo que estás a punto de olvidar y guarda todo en tu móvil. **No necesita internet** una vez instalada y **no envía tus datos a ningún sitio**.
 
-> Dirección de la app (cuando esté publicada): **https://graudiazjuan212-cyber.github.io/app-estudio/**
+> Dirección de la app: **https://graudiazjuan212-cyber.github.io/app-estudio/**
 
 ## 1. Instalarla en tu Android
 1. Abre la dirección de arriba en **Chrome**.
