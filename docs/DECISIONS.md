@@ -123,3 +123,10 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 
 ## ADR-016 · Reordenación de hitos
 - **Decisión:** la lógica de dominio (FSRS, dominio, sesión) pasa a M2, antes del almacenamiento, porque el esquema de BD depende de ella (ADR-002). El despliegue pasa a M0 (ADR-014). Ver `docs/PLAN.md`.
+
+## ADR-019 · Capa de datos en `src/data/`
+- **Decisión:** `CLAUDE.md`/`AGENTS.md` mandan sobre `PLAN.md`: la capa de IndexedDB vive en `src/data/` (no `src/db/`). El marcador `src/db/.gitkeep` se elimina en M3.
+
+## ADR-020 · E2E con el Chrome instalado
+- **Contexto:** la descarga de Chromium de Playwright no terminaba en el equipo de Juan.
+- **Decisión:** `channel: 'chrome'` en `playwright.config.ts`; en CI `npx playwright install --with-deps chrome`. WebKit (ADR-018) se instalará aparte cuando toque (M7) y, si no se puede, el humo en iPhone se documenta como no ejecutado.
