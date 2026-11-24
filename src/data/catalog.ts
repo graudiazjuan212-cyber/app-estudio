@@ -14,10 +14,15 @@ export async function loadCatalog(db: StudyDb, subjectId?: string): Promise<Cata
     }
     for (const block of blocks) {
       if (!catalog.chapters.has(block.chapterId)) continue;
-      catalog.blocks.set(block.id, { ...block, itemIds: items.filter(i => i.blockId === block.id).map(i => i.id) });
+      catalog.blocks.set(block.id, { id: block.id, subjectId: block.subjectId, chapterId: block.chapterId,
+        peso: block.peso, requiere: [...block.requiere],
+        itemIds: items.filter(i => i.blockId === block.id).map(i => i.id) });
     }
     for (const item of items) {
-      if (catalog.blocks.has(item.blockId)) catalog.items.set(item.id, { ...item });
+      if (catalog.blocks.has(item.blockId)) catalog.items.set(item.id, {
+        id: item.id, tipo: item.tipo, blockId: item.blockId, itemGen: item.itemGen,
+        archived: item.archived, relaciona: item.relaciona,
+      });
     }
     return catalog;
   });

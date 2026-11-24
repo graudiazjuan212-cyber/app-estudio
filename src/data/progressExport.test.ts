@@ -8,6 +8,7 @@ import { packSchema } from '../domain/pack/schema.ts';
 import { importPackText } from './importPack.ts';
 import { recordAttempt } from './attempts.ts';
 import { exportProgress } from './progressExport.ts';
+import * as progressAttempts from './progressAttempts.ts';
 
 let db: StudyDb;
 beforeEach(async () => { db = await testDb(); await importPackText(db, packText(), context); });
@@ -52,4 +53,27 @@ it('catches read failures without throwing', async () => {
   vi.spyOn(db.subjects, 'get').mockRejectedValueOnce(new Error('Lectura fallida'));
   await expect(exportProgress(db, 'ejmat', context)).resolves.toEqual({ status: 'error',
     message: 'No se pudo exportar el progreso: Lectura fallida' });
+});
+
+it('returns an error for conflicting copies supplied by the attempt reader without changing data', async () => {
+  const input = scenario();
+  const attempt = input.attempts.find(a => a.itemId === 'mat-i8');
+  if (!attempt) throw new Error('Missing fixture');
+  const before = await dump(db);
+  vi.spyOn(progressAttempts, 'readProgressAttempts').mockResolvedValueOnce([
+    ...input.attempts, { ...attempt, confidence: 'bastante' },
+  ]);
+  await expect(exportProgress(db, 'ejmat', context)).resolves.toEqual({ status: 'error',
+    message: `No se pudo exportar el progreso: El registro tiene un intento repetido con contenido distinto: ${attempt.attemptId}` });
+  expect(await dump(db)).toEqual(before);
+});
+
+it('excludes archived database blocks using explicit metadata', async () => {
+  await db.blocks.update('mat-b3', { archived: true });
+  const result = await exportProgress(db, 'ejmat', context);
+  expect(result.status).toBe('ok');
+  if (result.status !== 'ok') throw new Error('Export failed');
+  expect(JSON.parse(result.json)).toMatchObject({ capitulos: [{ bloques: [
+    { id: 'mat-b1' }, { id: 'mat-b2' },
+  ] }] });
 });

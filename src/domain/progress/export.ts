@@ -1,10 +1,12 @@
-import { z } from 'zod';
 import { progressConfig as c, studyConfig } from '../../config.ts';
 import { itemSchema } from '../pack/schema.ts';
-import { chapterPercent, evaluableIds, rebuildFromAttempts, studyDay } from '../study/index.ts';
+import { chapterPercent, evaluableIds, groupAttempts, rebuildFromAttempts, studyDay } from '../study/index.ts';
 import type { Attempt, Catalog, ItemState } from '../study/index.ts';
 import { compareAttempts, compareText, isCurrentEvaluable } from '../study/history.ts';
 import { progressSchema } from './schema.ts';
+import type { ProgressMeta } from './meta.ts';
+export { progressMetaFromPacks } from './meta.ts';
+export type { ProgressMeta } from './meta.ts';
 import type { ProgressExport } from './schema.ts';
 import { formatIsoWithOffset, shortText } from './text.ts';
 export { formatIsoWithOffset, shortText, progressFileName } from './text.ts';
@@ -13,13 +15,13 @@ export interface ProgressSession {
   id: string; kind: 'study' | 'review' | 'exam'; startedAt: string; endedAt: string | null;
 }
 export interface ProgressInput {
-  subjectId: string; catalog: Catalog; attempts: Attempt[]; sessions: ProgressSession[];
+  subjectId: string; catalog: Catalog; meta: ProgressMeta; attempts: Attempt[]; sessions: ProgressSession[];
   itemStates: Map<string, ItemState>; now: string; tz: string;
 }
-function title(value: unknown): string {
-  const result = z.object({ titulo: z.string().min(1) }).safeParse(value);
-  if (!result.success) throw new Error('Falta el título en el catálogo de progreso.');
-  return result.data.titulo;
+function requiredTitle(titles: Map<string, string>, id: string): string {
+  const value = titles.get(id);
+  if (!value?.trim()) throw new Error(`Falta el título ${id} en los metadatos de progreso.`);
+  return value;
 }
 export function buildProgressExport(input: ProgressInput): ProgressExport {
   const { subjectId, now, tz, itemStates } = input;
@@ -27,20 +29,23 @@ export function buildProgressExport(input: ProgressInput): ProgressExport {
   const chapters = [...input.catalog.chapters.values()].filter(ch => ch.subjectId === subjectId)
     .sort((a, b) => a.numero - b.numero || compareText(a.id, b.id));
   const blocks = new Map([...input.catalog.blocks].filter(([, b]) => b.subjectId === subjectId &&
-    !('archived' in b && b.archived === true)));
+    !input.meta.archivedBlockIds.has(b.id)));
   const catalog: Catalog = {
     chapters: new Map(chapters.map(ch => [ch.id, { ...ch, blockIds: ch.blockIds.filter(id => blocks.has(id)) }])),
     blocks, items: new Map([...input.catalog.items].filter(([, i]) => blocks.has(i.blockId))),
   };
-  const attempts = input.attempts.filter(a => a.subjectId === subjectId);
+  const groups = groupAttempts(input.attempts.filter(a => a.subjectId === subjectId));
+  const attempts = [...groups].map(([id, group]) => {
+    if (group.conflict) throw new Error(`El registro tiene un intento repetido con contenido distinto: ${id}`);
+    return group.first;
+  });
   const derived = rebuildFromAttempts(attempts, catalog, today);
   // Invalid history must never silently turn into an apparently valid report.
   const invalid = derived.skipped.filter(s => !s.reason.includes('generación') &&
     !s.reason.includes('catálogo') && !s.reason.includes('Duplicado idéntico'));
   if (invalid.length) throw new Error(`Registro de progreso inválido: ${invalid[0]?.reason ?? ''}`);
   const textFor = (id: string) => {
-    const item = catalog.items.get(id);
-    const parsed = itemSchema.safeParse(item && 'data' in item ? item.data : item);
+    const parsed = itemSchema.safeParse(input.meta.items.get(id));
     if (!parsed.success) throw new Error(`Falta el contenido del ítem ${id} en el catálogo de progreso.`);
     return shortText(parsed.data);
   };
@@ -70,7 +75,7 @@ export function buildProgressExport(input: ProgressInput): ProgressExport {
   const output = {
     schema: c.schema, exportado: formatIsoWithOffset(now, tz), asignatura: subjectId, sesiones: sessions,
     capitulos: [...catalog.chapters.values()].map(ch => ({
-      id: ch.id, numero: ch.numero, titulo: title(ch), porcentaje: chapterPercent(ch, catalog, derived.blocks),
+      id: ch.id, numero: ch.numero, titulo: requiredTitle(input.meta.chapterTitles, ch.id), porcentaje: chapterPercent(ch, catalog, derived.blocks),
       bloques: ch.blockIds.flatMap(id => {
         const block = blocks.get(id);
         const state = derived.blocks.get(id);
@@ -80,7 +85,7 @@ export function buildProgressExport(input: ProgressInput): ProgressExport {
           return itemState ? [itemState.card.due] : [];
         }).sort((a, b) => Date.parse(a) - Date.parse(b));
         const due = dues[0];
-        return [{ id, titulo: title(block), peso: block.peso, estado: state.status, bloqueado: state.locked,
+        return [{ id, titulo: requiredTitle(input.meta.blockTitles, id), peso: block.peso, estado: state.status, bloqueado: state.locked,
           dias_dominio: state.validDays,
           proximo_repaso: due === undefined ? null : studyDay(due, tz) }];
       }),

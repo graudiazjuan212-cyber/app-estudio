@@ -53,8 +53,7 @@ it('ignores missing item states and archived items and blocks', () => {
   const block = input.catalog.blocks.get('mat-b3');
   if (!item || !block) throw new Error('Missing fixture');
   input.catalog.items.set(item.id, { ...item, archived: true });
-  const archived = { ...block, archived: true };
-  input.catalog.blocks.set(block.id, archived);
+  input.meta.archivedBlockIds.add(block.id);
   input.itemStates.clear();
   const output = buildProgressExport(input);
   expect(output.puntos_ciegos).toEqual([]);
@@ -98,10 +97,8 @@ it('retains the latest 60 sessions in ascending order and excludes unfinished or
 });
 it('rejects missing catalog text and invalid history', () => {
   const input = scenario();
-  const chapter = input.catalog.chapters.get('ejmat-c01');
-  if (!chapter) throw new Error('Missing fixture');
-  input.catalog.chapters.set(chapter.id, { id: chapter.id, subjectId: chapter.subjectId, numero: chapter.numero, blockIds: chapter.blockIds });
-  expect(() => buildProgressExport(input)).toThrow('cat');
+  input.meta.chapterTitles.delete('ejmat-c01');
+  expect(() => buildProgressExport(input)).toThrow('Falta el título');
   const invalid = scenario();
   invalid.attempts = invalid.attempts.map(a => ({ ...a, durationMs: -1 }));
   expect(() => buildProgressExport(invalid)).toThrow('Registro');
