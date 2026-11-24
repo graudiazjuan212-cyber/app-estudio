@@ -1,0 +1,30 @@
+{
+  "schema": "estudio-pack/1",
+  "asignatura": {
+    "id": "ejmat",
+    "nombre": "Matemáticas (ejemplo)"
+  },
+  "capitulo": {
+    "id": "ejmat-c02",
+    "numero": 2,
+    "titulo": "Segundo capítulo"
+  },
+  "version": 1,
+  "generado": "2026-11-24",
+  "bloques": [
+    {
+      "id": "mat-c02-b1",
+      "titulo": "Segundo bloque",
+      "peso": 1,
+      "requiere": [],
+      "items": [
+        {
+          "id": "mat-c02-i1",
+          "tipo": "vf",
+          "enunciado": "Dos más dos son cuatro.",
+          "correcta": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { homeHashes, missingChapterRoutes, validRoutes } from '../../tests/fixtures/router';
+import { homeHashes, invalidRoutes, invalidHashes, validRoutes } from '../../tests/fixtures/router';
 import { buildHash, parseRoute } from './router';
 
 describe('hash router', () => {
@@ -9,5 +9,6 @@ describe('hash router', () => {
     expect(parseRoute(buildHash(route))).toEqual(route);
   });
   it.each(homeHashes)('falls back to home for %s', hash => { expect(parseRoute(hash)).toEqual({ name: 'home' }); });
-  it.each(missingChapterRoutes)('rejects a missing chapter: $mode', route => { expect(() => buildHash(route)).toThrow('requiere un capítulo'); });
+  it.each(invalidHashes)('rejects invalid hash %s', hash => { expect(parseRoute(hash)).toEqual({ name: 'home' }); });
+  it.each(invalidRoutes)('rejects invalid id in $name', route => { expect(() => buildHash(route)).toThrow('identificador'); });
 });

@@ -3,8 +3,9 @@ import { Layout } from '../ui/Layout';
 import { HomeScreen } from './HomeScreen';
 import { SettingsScreen } from './SettingsScreen';
 import { useRoute } from './useRoute';
+import { DataProvider } from './DataProvider';
 let Demo: ReturnType<typeof lazy> | undefined;
-export function App() {
+function AppContent() {
   const enableDemo = import.meta.env.VITE_ENABLE_DEMO === 'true';
   const { route } = useRoute(enableDemo);
   if (import.meta.env.VITE_ENABLE_DEMO === 'true') {
@@ -13,3 +14,5 @@ export function App() {
   }
   return <Layout>{route.name === 'settings' ? <SettingsScreen /> : <HomeScreen />}</Layout>;
 }
+
+export function App() { return <DataProvider><AppContent /></DataProvider>; }

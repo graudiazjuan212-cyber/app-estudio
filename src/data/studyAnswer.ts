@@ -1,0 +1,36 @@
+import { studyConfig } from '../config.ts';
+import { submissionOutcome, studyDay } from '../domain/study/index.ts';
+import type { BlockStatus, Submission } from '../domain/study/index.ts';
+import type { StudyDb } from './db.ts';
+import type { DataContext } from './cache.ts';
+import { recordAttempt } from './attempts.ts';
+export interface AnswerResult { status: 'saved' | 'duplicate'; correct: boolean | null; blockStatus: BlockStatus | null }
+export interface SubmitAnswerInput {
+  sessionId: string; itemId: string; attemptId: string; submission: Submission; durationMs: number;
+}
+export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: DataContext): Promise<AnswerResult> {
+  if (!Number.isInteger(input.durationMs) || input.durationMs < 0) throw new Error('La duración no es válida.');
+  if (!input.attemptId) throw new Error('Falta el identificador del intento.');
+  return db.transaction('rw', [db.sessions, db.items, db.chapters, db.blocks, db.attempts, db.itemState, db.blockState], async () => {
+    const session = await db.sessions.get(input.sessionId);
+    const item = await db.items.get(input.itemId);
+    if (!session || !item || item.archived || item.subjectId !== session.subjectId || !session.itemIds.includes(item.id))
+      throw new Error('La pregunta no pertenece a esta sesión o ya no está disponible.');
+    const outcome = submissionOutcome(item.data, input.submission);
+    if (!outcome.ok) throw new Error(outcome.reason);
+    const previous = await db.attempts.get(input.attemptId);
+    if (previous && (previous.sessionId !== session.id || previous.itemId !== item.id))
+      throw new Error('El identificador del intento pertenece a otra respuesta.');
+    if (session.endedAt !== null && !previous) throw new Error('La sesión ya ha terminado.');
+    const chapter = await db.chapters.get(item.chapterId);
+    if (!chapter) throw new Error('El capítulo no está disponible.');
+    const result = await recordAttempt(db, { attemptId: input.attemptId, sessionId: session.id,
+      itemId: item.id, itemGen: item.itemGen, subjectId: item.subjectId, chapterId: item.chapterId,
+      blockId: item.blockId, tipo: item.tipo, at: ctx.now, studyDay: studyDay(ctx.now, ctx.tz), tz: ctx.tz,
+      correct: outcome.correct, dontKnow: outcome.dontKnow, confidence: outcome.confidence, rating: outcome.rating,
+      durationMs: Math.min(input.durationMs, studyConfig.maxAttemptMs), packVersion: chapter.version,
+      schedulerVersion: studyConfig.schedulerVersion }, ctx);
+    return { status: result.status, correct: item.tipo === 'info' ? null : outcome.correct,
+      blockStatus: result.blockState?.status ?? null };
+  });
+}

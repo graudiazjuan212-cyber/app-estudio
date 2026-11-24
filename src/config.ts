@@ -40,6 +40,10 @@ export const studyConfig = {
   examPassPercent: 80,
   dailyGoalMinutes: [5, 10, 15],
   defaultSessionMinutes: 10,
+  defaultDailyGoalMinutes: 10,
+  defaultTheme: 'system',
+  themes: ['system', 'light', 'dark'],
+  maxAttemptMs: 3600000,
   secondsPerMinute: 60,
   millisecondsPerSecond: 1000,
   random: { increment: 0x6d2b79f5, shiftA: 15, shiftB: 7, shiftC: 14, divisor: 4294967296, mix: 61 },
@@ -73,3 +77,5 @@ export const questionConfig = {
   confidences: [['duda', 'Duda'], ['bastante', 'Bastante seguro'], ['seguro', 'Seguro']],
   ratings: [['otra', 'Otra vez'], ['dificil', 'Difícil'], ['bien', 'Bien'], ['facil', 'Fácil']],
 } as const;
+
+export const routerConfig = { idPattern: /^[a-z0-9][a-z0-9_-]{0,79}$/ };
