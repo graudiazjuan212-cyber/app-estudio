@@ -2,7 +2,7 @@ import type { ItemType, Pack } from '../pack/index.ts';
 import { studyConfig } from '../../config.ts';
 
 export interface CatalogItem {
-  id: string; tipo: ItemType; blockId: string; itemGen: number; archived: boolean;
+  id: string; tipo: ItemType; blockId: string; itemGen: number; archived: boolean; relaciona: boolean;
 }
 export interface CatalogBlock {
   id: string; chapterId: string; subjectId: string; peso: 1 | 3 | 5;
@@ -36,7 +36,7 @@ export function buildCatalog(packs: Pack[], gens: Map<string, number>, archivedI
         if (!Number.isInteger(itemGen) || itemGen < studyConfig.initialItemGeneration)
           throw new Error(`Generación inválida para el ítem ${item.id}.`);
         catalog.items.set(item.id, { id: item.id, tipo: item.tipo, blockId: block.id,
-          itemGen, archived: archivedIds.has(item.id) });
+          itemGen, archived: archivedIds.has(item.id), relaciona: 'relaciona' in item && item.relaciona === true });
       }
     }
   }

@@ -40,7 +40,7 @@ it('excludes archived, info and missing items, but keeps a valid day across a no
   const attempts = [...validDay(D1), bad('i1', D2, 'seguro'), ...successfulDay(D3),
     { ...bad('i1', D3, 'seguro'), tipo: 'info' as const, confidence: null }, bad('absent', D3, 'seguro')];
   expect(blockState(fixtureBlock(catalog), catalog, attempts, D3).validDays).toEqual([D1, D3]);
-  catalog.items.set('i5', { id: 'i5', tipo: 'test', blockId: 'B', itemGen: 1, archived: true });
+  catalog.items.set('i5', { id: 'i5', tipo: 'test', blockId: 'B', itemGen: 1, archived: true, relaciona: false });
   expect(blockState(fixtureBlock(catalog), catalog, [bad('i5', D1, 'seguro')], D1).status).toBe('pendiente');
 });
 it('locks only pending blocks whose prerequisites are not mastered', () => {
@@ -69,7 +69,7 @@ it.each([
 });
 it('excludes non-evaluable weights and returns zero for empty denominators or absent states', () => {
   const catalog = weightedCatalog();
-  catalog.items.set('B3-item', { id: 'B3-item', tipo: 'info', blockId: 'B3', itemGen: 1, archived: false });
+  catalog.items.set('B3-item', { id: 'B3-item', tipo: 'info', blockId: 'B3', itemGen: 1, archived: false, relaciona: false });
   const states = allBlockStates(catalog, [ok('B1-item', D1), ok('B1-item', D2)], D3);
   expect(chapterPercent(fixtureChapter(catalog), catalog, states)).toBe(25);
   expect(chapterPercent(fixtureChapter(catalog), catalog, new Map())).toBe(0);

@@ -28,9 +28,9 @@ export function masteryCases(): MasteryCase[] {
   const threshold = (count: number, correct: number) => [...catalogFixture(count).items.keys()]
     .map((id, i) => i < correct ? ok(id, D1) : bad(id, D1, 'duda'));
   const archived = catalogFixture();
-  archived.items.set('i5', { id: 'i5', tipo: 'test', blockId: 'B', itemGen: 1, archived: true });
+  archived.items.set('i5', { id: 'i5', tipo: 'test', blockId: 'B', itemGen: 1, archived: true, relaciona: false });
   const generation = catalogFixture();
-  generation.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 2, archived: false });
+  generation.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 2, archived: false, relaciona: false });
   return [
     row('M01', [], D1, 'pendiente'),
     row('M02', validDay(D1), D1, 'en_curso', [D1]),

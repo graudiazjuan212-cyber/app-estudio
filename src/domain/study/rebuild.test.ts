@@ -26,7 +26,7 @@ it('rebuilds identically from a fixed shuffle', () => {
 });
 it('starts a changed type at generation two and reports the old generation', () => {
   const catalog = catalogFixture(1, 'flashcard');
-  catalog.items.set('f1', { id: 'f1', tipo: 'flashcard', blockId: 'B', itemGen: 2, archived: false });
+  catalog.items.set('f1', { id: 'f1', tipo: 'flashcard', blockId: 'B', itemGen: 2, archived: false, relaciona: false });
   const old = { ...bad('f1', D1, 'seguro'), itemGen: 1 };
   const current = { ...ok('f1', D2), itemGen: 2, tipo: 'flashcard' as const,
     confidence: null, rating: 'facil' as const };
@@ -84,7 +84,7 @@ it('does not mutate the attempts or catalog', () => {
 });
 it('preserves archived FSRS state while excluding it from mastery and blind spots', () => {
   const catalog = catalogFixture(1);
-  catalog.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 1, archived: true });
+  catalog.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 1, archived: true, relaciona: false });
   const result = rebuildFromAttempts([bad('i1', D1, 'seguro')], catalog, D2);
   expect(result.items.get('i1')?.card.reps).toBe(1);
   expect(result.skipped).toEqual([]);

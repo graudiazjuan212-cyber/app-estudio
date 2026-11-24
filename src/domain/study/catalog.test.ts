@@ -1,6 +1,13 @@
 import { expect, it } from 'vitest';
-import { packVersions } from '../../../tests/fixtures/study/catalog.ts';
+import { packVersions, relatedPack } from '../../../tests/fixtures/study/catalog.ts';
 import { buildCatalog, evaluableIds } from './catalog.ts';
+
+it('copies relaciona only when explicitly true, defaulting info and absent values to false', () => {
+  const catalog = buildCatalog([relatedPack()], new Map());
+  expect([...catalog.items.values()].map(item => [item.id, item.relaciona])).toEqual([
+    ['i', false], ['t', true], ['f', false],
+  ]);
+});
 
 it('uses only the highest chapter version regardless of input order', () => {
   const packs = packVersions();
@@ -18,9 +25,9 @@ it('uses only the highest chapter version regardless of input order', () => {
 it('keeps generations, info, archived items and package order while filtering evaluables', () => {
   const catalog = buildCatalog(packVersions(), new Map([['t', 2]]), new Set(['t', 'removed']));
   expect([...catalog.items.values()]).toEqual([
-    { id: 'i', tipo: 'info', blockId: 'B2', itemGen: 1, archived: false },
-    { id: 't', tipo: 'test', blockId: 'B2', itemGen: 2, archived: true },
-    { id: 'f', tipo: 'flashcard', blockId: 'B1', itemGen: 1, archived: false },
+    { id: 'i', tipo: 'info', blockId: 'B2', itemGen: 1, archived: false, relaciona: false },
+    { id: 't', tipo: 'test', blockId: 'B2', itemGen: 2, archived: true, relaciona: false },
+    { id: 'f', tipo: 'flashcard', blockId: 'B1', itemGen: 1, archived: false, relaciona: false },
   ]);
   const blocks = [...catalog.blocks.values()];
   expect(blocks.map(block => evaluableIds(block, catalog))).toEqual([[], ['f']]);

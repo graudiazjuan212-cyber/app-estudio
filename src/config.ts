@@ -24,6 +24,18 @@ export const packConfig = {
 } as const;
 
 export const studyConfig = {
+  secondsPerType: { info: 20, flashcard: 15, vf: 15, test: 30, multi: 40,
+    huecos: 45, ordenar: 60, emparejar: 60, error: 60 },
+  calibrationMinAttempts: 30,
+  calibrationClampSeconds: [5, 180],
+  blindSpotBudgetPercent: 40,
+  examSize: { current: 2, previous: 1, earlier: 1, relaciona: 1 },
+  examPassPercent: 80,
+  dailyGoalMinutes: [5, 10, 15],
+  defaultSessionMinutes: 10,
+  secondsPerMinute: 60,
+  millisecondsPerSecond: 1000,
+  random: { increment: 0x6d2b79f5, shiftA: 15, shiftB: 7, shiftC: 14, divisor: 4294967296, mix: 61 },
   dayCutoffHour: 4,
   schedulerVersion: 1,
   fsrs: {

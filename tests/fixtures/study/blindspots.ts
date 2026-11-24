@@ -11,9 +11,9 @@ export function blindCases(): BlindCase[] {
   const row = (id: string, attempts: Attempt[], expected: BlindSpot[], catalog = catalogFixture()): BlindCase =>
     ({ id, attempts, expected, catalog });
   const archived = catalogFixture();
-  archived.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 1, archived: true });
+  archived.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 1, archived: true, relaciona: false });
   const generation = catalogFixture();
-  generation.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 2, archived: false });
+  generation.items.set('i1', { id: 'i1', tipo: 'test', blockId: 'B', itemGen: 2, archived: false, relaciona: false });
   return [
     row('B01', [first], pending),
     row('B02', [first, ok('i1', D1, 'seguro', 1)], pending),
