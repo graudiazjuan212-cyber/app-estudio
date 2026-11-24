@@ -4,7 +4,7 @@ import type { Attempt } from './types.ts';
 export function compareText(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
-export function compareAttempts(a: Attempt, b: Attempt): number {
+export function compareAttempts(a: Pick<Attempt, 'at' | 'attemptId'>, b: Pick<Attempt, 'at' | 'attemptId'>): number {
   const aTime = Date.parse(a.at);
   const bTime = Date.parse(b.at);
   const aValid = Number.isFinite(aTime);

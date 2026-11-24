@@ -3,6 +3,7 @@ import { studyConfig } from '../../config.ts';
 import { fromStoredCard, toStoredCard, validateAttempt } from './types.ts';
 import type { Attempt, ItemState } from './types.ts';
 import { nextCutoff } from './time.ts';
+import { compareAttempts } from './history.ts';
 
 export function fsrsRating(a: Attempt): 1 | 2 | 3 | 4 | null {
   const errors = validateAttempt(a);
@@ -28,7 +29,7 @@ export function fsrsRating(a: Attempt): 1 | 2 | 3 | 4 | null {
 export function newItemState(itemId: string, itemGen: number): ItemState {
   if (!itemId || !Number.isInteger(itemGen) || itemGen < 1) throw new Error('Invalid item identity');
   // Sentinel only: an unreviewed card is seeded with the first attempt's instant.
-  return { itemId, itemGen, card: toStoredCard(createEmptyCard(studyConfig.emptyCardInstant)) };
+  return { itemId, itemGen, lastAttemptId: '', card: toStoredCard(createEmptyCard(studyConfig.emptyCardInstant)) };
 }
 interface Applied { state: ItemState; needsRebuild: boolean }
 interface MaybeApplied { state: ItemState | null; needsRebuild: boolean }
@@ -38,13 +39,18 @@ export function applyAttempt(prev: ItemState | null, a: Attempt): MaybeApplied {
   const rating = fsrsRating(a);
   if (rating === null) return { state: prev, needsRebuild: false };
   if (prev && (prev.itemId !== a.itemId || prev.itemGen !== a.itemGen)) throw new Error('Item identity mismatch');
+  if (prev && typeof prev.lastAttemptId !== 'string') return { state: prev, needsRebuild: true };
+  if (prev && prev.lastAttemptId === a.attemptId) return { state: prev, needsRebuild: false };
   const at = new Date(a.at);
   const card = prev ? fromStoredCard(prev.card) : createEmptyCard(at);
-  if (card.last_review && at.getTime() < card.last_review.getTime()) return { state: prev, needsRebuild: true };
+  if (prev?.card.last_review !== undefined &&
+    compareAttempts(a, { at: prev.card.last_review, attemptId: prev.lastAttemptId }) < 0)
+    return { state: prev, needsRebuild: true };
   if (card.reps === 0) card.due = at;
   const scheduler = fsrs(generatorParameters(studyConfig.fsrs));
   const next = scheduler.next(card, at, rating).card;
-  return { state: { itemId: a.itemId, itemGen: a.itemGen, card: toStoredCard(next) }, needsRebuild: false };
+  return { state: { itemId: a.itemId, itemGen: a.itemGen, lastAttemptId: a.attemptId,
+    card: toStoredCard(next) }, needsRebuild: false };
 }
 export function isDue(state: ItemState, now: string, tz: string): boolean {
   return fromStoredCard(state.card).due.getTime() < new Date(nextCutoff(now, tz)).getTime();

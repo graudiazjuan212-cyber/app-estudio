@@ -34,7 +34,7 @@ export function sessionInput(minutes = 5): SessionInput {
   return { catalog: sessionCatalog(), derived, attempts: [], subjectId: 'S', now, tz, minutes, seed: 1 };
 }
 export function setDue(input: SessionInput, id: string, due = '2026-12-01T08:00:00.000Z'): void {
-  input.derived.items.set(id, { itemId: id, itemGen: 1, card: { ...storedCard, due } });
+  input.derived.items.set(id, { itemId: id, itemGen: 1, lastAttemptId: 'a', card: { ...storedCard, due } });
 }
 export function replaceItem(input: SessionInput, id: string, patch: Partial<CatalogItem>): void {
   const item = input.catalog.items.get(id);

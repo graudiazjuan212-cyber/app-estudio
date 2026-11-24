@@ -15,7 +15,7 @@ export interface Attempt {
 export type StoredCard = Omit<Card, 'due' | 'last_review'> & {
   due: string; last_review?: string;
 };
-export interface ItemState { itemId: string; itemGen: number; card: StoredCard }
+export interface ItemState { itemId: string; itemGen: number; lastAttemptId: string; card: StoredCard }
 
 export function toStoredCard(card: Card): StoredCard {
   const { due, last_review, ...rest } = card;
@@ -40,7 +40,8 @@ function validInstant(value: string): boolean {
 export function validateAttempt(a: Attempt): string[] {
   const errors: string[] = [];
   if (!validInstant(a.at)) errors.push('Invalid UTC instant');
-  if (typeof a.studyDay !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(a.studyDay)) errors.push('Invalid study day');
+  if (!validStudyDay(a.studyDay)) errors.push('Invalid study day');
+  if (!validTimeZone(a.tz)) errors.push('Invalid time zone');
   if (!Number.isInteger(a.durationMs) || a.durationMs < 0) errors.push('Invalid duration');
   if (!Number.isInteger(a.itemGen) || a.itemGen < 1) errors.push('Invalid item generation');
   if (!Number.isInteger(a.packVersion) || a.packVersion < 1) errors.push('Invalid pack version');
@@ -58,4 +59,25 @@ export function validateAttempt(a: Attempt): string[] {
     } else if (!['duda', 'bastante', 'seguro'].includes(a.confidence ?? '')) errors.push('Invalid confidence');
   }
   return errors;
+}
+
+function validStudyDay(value: string): boolean {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().startsWith(`${value}T`);
+}
+
+const timeZoneValidity = new Map<string, boolean>();
+function validTimeZone(value: string): boolean {
+  if (typeof value !== 'string' || value === '') return false;
+  const cached = timeZoneValidity.get(value);
+  if (cached !== undefined) return cached;
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: value });
+    timeZoneValidity.set(value, true);
+    return true;
+  } catch {
+    timeZoneValidity.set(value, false);
+    return false;
+  }
 }

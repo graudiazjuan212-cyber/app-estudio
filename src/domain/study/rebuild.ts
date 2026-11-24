@@ -7,6 +7,7 @@ import type { BlockState } from './mastery.ts';
 import { pendingBlindSpots } from './blindspots.ts';
 import type { BlindSpot } from './blindspots.ts';
 import { compareAttempts } from './history.ts';
+import { groupAttempts } from './duplicates.ts';
 
 export interface DerivedState {
   items: Map<string, ItemState>; blocks: Map<string, BlockState>; blindSpots: BlindSpot[];
@@ -16,7 +17,16 @@ export function rebuildFromAttempts(attempts: Attempt[], catalog: Catalog, today
   const items = new Map<string, ItemState>();
   const skipped: DerivedState['skipped'] = [];
   const accepted: Attempt[] = [];
+  const groups = groupAttempts(attempts);
+  const seen = new Set<string>();
   for (const a of [...attempts].sort(compareAttempts)) {
+    const group = groups.get(a.attemptId);
+    if (group?.conflict || seen.has(a.attemptId)) {
+      skipped.push({ attemptId: a.attemptId, reason: group?.conflict ?
+        'attemptId repetido con contenido distinto.' : 'Duplicado idéntico del intento.' });
+      continue;
+    }
+    seen.add(a.attemptId);
     const errors = validateAttempt(a);
     const item = catalog.items.get(a.itemId);
     const reason = errors.length ? `Intento inválido: ${errors.join('; ')}` :

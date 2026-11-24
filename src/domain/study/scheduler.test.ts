@@ -19,7 +19,8 @@ function reviewed(patch: Partial<Attempt> = {}): ItemState {
 it('matches every fixed FSRS-6 (ts-fsrs 5.4.2) golden interval', () => {
   let state: ItemState | null = null;
   for (const row of golden()) {
-    const applied: { state: ItemState | null; needsRebuild: boolean } = applyAttempt(state, { ...attempt, at: row.at, correct: row.correct, confidence: row.confidence });
+    const applied: { state: ItemState | null; needsRebuild: boolean } = applyAttempt(state, { ...attempt, attemptId: row.at,
+      at: row.at, correct: row.correct, confidence: row.confidence });
     expect(applied.needsRebuild).toBe(false);
     expect(applied.state?.card).toMatchObject({ scheduled_days: row.scheduled_days,
       due: row.due, reps: row.reps, lapses: row.lapses });
@@ -53,8 +54,8 @@ it('orders flashcard intervals', () => {
 it('schedules a failure earlier than success at the same history point', () => {
   const prev = reviewed();
   const at = '2026-11-27T10:00:00.000Z';
-  const failure = applyAttempt(prev, { ...attempt, at, correct: false });
-  const success = applyAttempt(prev, { ...attempt, at });
+  const failure = applyAttempt(prev, { ...attempt, attemptId: 'next', at, correct: false });
+  const success = applyAttempt(prev, { ...attempt, attemptId: 'next', at });
   expect(failure.state.card.due < success.state.card.due).toBe(true);
 });
 it('schedules unknown exactly like Again', () => {
@@ -70,7 +71,7 @@ it('does not create or change info state', () => {
 it('requests rebuilding for earlier reviews without changing prev', () => {
   const prev = reviewed();
   const before = structuredClone(prev);
-  const applied = applyAttempt(prev, { ...attempt, at: '2026-11-23T10:00:00.000Z' });
+  const applied = applyAttempt(prev, { ...attempt, attemptId: 'earlier', at: '2026-11-23T10:00:00.000Z' });
   expect(applied).toEqual({ state: prev, needsRebuild: true });
   expect(applied.state).toBe(prev);
   expect(prev).toEqual(before);
@@ -78,7 +79,7 @@ it('requests rebuilding for earlier reviews without changing prev', () => {
 it.each(['2026-11-24T10:00:00.000Z', '2026-11-27T10:00:00.000Z'])('accepts non-earlier %s without mutation', at => {
   const prev = reviewed();
   const before = structuredClone(prev);
-  expect(applyAttempt(prev, { ...attempt, at }).needsRebuild).toBe(false);
+  expect(applyAttempt(prev, { ...attempt, attemptId: 'next', at }).needsRebuild).toBe(false);
   expect(prev).toEqual(before);
 });
 it.each([{ itemGen: 2 }, { itemId: 'other' }])('rejects mismatching identity %s', patch => {
@@ -100,7 +101,7 @@ it('survives JSON serialization and can continue scheduling', () => {
   const prev = reviewed();
   const restored = JSON.parse(JSON.stringify(prev)) as ItemState;
   expect(restored).toEqual(prev);
-  const next = { ...attempt, at: '2026-11-27T10:00:00.000Z' };
+  const next = { ...attempt, attemptId: 'next', at: '2026-11-27T10:00:00.000Z' };
   expect(applyAttempt(restored, next)).toEqual(applyAttempt(prev, next));
   expect(toStoredCard(fromStoredCard(restored.card))).toEqual(restored.card);
 });
@@ -108,7 +109,7 @@ it.each([
   ['2026-11-25T02:59:00.000Z', true], ['2026-11-25T03:00:00.000Z', false],
   ['2026-11-23T10:00:00.000Z', true], ['2026-11-26T10:00:00.000Z', false],
 ] as const)('isDue for %s is %s', (due, expected) => {
-  const state: ItemState = { itemId: 'x', itemGen: 1, card: { ...storedCard, due } };
+  const state: ItemState = { itemId: 'x', itemGen: 1, lastAttemptId: 'a', card: { ...storedCard, due } };
   expect(isDue(state, attempt.at, attempt.tz)).toBe(expected);
 });
 it.each([{ at: 'invalid' }, { confidence: null }])('rejects invalid scheduling input %s', patch => {
