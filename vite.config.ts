@@ -7,10 +7,12 @@ export default defineConfig(({ command, isPreview }) => {
   const base = command === 'build' || isPreview ? appConfig.productionBase : appConfig.developmentBase;
   return {
     base,
+    define: { __APP_VERSION__: JSON.stringify(process.env.VITE_APP_VERSION ?? 'dev') },
     plugins: [react(), VitePWA({
       registerType: 'prompt',
       injectRegister: false,
       manifest: {
+        id: appConfig.productionBase, categories: ['education'], description: 'Estudia y repasa sin conexión en tu móvil.', orientation: 'portrait',
         name: appConfig.title, short_name: appConfig.title, lang: 'es', display: 'standalone',
         start_url: base, scope: base, theme_color: appConfig.themeColor,
         background_color: appConfig.backgroundColor,
@@ -20,8 +22,8 @@ export default defineConfig(({ command, isPreview }) => {
           { src: 'icons/maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,png,svg,woff2}'] },
+      workbox: { globPatterns: ['**/*.{js,css,html,png,svg,woff2}'], globIgnores: ['**/fixtures/**', '**/DemoScreen*'], navigateFallback: 'index.html', cleanupOutdatedCaches: true },
     })],
-    test: { environment: 'node', include: ['src/**/*.test.ts'], exclude: ['e2e/**'] },
+    test: { environment: 'node', include: ['src/**/*.test.ts'], exclude: ['e2e/**', 'src/**/*.dist.test.ts'] },
   };
 });

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { dataConfig, packConfig } from '../config.ts';
-import { importPackText } from '../data/index.ts';
+import { requestFirstPersistence, importPackText } from '../data/index.ts';
 import type { ImportResult } from '../data/index.ts';
 import { formatErrors, validatePackText } from '../domain/pack/index.ts';
 import { Dialog } from '../ui/Dialog.tsx';
@@ -10,6 +10,7 @@ import styles from '../ui/Screens.module.css';
 import { useData } from './DataProvider.tsx';
 export function ImportPanel() {
   const { db, ctx, bump } = useData();
+  const [persistence, setPersistence] = useState('');
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -41,6 +42,9 @@ export function ImportPanel() {
         const parsed = validatePackText(value);
         if (parsed.ok) setDescription(`Importado: ${parsed.pack.asignatura.nombre} · capítulo ${String(parsed.pack.capitulo.numero)} «${parsed.pack.capitulo.titulo}» · versión ${String(parsed.pack.version)}.`);
         bump();
+        void requestFirstPersistence(db, navigator.storage).then(protection => {
+          if (protection) setPersistence(protection === 'granted' ? 'Almacenamiento protegido' : 'Tu navegador no ha protegido el almacenamiento: instala la app y haz copias de seguridad');
+        });
       }
     } catch { setError('No se ha podido importar el paquete. Vuelve a intentarlo.'); }
     finally { lock.current = false; setBusy(false); }
@@ -49,6 +53,7 @@ export function ImportPanel() {
     <label>Elegir archivo<input type="file" accept=".json,application/json" disabled={busy} onChange={event => { const file = event.target.files?.[0]; if (file) void read(file); }} /></label>
     <label>O pega el JSON aquí<textarea value={text} disabled={busy} onChange={event => { setText(event.target.value); setError(''); setResult(null); }} /></label>
     <button ref={importButton} disabled={busy || Boolean(error)} onClick={() => { void run(); }}>Importar</button>
+    <p role="status">{persistence}</p>
     <div aria-live="polite">{error && <p role="alert">{error}</p>}
       {result?.status === 'imported' && <><p>{description}</p><p>{diffSummary(result.diff)}</p>{result.warnings.map((warning, index) => <p key={index}>Aviso: {warning.message}</p>)}</>}
       {result?.status === 'already-imported' && <p>Este paquete ya estaba importado.</p>}

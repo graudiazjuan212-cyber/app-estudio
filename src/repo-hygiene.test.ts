@@ -28,3 +28,12 @@ it(`keeps every code file at ${String(maxLines)} lines or fewer`, () => {
     .filter(file => file.lines > maxLines);
   expect(offenders).toEqual([]);
 });
+it('has no corrupted accents (a question mark between letters) in source or fixture text', () => {
+  // A tool once saved "conexión" as "conexi?n". Optional chaining (`a?.b`), `??`, ternaries and regex groups do not match.
+  const corrupted = /[A-Za-zÁÉÍÓÚáéíóúñ]\?[A-Za-zÁÉÍÓÚáéíóúñ]/;
+  const legitimate = /\?[.:?]|\(\?|\/.*\?.*\//;
+  const offenders = all.filter(path => /\.(tsx?|css|md)$/.test(path)).flatMap(path =>
+    readFileSync(path, 'utf8').split('\n').flatMap((text, index) =>
+      corrupted.test(text) && !legitimate.test(text) ? [`${relative(root, path)}:${String(index + 1)}`] : []));
+  expect(offenders).toEqual([]);
+});

@@ -77,23 +77,23 @@ for (const tipo of ['info', 'flashcard', 'test', 'multi', 'vf', 'ordenar', 'empa
         expect(box.height).toBeGreaterThanOrEqual(44);
       }
       await respond(page, item, correct);
-      await expect(page.getByRole('status')).toContainText(tipo === 'info' || tipo === 'flashcard' ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
+      await expect(page.locator('article').getByRole('status')).toContainText(tipo === 'info' || tipo === 'flashcard' ? 'Anotado' : correct ? 'Correcto' : 'Incorrecto');
       if (!correct && item.opciones) {
         for (const option of item.opciones.filter(o => !o.correcta && o.feedback)) {
           if (tipo === 'test' && option !== item.opciones.find(o => !o.correcta)) continue;
           await expect(page.getByText(required(option.feedback), { exact: true })).toBeVisible();
         }
       }
-      await expect(page.getByRole('status')).toBeFocused();
+      await expect(page.locator('article').getByRole('status')).toBeFocused();
       await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
-      await expect(page.getByRole('status')).toHaveCount(0);
+      await expect(page.locator('article').getByRole('status')).toHaveCount(0);
     });
   }
 }
 test('unknown answer', async ({ page }) => {
   await select(page, required(demoItems.find(i => i.tipo === 'test')));
   await page.getByRole('button', { name: 'No lo sé', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Incorrecto');
+  await expect(page.locator('article').getByRole('status')).toContainText('Incorrecto');
 });
 test('incomplete answer stays disabled even with confidence', async ({ page }) => {
   await select(page, required(demoItems.find(i => i.tipo === 'ordenar')));
@@ -105,10 +105,10 @@ test('failed save has no feedback and retries the same submission', async ({ pag
   await page.getByRole('checkbox', { name: 'Simular fallo de guardado' }).check();
   await respond(page, required(demoItems.find(i => i.tipo === 'test')), true);
   await expect(page.getByRole('alert')).toContainText('No se ha podido guardar');
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('article').getByRole('status')).toHaveCount(0);
   await expect(page.getByTestId('submissions')).toHaveText('1');
   await page.getByRole('button', { name: 'Reintentar' }).click();
-  await expect(page.getByRole('status')).toContainText('Correcto');
+  await expect(page.locator('article').getByRole('status')).toContainText('Correcto');
   await expect(page.getByTestId('submissions')).toHaveText('2');
 });
 test('rapid double click submits once', async ({ page }) => {

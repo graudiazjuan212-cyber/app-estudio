@@ -42,6 +42,7 @@
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",
     "e2e": "playwright test",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "test:dist": "vitest run --config vitest.dist.config.ts",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run test:dist"
   }
 }

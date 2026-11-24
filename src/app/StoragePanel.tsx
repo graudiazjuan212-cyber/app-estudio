@@ -20,6 +20,6 @@ export function StoragePanel() {
     {state.data && <><p>{state.data.persisted === null ? 'No se puede comprobar' : state.data.persisted ? 'Protegido' : 'No protegido'}</p>
       {state.data.usageBytes !== null && <p>Uso: {bytesToMegabytes(state.data.usageBytes)} MB / {bytesToMegabytes(state.data.quotaBytes)} MB</p>}</>}
     <button disabled={busy} onClick={() => { void protect(); }}>Proteger almacenamiento</button><p role="status">{message}</p>
-    <p>Instala la app en la pantalla de inicio para que Android no borre tus datos.</p>
+    <p>El almacenamiento protegido reduce el riesgo de borrado. Instala la app y haz copias de seguridad: la protección depende del navegador.</p>
   </section>;
 }

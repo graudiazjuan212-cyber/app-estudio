@@ -29,3 +29,4 @@ export { startStudySession, loadSessionRun, submitAnswer, finishStudySession, ge
 export type { StartStudyInput, StartStudyResult, SessionRun, SubmitAnswerInput, AnswerResult, SessionSummary } from './study.ts';
 export { getAppStorageStatus, getOpenSessions } from './appStorage.ts';
 export { exportProgress } from './progressExport.ts';
+export { claimPwaNotice, requestFirstPersistence } from './pwaMeta';

@@ -1,3 +1,5 @@
+export const pwaConfig = { updateCheckMinMinutes: 30, millisecondsPerMinute: 60000 };
+
 export const appConfig = {
   productionBase: '/app-estudio/',
   developmentBase: '/',

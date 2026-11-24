@@ -1,3 +1,4 @@
+import { UpdateBanner } from './UpdateBanner';
 import { lazy, Suspense } from 'react';
 import { Layout } from '../ui/Layout';
 import { SessionScreen } from './SessionScreen';
@@ -8,7 +9,7 @@ import { SettingsScreen } from './SettingsScreen';
 import { useRoute } from './useRoute';
 import { DataProvider } from './DataProvider';
 let Demo: ReturnType<typeof lazy> | undefined;
-function AppContent() {
+function RoutedContent() {
   const enableDemo = import.meta.env.VITE_ENABLE_DEMO === 'true';
   const { route } = useRoute(enableDemo);
   if (import.meta.env.VITE_ENABLE_DEMO === 'true') {
@@ -19,6 +20,10 @@ function AppContent() {
   return <Layout>{route.name === 'settings' ? <SettingsScreen /> : route.name === 'subject' ? <SubjectScreen subjectId={route.subjectId} /> : route.name === 'summary' ? <SummaryScreen key={route.sessionId} sessionId={route.sessionId} /> : <HomeScreen />}</Layout>;
 }
 
+function AppContent() {
+  const { route } = useRoute(import.meta.env.VITE_ENABLE_DEMO === 'true');
+  return <><UpdateBanner route={route} /><RoutedContent /></>;
+}
 export function App() {
   if (import.meta.env.VITE_ENABLE_DEMO === 'true') {
     return <DataProvider clock={() => {
