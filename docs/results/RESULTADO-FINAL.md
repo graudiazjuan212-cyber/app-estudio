@@ -19,8 +19,7 @@
 Funciona sin internet una vez instalada.
 
 ## Lo que tienes que hacer tú (también en `docs/PENDIENTE-JUAN.md`)
-1. Contestar las preguntas 6 (publicar) y 7 (sesión sin terminar: ¿no debe contar?).
-   Antes, la 6 de `docs/QUESTIONS.md` y, si dices que sí, autorizar el `git push`.
+1. Contestar en `docs/QUESTIONS.md` la **7** (sesión sin terminar: ¿no debe contar?) y la **6** (publicar); si dices que sí a publicar, autorizar el `git push`.
 2. En GitHub: Settings → Pages → origen **«GitHub Actions»**.
 3. Seguir `docs/PRUEBA_MOVIL.md` en tu Android (es el criterio de aceptación de M8 y solo tú puedes hacerlo).
 4. Importar tus paquetes reales y hacer la primera copia de seguridad.
