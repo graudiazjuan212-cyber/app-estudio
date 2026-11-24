@@ -130,3 +130,6 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 ## ADR-020 · E2E con el Chrome instalado
 - **Contexto:** la descarga de Chromium de Playwright no terminaba en el equipo de Juan.
 - **Decisión:** `channel: 'chrome'` en `playwright.config.ts`; en CI `npx playwright install --with-deps chrome`. WebKit (ADR-018) se instalará aparte cuando toque (M7) y, si no se puede, el humo en iPhone se documenta como no ejecutado.
+
+## ADR-021 · JSON Schema orientativo y validación como fuente de verdad
+- **Decisión:** `docs/estudio-pack-1.schema.json` se exporta en modo **entrada** (`io: 'input'`) y es orientativo: no expresa las reglas semánticas (exactamente 1 correcta, textos distintos, marcadores `{{n}}`, ids únicos, ciclos de `requiere`, LaTeX). La fuente de verdad es `validatePack`. El validador normaliza el input a JSON puro (límite de profundidad, sin propiedades heredadas) y nunca lanza.
