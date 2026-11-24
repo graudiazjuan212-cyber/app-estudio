@@ -6,7 +6,7 @@ test('home, settings, reload and production manifest', async ({ page }) => {
   page.on('pageerror', error => { errors.push(error.message); });
   await page.goto('./');
   await expect(page.getByRole('heading', { name: 'Estudio', exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Ajustes' }).click();
+  await page.getByRole('link', { name: 'Ajustes', exact: true }).click();
   await expect(page).toHaveURL(/#\/ajustes$/);
   await expect(page.getByRole('heading', { name: 'Ajustes' })).toBeVisible();
   await page.reload();

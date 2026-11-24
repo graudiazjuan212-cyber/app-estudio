@@ -10,7 +10,7 @@ export const appConfig = {
 export const dataConfig = {
   dbName: 'estudio', schemaVersion: 1, snapshotKeep: 3, premigrationKeep: 2,
   blockedTimeoutMs: 8000,
-  maxBackupRows: 2000000,
+  maxBackupRows: 2000000, maxImportBytes: 5 * 1024 * 1024,
   backupSchema: 'estudio-backup/1' as const, backupReminderDays: 7,
 };
 
@@ -79,3 +79,5 @@ export const questionConfig = {
 } as const;
 
 export const routerConfig = { idPattern: /^[a-z0-9][a-z0-9_-]{0,79}$/ };
+
+export const screenConfig = { bytesPerMegabyte: 1024 * 1024, percentMax: 100, decimalPlaces: 1 };
