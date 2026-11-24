@@ -13,7 +13,8 @@ export function useAsync<T>(fn: () => Promise<T>, deps: DependencyList): AsyncSt
     active.current = request;
     void Promise.resolve().then(async () => {
       if (request.cancelled) return;
-      setState({ status: 'loading', data: undefined, error: undefined });
+      // Keep the previous data while reloading so screens do not flash empty after a save.
+      setState(previous => ({ status: 'loading', data: previous.data, error: undefined }));
       try {
         const data = await fn();
         if (!isCancelled(request)) setState({ status: 'ready', data, error: undefined });

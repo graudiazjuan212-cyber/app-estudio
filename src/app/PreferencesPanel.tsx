@@ -10,16 +10,19 @@ export function PreferencesPanel() {
   const state = useAsync(() => getSettings(db), [db, revision]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  // Show the choice immediately; the saved value takes over after the write (or the choice is undone on failure).
+  // Show the choice immediately and keep it until the saved settings have been reloaded
+  // (or drop it if the write fails), so the radios never flicker back to the old value.
   const [chosen, setChosen] = useState<Partial<Settings>>({});
+  const [seen, setSeen] = useState(state.data);
+  if (state.data !== seen) { setSeen(state.data); setChosen({}); }
   async function change<K extends keyof Settings>(key: K, value: Settings[K]) {
     setBusy(true); setError(''); setChosen(current => ({ ...current, [key]: value }));
     try { await setSetting(db, key, value); bump(); }
-    catch { setError('No se ha podido guardar la preferencia. Vuelve a intentarlo.'); }
-    finally {
-      setChosen(current => Object.fromEntries(Object.entries(current).filter(([name]) => name !== key)) as Partial<Settings>);
-      setBusy(false);
+    catch {
+      setChosen({});
+      setError('No se ha podido guardar la preferencia. Vuelve a intentarlo.');
     }
+    finally { setBusy(false); }
   }
   return <section><h2>Preferencias</h2>{state.status === 'error' && <LoadError retry={bump} />}
     {error && <p role="alert">{error}</p>}

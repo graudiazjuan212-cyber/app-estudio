@@ -1,5 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Layout } from '../ui/Layout';
+import { SessionScreen } from './SessionScreen';
+import { SummaryScreen } from './SummaryScreen';
 import { HomeScreen } from './HomeScreen';
 import { SubjectScreen } from './SubjectScreen';
 import { SettingsScreen } from './SettingsScreen';
@@ -13,7 +15,16 @@ function AppContent() {
     Demo ??= lazy(() => import('./DemoScreen'));
     if (route.name === 'demo') return <Layout><Suspense fallback={<p>Cargando…</p>}><Demo /></Suspense></Layout>;
   }
-  return <Layout>{route.name === 'settings' ? <SettingsScreen /> : route.name === 'subject' ? <SubjectScreen subjectId={route.subjectId} /> : route.name === 'session' || route.name === 'summary' ? <p>Esta pantalla estará disponible en la siguiente entrega.</p> : <HomeScreen />}</Layout>;
+  if (route.name === 'session') return <main><SessionScreen key={route.sessionId} sessionId={route.sessionId} /></main>;
+  return <Layout>{route.name === 'settings' ? <SettingsScreen /> : route.name === 'subject' ? <SubjectScreen subjectId={route.subjectId} /> : route.name === 'summary' ? <SummaryScreen key={route.sessionId} sessionId={route.sessionId} /> : <HomeScreen />}</Layout>;
 }
 
-export function App() { return <DataProvider><AppContent /></DataProvider>; }
+export function App() {
+  if (import.meta.env.VITE_ENABLE_DEMO === 'true') {
+    return <DataProvider clock={() => {
+      const value = (window as Window & { __ESTUDIO_NOW__?: string }).__ESTUDIO_NOW__;
+      return value ? new Date(value) : new Date();
+    }}><AppContent /></DataProvider>;
+  }
+  return <DataProvider><AppContent /></DataProvider>;
+}
