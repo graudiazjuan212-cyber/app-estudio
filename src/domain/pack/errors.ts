@@ -59,6 +59,8 @@ export function schemaErrors(input: unknown, issues: z.core.$ZodIssue[]): PackEr
   return issues.flatMap(issue => {
     const field = String(issue.path.at(-1) ?? 'paquete');
     if (issue.code === 'unrecognized_keys') return issue.keys.map(key => {
+      if (readAt(input, [...issue.path, 'tipo']) === 'info' && (key === 'relaciona' || key === 'explicacion'))
+        return contextualError(input, [...issue.path, key], `\`${key}\` no se puede usar en una tarjeta \`info\` (solo en preguntas evaluables).`);
       const candidates = allowedKeys(input, issue.path).map(name => ({ name, distance: editDistance(key, name) }))
         .sort((a, b) => a.distance - b.distance);
       const suggestion = candidates[0];
@@ -68,10 +70,18 @@ export function schemaErrors(input: unknown, issues: z.core.$ZodIssue[]): PackEr
     let message: string;
     if (issue.code === 'custom') message = issue.message;
     else if (readAt(input, issue.path) === undefined) message = `Falta el campo \`${field}\`.`;
+    else if (field === 'tipo') message = `\`tipo\` debe ser uno de: ${packConfig.itemTypes.join(', ')} (has puesto «${String(readAt(input, issue.path))}»).`;
+    else if (field === 'id' && issue.code === 'invalid_format') message = 'El `id` solo puede tener minúsculas sin tildes, números, `-` y `_`, y empezar por letra o número.';
     else if (field === 'peso') message = '`peso` debe ser 1, 3 o 5.';
     else if (issue.code === 'invalid_type') message = `El campo \`${field}\` tiene un tipo incorrecto; se esperaba ${issue.expected === 'string' ? 'texto' : issue.expected === 'boolean' ? 'verdadero o falso' : issue.expected === 'array' ? 'una lista' : issue.expected === 'object' ? 'un objeto' : 'un número entero'}.`;
-    else if (issue.code === 'too_small') message = `El campo \`${field}\` debe tener como mínimo ${String(issue.minimum)}${issue.origin === 'number' || issue.origin === 'int' ? '' : ' elementos o caracteres'}.`;
-    else if (issue.code === 'too_big') message = `El campo \`${field}\` debe tener como máximo ${String(issue.maximum)} elementos o caracteres.`;
+    else if (issue.code === 'too_small' || issue.code === 'too_big') {
+      const subject = issue.origin === 'array' ? packConfig.listNames[field] ?? `El campo \`${field}\`` : `El campo \`${field}\``;
+      const bound = issue.code === 'too_small' ? `como mínimo ${String(issue.minimum)}` : `como máximo ${String(issue.maximum)}`;
+      const limit = issue.code === 'too_small' ? issue.minimum : issue.maximum;
+      const unit = issue.origin === 'array' ? limit === 1 ? ' elemento' : ' elementos'
+        : issue.origin === 'string' ? limit === 1 ? ' carácter' : ' caracteres' : '';
+      message = `${subject} debe${subject.startsWith('Los ') || subject.startsWith('Las ') ? 'n' : ''} tener ${bound}${unit}.`;
+    }
     else if (field === 'generado') message = '`generado` debe ser una fecha real válida YYYY-MM-DD.';
     else if (issue.code === 'invalid_value') message = `Valor no permitido en \`${field}\`: debe ser ${issue.values.map(v => String(v)).join(', ')}.`;
     else message = `El campo \`${field}\` tiene un formato o valor no permitido.`;

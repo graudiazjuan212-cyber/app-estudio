@@ -1,0 +1,216 @@
+{
+  "math": [
+    {
+      "text": "Un ` suelto $a$",
+      "expected": [
+        {
+          "kind": "inline",
+          "source": "a"
+        }
+      ]
+    },
+    {
+      "text": "```python sin cerrar $x$",
+      "expected": [
+        {
+          "kind": "inline",
+          "source": "x"
+        }
+      ]
+    },
+    {
+      "text": "`código $ real`",
+      "expected": []
+    },
+    {
+      "text": "```python\n$ real\n```",
+      "expected": []
+    },
+    {
+      "text": "\\$5 y $a$",
+      "expected": [
+        {
+          "kind": "inline",
+          "source": "a"
+        }
+      ]
+    }
+  ],
+  "unclosed": [
+    "` suelto $",
+    "```python sin cerrar $"
+  ],
+  "badMath": [
+    "Un ` suelto $\\comandoInexistente$",
+    "```python sin cerrar $\\comandoInexistente$",
+    "Un ` suelto $sin cerrar"
+  ],
+  "messages": [
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "tipo"
+      ],
+      "value": "x",
+      "expected": "`tipo` debe ser uno de: info, flashcard, test, multi, vf, ordenar, emparejar, huecos, error (has puesto «x»)."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "relaciona"
+      ],
+      "value": false,
+      "expected": "`relaciona` no se puede usar en una tarjeta `info` (solo en preguntas evaluables)."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "explicacion"
+      ],
+      "value": "Texto",
+      "expected": "`explicacion` no se puede usar en una tarjeta `info` (solo en preguntas evaluables)."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "correccion"
+      ],
+      "value": "Texto",
+      "expected": "Campo desconocido `correccion`."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "id"
+      ],
+      "value": "Mayúscula",
+      "expected": "El `id` solo puede tener minúsculas sin tildes, números, `-` y `_`, y empezar por letra o número."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        2,
+        "enunciadoo"
+      ],
+      "value": "Texto",
+      "expected": "¿querías decir `enunciado`?"
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        2,
+        "opciones"
+      ],
+      "value": [],
+      "expected": "Las opciones deben tener como mínimo 3 elementos."
+    },
+    {
+      "path": [
+        "bloques",
+        1,
+        "items",
+        0,
+        "pasos"
+      ],
+      "value": [],
+      "expected": "Los pasos deben tener como mínimo 3 elementos."
+    },
+    {
+      "path": [
+        "bloques",
+        1,
+        "items",
+        1,
+        "pares"
+      ],
+      "value": [],
+      "expected": "Los pares deben tener como mínimo 3 elementos."
+    },
+    {
+      "path": [
+        "bloques",
+        1,
+        "items",
+        2,
+        "huecos"
+      ],
+      "value": [],
+      "expected": "Los huecos deben tener como mínimo 1 elemento."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "titulo"
+      ],
+      "value": "",
+      "expected": "El campo `titulo` debe tener como mínimo 1 carácter."
+    }
+  ],
+  "largeMessages": [
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        0,
+        "titulo"
+      ],
+      "length": 121,
+      "unit": "text",
+      "expected": "El campo `titulo` debe tener como máximo 120 caracteres."
+    },
+    {
+      "path": [
+        "bloques",
+        0,
+        "items",
+        2,
+        "opciones"
+      ],
+      "length": 6,
+      "unit": "options",
+      "expected": "Las opciones deben tener como máximo 5 elementos."
+    }
+  ],
+  "normalizationNames": [
+    "cycle",
+    "bigint",
+    "function",
+    "symbol",
+    "undefined",
+    "number",
+    "getter",
+    "nested-bigint",
+    "nested-function",
+    "nested-symbol",
+    "nested-undefined",
+    "nan",
+    "infinity",
+    "proxy"
+  ],
+  "depthAccepted": 12,
+  "depthRejected": 13,
+  "deepLevels": 5000
+}

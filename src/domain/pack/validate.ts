@@ -4,6 +4,7 @@ import { packSchema } from './schema.ts';
 import type { Pack } from './schema.ts';
 import { contextualError, schemaErrors } from './errors.ts';
 import type { PackError, PackWarning, Path } from './errors.ts';
+import { normalizeJson, InputDepthError } from './normalize.ts';
 import { extractMath } from './latex.ts';
 
 export type ValidationResult =
@@ -80,6 +81,17 @@ function referenceErrors(input: unknown): PackError[] {
   return errors;
 }
 export function validatePack(input: unknown): ValidationResult {
+  try { return validateNormalizedPack(normalizeJson(input)); }
+  catch (error) {
+    let depthExceeded = false;
+    try { depthExceeded = error instanceof InputDepthError; }
+    catch { /* Even a thrown value can be a proxy that rejects inspection. */ }
+    return { ok: false, errors: [{ path: '', message: depthExceeded
+      ? 'El archivo está demasiado anidado; reduce los niveles de anidación.'
+      : 'El contenido no es JSON válido; revisa los datos del archivo.' }] };
+  }
+}
+function validateNormalizedPack(input: unknown): ValidationResult {
   const parsed = packSchema.safeParse(input);
   const errors = [
     ...(parsed.success ? [] : schemaErrors(input, parsed.error.issues)),

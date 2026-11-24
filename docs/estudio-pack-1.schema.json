@@ -740,7 +740,6 @@
           "id",
           "titulo",
           "peso",
-          "requiere",
           "items"
         ],
         "additionalProperties": false
@@ -755,5 +754,6 @@
     "generado",
     "bloques"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "description": "La app comprueba además ocho reglas semánticas: número de opciones correctas (una en test y huecos; al menos una correcta y una incorrecta en multi), textos distintos, marcadores {{n}} consecutivos y correspondientes a los huecos, exactamente un paso incorrecto, ids únicos y no reservados, dependencias existentes sin autorreferencias, ausencia de ciclos y LaTeX válido."
 }

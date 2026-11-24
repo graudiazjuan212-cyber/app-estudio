@@ -21,7 +21,7 @@ const expected = [
   ['15-dolar', 'bloques[0].items[0].cuerpo', '`$` sin cerrar'],
   ['16-fecha', 'generado', 'fecha real válida'],
   ['17-derecha', 'bloques[1].items[1].pares.derecha', 'Los textos de derecha deben ser distintos'],
-  ['18-info-relaciona', 'bloques[0].items[0].relaciona', 'Campo desconocido `relaciona`'],
+  ['18-info-relaciona', 'bloques[0].items[0].relaciona', '`relaciona` no se puede usar en una tarjeta `info` (solo en preguntas evaluables).'],
 ] as const;
 describe('pack validation', () => {
   it.each([

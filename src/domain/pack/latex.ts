@@ -13,7 +13,7 @@ export function extractMath(text: string): MathFragment[] {
       let end = text.indexOf(delimiter, i);
       while (end >= 0 && (text[end - 1] === '`' || text[end + delimiter.length] === '`'))
         end = text.indexOf(delimiter, end + delimiter.length);
-      i = end < 0 ? text.length : end + delimiter.length;
+      if (end >= 0) i = end + delimiter.length;
       continue;
     }
     if (text[i] !== '$') { i++; continue; }
