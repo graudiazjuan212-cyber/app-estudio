@@ -11,3 +11,5 @@ backup_*.json
 *.tsbuildinfo
 .npm-cache/
 dist-e2e
+dist-e2e-a
+dist-e2e-b

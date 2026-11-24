@@ -33,7 +33,7 @@ export function ImportPanel() {
     const value = confirmOlder ? pending.current : text;
     if (!value.trim()) { setError('El texto está vacío. Elige un archivo o pega el JSON.'); return; }
     if (new Blob([value]).size > dataConfig.maxImportBytes) { setError('El paquete supera el máximo de 5 MB.'); return; }
-    lock.current = true; setBusy(true); setError('');
+    lock.current = true; setBusy(true); setError(''); setPersistence('');
     try {
       pending.current = value;
       const next = await importPackText(db, value, { ...ctx(), confirmOlder });

@@ -43,6 +43,7 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "test:dist": "vitest run --config vitest.dist.config.ts",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run test:dist"
+    "test:node": "node --test e2e/support/static-server.test.ts",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run test:node && npm run build && npm run test:dist"
   }
 }
