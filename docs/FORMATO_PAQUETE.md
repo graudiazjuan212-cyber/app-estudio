@@ -115,4 +115,32 @@ Consejos de calidad: opciones de longitud parecida, sin pistas gramaticales; dis
 La app muestra **todos** los errores a la vez (hasta 50), con el bloque y el número de pregunta.
 
 ## 7. Exportación de progreso `estudio-progreso/1`
-Se documentará aquí al cerrar M6 (campos, ventana de 30 días para `fallos_recurrentes`, últimas 60 sesiones). Referencia provisional: BRIEF §6.2.
+
+Juan pulsa «Exportar progreso para Claude» en una asignatura y sube el archivo `progreso_<asignatura>_<AAAA-MM-DD>.json` al proyecto de esa asignatura. Contiene **solo** esa asignatura. El esquema técnico está en `docs/estudio-progreso-1.schema.json`. Ejemplo completo (el mismo que usan los tests): `tests/fixtures/progress/expected-ejmat-2026-12-02.json`.
+
+```json
+{
+  "schema": "estudio-progreso/1",
+  "exportado": "2026-12-02T21:10:00+01:00",
+  "asignatura": "ejmat",
+  "sesiones": [ { "fecha": "2026-11-24", "minutos": 2.3, "preguntas": 4, "aciertos": 4, "tipo": "estudio" } ],
+  "capitulos": [ { "id": "ejmat-c01", "numero": 1, "titulo": "Vectores en el plano", "porcentaje": 11,
+    "bloques": [ { "id": "mat-b1", "titulo": "Componentes y norma", "peso": 1, "estado": "dominado", "bloqueado": false,
+      "dias_dominio": ["2026-11-24", "2026-11-27"], "proximo_repaso": "2026-12-11" } ] } ],
+  "puntos_ciegos": [ { "item": "mat-i8", "enunciado_corto": "La suma de (1,2) y (3,4) es (___,___).", "fecha": "2026-11-28" } ],
+  "fallos_recurrentes": [ { "item": "mat-i8", "enunciado_corto": "La suma de (1,2) y (3,4) es (___,___).", "fallos": 2 } ]
+}
+```
+
+| Campo | Qué significa |
+|---|---|
+| `exportado` | Momento de la exportación, en la hora local de Juan con su desfase (`+01:00` en invierno, `+02:00` en verano). |
+| `sesiones` | Las **últimas 60 sesiones terminadas** (de más antigua a más reciente). `fecha` = día de estudio (el día cambia a las 04:00), `minutos` = tiempo total con un decimal, `preguntas`/`aciertos` = solo preguntas evaluables (no cuentan las tarjetas `info`), `tipo` = `estudio`, `repaso` (repasar capítulo) o `examen` (mini examen). |
+| `capitulos[].porcentaje` | % del capítulo: suma de pesos de bloques **dominados o graduados** / suma de pesos de todos los bloques con preguntas (redondeado hacia abajo). Es duro a propósito. |
+| `bloques[].estado` | `pendiente`, `en_curso`, `dominado` o `graduado` (definiciones en §4). `bloqueado: true` = depende de un bloque que aún no está dominado y todavía no se ha empezado. |
+| `bloques[].dias_dominio` | Los días de estudio que cuentan como «día válido» del bloque (hacen falta 2 para dominarlo). Vacío si el bloque perdió el dominio por un fallo posterior. |
+| `bloques[].proximo_repaso` | La fecha más cercana en que vence el repaso de alguna pregunta del bloque (`null` si aún no hay ninguna programada). |
+| `puntos_ciegos` | Preguntas que Juan **falló estando seguro** y aún no ha resuelto (se resuelven acertando con «Bastante» o «Seguro» en un día posterior). `enunciado_corto` = primeros 80 caracteres del enunciado (los huecos `{{n}}` salen como `___`). Son lo primero que conviene repasar con él. |
+| `fallos_recurrentes` | Preguntas con **2 o más fallos** en los últimos **30 días de estudio** (incluye «No lo sé»), de más a menos fallos. |
+
+Cómo usarlo desde el proyecto de la asignatura: priorizar los `puntos_ciegos`, reforzar los bloques `en_curso` y los `fallos_recurrentes`, no generar contenido nuevo de un capítulo cuyo `porcentaje` sea bajo sin antes consolidar sus bloques, y generar el siguiente paquete **subiendo `version`** (§5) para no perder el progreso. Los ids de pregunta (`item`) son los de tu paquete.
