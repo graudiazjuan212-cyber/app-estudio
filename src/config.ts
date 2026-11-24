@@ -7,6 +7,11 @@ export const appConfig = {
   previewPort: 4173,
 } as const;
 
+export const dataConfig = {
+  dbName: 'estudio', schemaVersion: 1, snapshotKeep: 3, premigrationKeep: 2,
+  blockedTimeoutMs: 8000,
+};
+
 export function previewUrl(): string {
   return `http://localhost:${String(appConfig.previewPort)}${appConfig.productionBase}`;
 }
