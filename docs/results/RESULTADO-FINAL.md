@@ -5,7 +5,8 @@
 ## La app
 - **Dirección (cuando se publique):** https://graudiazjuan212-cyber.github.io/app-estudio/
 - Hitos M0–M9 cerrados. Código en `main`, **sin `git push`**.
-- Verificación final: `npm run check` verde (1340 tests, lint a 0 avisos, build) y `npm run e2e` verde (149 pasan, 2 omitidos que son solo de capturas, 0 fallos).
+- Verificación final: `npm run check` verde (1379 tests, lint a 0 avisos, build) y `npm run e2e` verde (153 pasan, 2 omitidos que son solo de capturas, 0 fallos). Revisión adversarial de M9-3: aprobada sin hallazgos.
+- Duración de la sesión: se elige al empezar (1, 5, 10, 15 o 30 min; 10 por defecto) y se puede cambiar el valor por defecto en Ajustes.
 - Medido en PC con 6 000 preguntas y 20 000 intentos: Inicio 0,4 s, abrir asignatura 0,1 s, empezar a estudiar 0,4 s, responder 0,1 s, copia de seguridad 0,8 s.
 
 ## Cómo instalarla en tu Android (cuando esté publicada)
@@ -18,7 +19,8 @@
 Funciona sin internet una vez instalada.
 
 ## Lo que tienes que hacer tú (también en `docs/PENDIENTE-JUAN.md`)
-1. Contestar la pregunta 6 de `docs/QUESTIONS.md` y, si dices que sí, autorizar el `git push`.
+1. Contestar las preguntas 6 (publicar) y 7 (sesión sin terminar: ¿no debe contar?).
+   Antes, la 6 de `docs/QUESTIONS.md` y, si dices que sí, autorizar el `git push`.
 2. En GitHub: Settings → Pages → origen **«GitHub Actions»**.
 3. Seguir `docs/PRUEBA_MOVIL.md` en tu Android (es el criterio de aceptación de M8 y solo tú puedes hacerlo).
 4. Importar tus paquetes reales y hacer la primera copia de seguridad.

@@ -14,12 +14,13 @@ Arranque de sesión nueva: `CLAUDE.md` → este archivo → `docs/PLAN.md`. **Pr
 | M6 Exportación de progreso | **Cerrado** (adversarial) | `af6ce0c` | 1232 tests + 51 E2E |
 | M7 Offline / actualización / instalación | **Cerrado** | `909b475` | 56 E2E (5 de PWA con dos builds reales) |
 | M8 README para Juan + prueba móvil | **Cerrado por Claude** (documentos revisados contra la UI final); la **prueba en el Android de Juan** es suyo | ver `RESULTADO-M8.md` | revisión estática + capturas |
-| M9 Pulido (a11y, rendimiento, integridad, capturas) | **Cerrado** | `c2598ce` (M9-2), `459dde0` (M9-3) + commit de cierre | `npm run check`: 1340 tests + 16 node + 4 dist; E2E: 149 pasan, 2 omitidos (capturas), 0 fallos |
+| M9 Pulido (a11y, rendimiento, integridad, capturas) | **Cerrado** (adversarial de M9-3: aprobado, sin hallazgos) | `c2598ce` (M9-2), `459dde0` (M9-3), `7dbe6c4` | `npm run check`: 1340 tests; E2E 149 |
+| M10-1 Duración de sesión al empezar (1/5/10/15/30 min, 10 por defecto) | **Cerrado** | `6b0a265` | `npm run check`: 1379 tests + 16 node + 4 dist; E2E: 153 pasan, 2 omitidos, 0 fallos |
 
 Informes: `docs/results/RESULTADO-M0…M9.md`, `PARA-REVISAR-*.md`, `RESULTADO-FINAL.md`, `M9-1.md` (informe de Codex), `capturas/` (PNG claro/oscuro).
 
 ## Qué falta
-Nada de código. Solo Juan (ver `docs/PENDIENTE-JUAN.md` y `docs/QUESTIONS.md`):
+Nada de código pendiente salvo la **pregunta 7** de `docs/QUESTIONS.md` (sesión sin terminar: hoy las respuestas cuentan al momento; propuesta de que cuenten solo al terminar). Si Juan dice «sí», es la tarea M10-2 (domino/repasos: revisar con `adversarial-review` antes de publicar). Y Juan (ver `docs/PENDIENTE-JUAN.md` y `docs/QUESTIONS.md`):
 1. Contestar la pregunta 6 (publicar o no) y autorizar el `git push`.
 2. Activar Pages con origen «GitHub Actions».
 3. Probar `docs/PRUEBA_MOVIL.md` en su Android.
