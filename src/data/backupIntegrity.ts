@@ -99,6 +99,18 @@ export function validateBackupIntegrity(data: BackupData): string[] {
       errors.push(`Actualiza la app antes de restaurar esta copia: planificador futuro en intento ${attempt.attemptId}.`);
     // Historical block ids and session item ids deliberately need not exist today.
   }
+  // Free practice must never leak into progress (or the reverse): the two kinds of answer stay in their own tables.
+  // A session that no longer exists is historical and tolerated.
+  const sessionKinds = new Map(data.sessions.map(session => [session.id, session.kind]));
+  for (const attempt of data.attempts) {
+    if (sessionKinds.get(attempt.sessionId) === 'practice')
+      errors.push(`El intento ${attempt.attemptId} pertenece a una sesión de práctica libre.`);
+  }
+  for (const attempt of data.practiceAttempts ?? []) {
+    const kind = sessionKinds.get(attempt.sessionId);
+    if (kind !== undefined && kind !== 'practice')
+      errors.push(`La respuesta de práctica ${attempt.attemptId} pertenece a una sesión que no es de práctica libre.`);
+  }
   for (const session of data.sessions) {
     if (!subjects.has(session.subjectId)) errors.push(`Asignatura inexistente en sesión ${session.id}.`);
   }

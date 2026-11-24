@@ -43,8 +43,11 @@ test('a practice-only day contributes minutes, goal and streak on home', async (
   const attempt = backup.data.attempts.find(a => a.tipo === 'test');
   if (!attempt) throw new Error('Missing fixed attempt');
   const { schedulerVersion, ...practice } = attempt; void schedulerVersion;
+  const normal = backup.data.sessions.find(session => session.id === attempt.sessionId);
+  if (!normal) throw new Error('Missing fixed session');
   backup.data.attempts = [];
-  backup.data.practiceAttempts = [{ ...practice, studyDay: '2026-11-24', at: '2026-11-24T10:00:00.000Z', durationMs: 600000 }];
+  backup.data.sessions = [{ ...normal, id: 'free-fixed', kind: 'practice', endedAt: '2026-11-24T10:10:00.000Z' }];
+  backup.data.practiceAttempts = [{ ...practice, sessionId: 'free-fixed', studyDay: '2026-11-24', at: '2026-11-24T10:00:00.000Z', durationMs: 600000 }];
   await restore(page, backup); await page.goto('./');
   await expect(page.getByText('Racha: 1 día', { exact: true })).toBeVisible();
   await expect(page.getByText(/Hoy: 10 de/)).toBeVisible();
@@ -53,13 +56,9 @@ test('a practice-only day contributes minutes, goal and streak on home', async (
 test('opens a native published v1 database with its recovery copy', async ({ page }) => {
   await prepare(page); await page.goto('./');
   const backup = backupSchema.parse(JSON.parse(readFileSync('tests/fixtures/backups/v1-real.json', 'utf8')) as unknown);
+  // The app creates its (v2) database asynchronously: wait for it, then the seeding below drops it and writes a real v1 one.
+  await page.waitForFunction(async () => (await indexedDB.databases()).some(db => db.name === 'estudio'));
   await page.evaluate(async text => {
-    // The app already created its (v2) database when the page loaded: drop it so a real v1 one can be seeded.
-    await new Promise<void>((resolve, reject) => {
-      const drop = indexedDB.deleteDatabase('estudio');
-      drop.onsuccess = () => { resolve(); };
-      drop.onerror = () => { reject(new Error('Cannot drop the database')); };
-    });
     const { data } = JSON.parse(text) as { data: Record<string, Record<string, unknown>[]> };
     const stores = {
       subjects: 'id', chapters: 'id, subjectId', blocks: 'id, chapterId, subjectId',
