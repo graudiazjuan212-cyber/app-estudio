@@ -7,7 +7,7 @@ import { backupSchema } from './backupSchema.ts';
 import type { Backup, BackupData } from './backupSchema.ts';
 
 export function backupCounts(data: BackupData): Record<string, number> {
-  return Object.fromEntries(Object.entries(data).map(([key, rows]) => [key, rows.length]));
+  return Object.fromEntries(Object.entries(data).map(([key, rows]) => [key, rows?.length ?? 0]));
 }
 // Sort every object's keys, including arbitrary JSON settings, for a fixed byte representation.
 function canonical(value: unknown): unknown {
@@ -29,6 +29,7 @@ export async function readBackup(db: StudyDb, now: string): Promise<Backup> {
         void derivedKey;
         return item;
       }), packs: await db.packs.toArray(),
+      practiceAttempts: db.tables.some(t => t.name === 'practiceAttempts') ? await db.practiceAttempts.toArray() : undefined,
       attempts: await db.attempts.toArray(), sessions: await db.sessions.toArray(), settings: await db.settings.toArray(),
     } });
 }

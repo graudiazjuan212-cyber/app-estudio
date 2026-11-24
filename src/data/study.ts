@@ -66,13 +66,13 @@ export interface SessionRun {
   answered: string[]; nextIndex: number;
 }
 export async function loadSessionRun(db: StudyDb, sessionId: string): Promise<SessionRun | null> {
-  return db.transaction('r', [db.sessions, db.items, db.attempts], async () => {
+  return db.transaction('r', [db.sessions, db.items, db.attempts, db.practiceAttempts], async () => {
     const session = await db.sessions.get(sessionId);
     if (!session) return null;
     const rows = await db.items.bulkGet(session.itemIds);
     const items = rows.flatMap(row => row && !row.archived ? [{ id: row.id, item: row.data, fingerprint: itemFingerprint(row.data),
       blockId: row.blockId, chapterId: row.chapterId, itemGen: row.itemGen }] : []);
-    const answered = [...new Set((await sessionAttempts(db, sessionId)).map(a => a.itemId))];
+    const answered = [...new Set((await (session.kind === 'practice' ? db.practiceAttempts.where('sessionId').equals(sessionId).toArray() : sessionAttempts(db, sessionId))).map(a => a.itemId))];
     const index = items.findIndex(item => !answered.includes(item.id));
     return { session, items, answered, nextIndex: index < 0 ? items.length : index };
   });

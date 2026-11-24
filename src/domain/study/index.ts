@@ -25,3 +25,6 @@ export type { Submission, Outcome } from './submission.ts';
 export { groupAttempts } from './duplicates.ts';
 export { blockDayProgress } from './dayProgress.ts';
 export type { BlockDayProgress } from './dayProgress.ts';
+
+export { practiceWeight, consecutivePracticeFailures, buildPracticeSession } from './practice.ts';
+export type { PracticeAttempt, PracticeInput, PracticeWeightInput } from './practice.ts';

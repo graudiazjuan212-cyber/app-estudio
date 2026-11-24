@@ -1,5 +1,6 @@
 import { allBlockStates, chapterPercent, currentStreak, dailyGoalReached, examPassed,
   secondsStudiedToday, studyDay } from '../domain/study/index.ts';
+import { studyConfig } from '../config.ts';
 import type { StudyDb } from './db.ts';
 import type { DataContext } from './cache.ts';
 import type { SessionRow } from './schema.ts';
@@ -14,7 +15,8 @@ export interface SessionSummary {
 async function summarize(db: StudyDb, sessionId: string, ctx: DataContext): Promise<SessionSummary> {
   const session = await db.sessions.get(sessionId);
   if (!session) throw new Error('La sesión no existe.');
-  const attempts = (await sessionAttempts(db, sessionId)).filter(a => a.tipo !== 'info');
+  const practice = session.kind === 'practice';
+  const attempts = (await (practice ? db.practiceAttempts.where('sessionId').equals(sessionId).toArray() : sessionAttempts(db, sessionId))).filter(a => a.tipo !== 'info');
   const total = attempts.length;
   const correct = attempts.filter(a => a.correct).length;
   const all = await db.attempts.toArray();
@@ -28,19 +30,21 @@ async function summarize(db: StudyDb, sessionId: string, ctx: DataContext): Prom
     const before = session.percentBefore[chapter.id] ?? 0;
     if (before !== after) chapterChanges.push({ chapterId: chapter.id, titulo: chapter.titulo, before, after });
   }
-  const secondsToday = secondsStudiedToday(all, today);
+  const practiceToday = await db.practiceAttempts.where('studyDay').equals(today).toArray();
+  const practiceDays = await db.practiceAttempts.orderBy('studyDay').uniqueKeys();
+  const secondsToday = secondsStudiedToday(all, today) + practiceToday.reduce((sum, a) => sum + a.durationMs, 0) / studyConfig.millisecondsPerSecond;
   return { sessionId, kind: session.kind, correct, total,
-    blindSpotsCreated: attempts.filter(a => !a.correct && !a.dontKnow && a.confidence === 'seguro').length,
-    chapterChanges, streak: currentStreak(all.map(a => a.studyDay), today), secondsToday,
+    blindSpotsCreated: practice ? 0 : attempts.filter(a => !a.correct && !a.dontKnow && a.confidence === 'seguro').length,
+    chapterChanges: practice ? [] : chapterChanges, streak: currentStreak([...all.map(a => a.studyDay), ...practiceDays.map(String)], today), secondsToday,
     goalReached: dailyGoalReached(secondsToday, (await getSettings(db)).dailyGoalMinutes),
     exam: session.kind === 'exam' ? { passed: examPassed(correct, total) } : null };
 }
 export async function getSessionSummary(db: StudyDb, sessionId: string, ctx: DataContext): Promise<SessionSummary> {
-  return db.transaction('r', [db.sessions, db.attempts, db.chapters, db.blocks, db.items, db.settings],
+  return db.transaction('r', [db.sessions, db.attempts, db.chapters, db.blocks, db.items, db.settings, db.practiceAttempts],
     () => summarize(db, sessionId, ctx));
 }
 export async function finishStudySession(db: StudyDb, sessionId: string, ctx: DataContext): Promise<SessionSummary> {
-  return db.transaction('rw', [db.sessions, db.attempts, db.chapters, db.blocks, db.items, db.settings], async () => {
+  return db.transaction('rw', [db.sessions, db.attempts, db.chapters, db.blocks, db.items, db.settings, db.practiceAttempts], async () => {
     const summary = await summarize(db, sessionId, ctx);
     await finishSession(db, sessionId, ctx.now, { correct: summary.correct, total: summary.total });
     return summary;

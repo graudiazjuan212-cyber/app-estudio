@@ -36,7 +36,7 @@ it.each(historicalChanges)('accepts history: %s', async (_, change) => {
 });
 it('rejects one row over the limit and accepts the exact limit', async () => {
   const base = backupSchema.parse(JSON.parse(changedBackup()) as unknown);
-  const count = Object.values(base.data).reduce((sum, rows) => sum + rows.length, 0);
+  const count = Object.values(base.data).reduce((sum, rows) => sum + (rows?.length ?? 0), 0);
   const original = dataConfig.maxBackupRows;
   try {
     dataConfig.maxBackupRows = count;

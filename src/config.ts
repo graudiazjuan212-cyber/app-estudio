@@ -10,7 +10,7 @@ export const appConfig = {
 } as const;
 
 export const dataConfig = {
-  dbName: 'estudio', schemaVersion: 1, snapshotKeep: 3, premigrationKeep: 2,
+  dbName: 'estudio', schemaVersion: 2, snapshotKeep: 3, premigrationKeep: 2,
   blockedTimeoutMs: 8000, nativeSchemaPatchIncrement: 0.1,
   maxBackupRows: 2000000, maxImportBytes: 5 * 1024 * 1024,
   backupSchema: 'estudio-backup/1' as const, backupReminderDays: 7,
@@ -113,4 +113,11 @@ export const dayProgressConfig = {
   valid: 'Día de hoy válido ✓ ({validDays} de {requiredDays} días válidos)',
   voided: 'Hoy este bloque no puede validar el día (hubo un «No lo sé» o un fallo con «Seguro»). Mañana vuelve a intentarlo.',
   impossible: 'Hoy ya no se puede validar este bloque: faltan {missing} aciertos y solo quedan {remaining} preguntas. Mañana vuelve a intentarlo.',
+} as const;
+
+export const practiceConfig = {
+  base: 1, blindSpot: 8, recentFail: 4, lowConfidence: 3, practiceFail: 3,
+  practiceFailCap: 3, masteredFactor: 0.25, windowDays: 30,
+  title: 'Practicar más', note: 'Práctica libre: no cambia tu progreso',
+  empty: 'Aún no hay preguntas para practicar: responde primero alguna en una sesión normal.',
 } as const;

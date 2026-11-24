@@ -20,7 +20,7 @@ export function requiredRow<T>(rows: T[], index = 0): T {
 export const backupContext = { ...context, now: '2026-11-27T10:00:00.000Z' };
 export const exportContext = { now: '2026-11-24T10:00:00Z' };
 export const expectedCounts = { subjects: 2, chapters: 2, blocks: 5, items: 24, packs: 2,
-  attempts: 12, sessions: 0, settings: 0 };
+  attempts: 12, practiceAttempts: 0, sessions: 0, settings: 0 };
 export const backupTestConfig = { attempts: 20000, performanceMaxMs: 5000 };
 export const reminderCases: [string | null, string, boolean, boolean][] = [
   [null, '2026-11-24T10:00:00Z', false, false],

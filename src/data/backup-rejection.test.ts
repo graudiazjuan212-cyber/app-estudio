@@ -49,7 +49,7 @@ it.each(['truncated', 'schema', 'extra', 'attempt', 'item', 'block', 'depth', 'e
   });
 it('rejects a future version with the update message', async () => {
   const before = await dump(db);
-  expect(await restoreBackup(db, changed(b => { b.dbVersion = 2; }), backupContext)).toEqual({
+  expect(await restoreBackup(db, changed(b => { b.dbVersion = 3; }), backupContext)).toEqual({
     status: 'rejected', message: 'Actualiza la app antes de restaurar esta copia',
   });
   expect(await dump(db)).toEqual(before);

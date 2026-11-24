@@ -25,7 +25,7 @@ export async function exportProgress(db: StudyDb, subjectId: string, ctx: DataCo
       };
       const progress = buildProgressExport({ subjectId, catalog, meta,
         attempts: await readProgressAttempts(db, subjectId),
-        sessions: await db.sessions.where('subjectId').equals(subjectId).toArray(),
+        sessions: (await db.sessions.where('subjectId').equals(subjectId).toArray()).filter((s): s is typeof s & { kind: 'study' | 'review' | 'exam' } => s.kind !== 'practice'),
         itemStates: new Map((await db.itemState.toArray()).map(s => [s.itemId, s])), ...ctx });
       return { status: 'ok', json: `${JSON.stringify(progress, null, 2)}\n`,
         fileName: progressFileName(subjectId, studyDay(ctx.now, ctx.tz)) };

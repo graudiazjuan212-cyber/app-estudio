@@ -1,7 +1,7 @@
 import { installItemMetadata } from './itemMetadata.ts';
 import { Dexie } from 'dexie';
 import type { Table } from 'dexie';
-import type { Attempt, ItemState } from '../domain/study/index.ts';
+import type { PracticeAttempt, Attempt, ItemState } from '../domain/study/index.ts';
 import type { BlockRow, BlockStateRow, ChapterRow, DbVersion, ItemRow, PackRow,
   SessionRow, SnapshotRow, SubjectRow, ValueRow } from './schema.ts';
 
@@ -11,6 +11,7 @@ export class StudyDb extends Dexie {
   declare blocks: Table<BlockRow, string>;
   declare items: Table<ItemRow, string>;
   declare packs: Table<PackRow, string>;
+  declare practiceAttempts: Table<PracticeAttempt, string>;
   declare attempts: Table<Attempt, string>;
   declare itemState: Table<ItemState, string>;
   declare blockState: Table<BlockStateRow, string>;

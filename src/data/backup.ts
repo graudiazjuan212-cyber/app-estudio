@@ -49,13 +49,14 @@ export async function restoreBackup(db: StudyDb, text: string, ctx: DataContext,
       await db.snapshots.bulkDelete(old);
       const data = backup.data;
       for (const table of [db.subjects, db.chapters, db.blocks, db.items, db.packs, db.attempts,
-        db.sessions, db.settings, db.itemState, db.blockState]) await table.clear();
+        db.sessions, db.settings, db.itemState, db.blockState, ...db.tables.filter(t => t.name === 'practiceAttempts')]) await table.clear();
       await db.subjects.bulkAdd(data.subjects);
       await db.chapters.bulkAdd(data.chapters);
       await db.blocks.bulkAdd(data.blocks);
       await db.items.bulkAdd(data.items);
       await db.packs.bulkAdd(data.packs);
       await db.attempts.bulkAdd(data.attempts);
+      if (db.tables.some(t => t.name === 'practiceAttempts')) await db.practiceAttempts.bulkAdd(data.practiceAttempts ?? []);
       await db.sessions.bulkAdd(data.sessions);
       await db.settings.bulkAdd(data.settings);
       await db.itemState.bulkAdd(derived.items);

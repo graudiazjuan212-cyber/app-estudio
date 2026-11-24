@@ -19,7 +19,7 @@ export interface PackRow {
 }
 export type BlockStateRow = BlockState & { subjectId: string };
 export interface SessionRow {
-  id: string; subjectId: string; kind: 'study' | 'review' | 'exam'; chapterId: string | null;
+  id: string; subjectId: string; kind: 'study' | 'review' | 'exam' | 'practice'; chapterId: string | null;
   startedAt: string; endedAt: string | null; itemIds: string[]; minutes: number;
   percentBefore: Record<string, number>; result: { correct: number; total: number } | null;
 }
@@ -34,4 +34,6 @@ export const studyVersions: DbVersion[] = [{ version: 1, stores: {
   attempts: 'attemptId, itemId, subjectId, studyDay, sessionId, at, [subjectId+studyDay]',
   itemState: 'itemId', blockState: 'blockId, subjectId', sessions: 'id, subjectId, startedAt',
   settings: 'key', snapshots: '++id', meta: 'key',
+} }, { version: 2, stores: {
+  practiceAttempts: 'attemptId, itemId, subjectId, studyDay, sessionId, [subjectId+studyDay]',
 } }];

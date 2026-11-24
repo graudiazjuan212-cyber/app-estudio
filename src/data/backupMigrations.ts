@@ -6,6 +6,10 @@ export function migrateBackup(input: unknown, from: number, to: number,
   let data = input;
   let current = from;
   while (current < to) {
+    if (current === 1 && to >= 2 && !migrations.some(step => step.from === 1) &&
+      typeof data === 'object' && data !== null) {
+      data = { ...data, dbVersion: 2 }; current = 2; continue;
+    }
     const candidates = migrations.filter(step => step.from === current);
     const step = candidates[0];
     if (candidates.length !== 1 || !step || !Number.isInteger(step.to) || step.to <= current || step.to > to)

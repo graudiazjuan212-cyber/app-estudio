@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { loadSessionRun, finishStudySession, submitAnswer } from '../data/index';
+import { loadSessionRun, finishStudySession, submitAnswer, submitPracticeAnswer } from '../data/index';
 import type { SessionRun } from '../data/index';
 import { buildHash } from '../domain/router';
 import { seedFor } from '../domain/render/order';
@@ -11,6 +11,7 @@ import { Dialog } from '../ui/Dialog';
 import { LoadError } from '../ui/LoadState';
 import { useData } from './DataProvider';
 import { useAsync } from './useAsync';
+import { practiceConfig } from '../config';
 import { sessionHeaderText } from './studyText';
 
 export function SessionScreen({ sessionId }: { sessionId: string }) {
@@ -61,6 +62,7 @@ function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
     } else { void end(); }
   }, [current, end]);
   return <section><h1>{sessionHeaderText(run.session.kind, index, run.items.length).kind}</h1>
+    {run.session.kind === 'practice' && <p role="note">{practiceConfig.note}</p>}
     <p>{sessionHeaderText(run.session.kind, index, run.items.length).progress}</p>
     <progress role="progressbar" aria-label="Progreso de la sesión" value={index} max={run.items.length}
       aria-valuenow={index} aria-valuemin={0} aria-valuemax={run.items.length} />
@@ -73,7 +75,9 @@ function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
         if (!attempt) throw new Error('La pregunta todavía no está preparada.');
         setError(null);
         try {
-          const result = await submitAnswer(db, { sessionId: run.session.id, itemId: current.id,
+          const save = run.session.kind === 'practice' ? async (...args: Parameters<typeof submitPracticeAnswer>) =>
+            ({ ...await submitPracticeAnswer(...args), dayProgress: null }) : submitAnswer;
+          const result = await save(db, { sessionId: run.session.id, itemId: current.id,
             attemptId: attempt.id, fingerprint: current.fingerprint, submission, durationMs: Math.max(0, Math.round(performance.now() - attempt.start)) }, ctx());
           if (result.status === 'already-answered') {
             onNotice('Esta pregunta ya se respondió en otra ventana. Pasamos a la siguiente.');
@@ -87,7 +91,7 @@ function SessionRunScreen({ run, finish, startIndex, reloadAt, onNotice }: {
           setFeedback({ correct: result.correct }); bump();
         } catch { setError('No se ha podido guardar la respuesta.'); throw new Error('No se ha podido guardar la respuesta.'); }
       }} onNext={() => { setFeedback(null); setError(null); setIndex(n => n + 1); }} /></div>}
-    <BlockDayProgress progress={dayProgress} />
+    {run.session.kind !== 'practice' && <BlockDayProgress progress={dayProgress} />}
     {!current && error && <div role="alert">{error}<button disabled={busy} onClick={() => { void end(); }}>Reintentar</button></div>}
     {confirm && <Dialog title="¿Terminar la sesión?" returnFocus={exit} onClose={() => { if (!busy) setConfirm(false); }}>
       <p>Se conservarán las respuestas guardadas.</p>

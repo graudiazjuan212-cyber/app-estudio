@@ -30,3 +30,5 @@ export type { StartStudyInput, StartStudyResult, SessionRun, SubmitAnswerInput, 
 export { getAppStorageStatus, getOpenSessions } from './appStorage.ts';
 export { exportProgress } from './progressExport.ts';
 export { claimPwaNotice, requestFirstPersistence } from './pwaMeta';
+
+export { startPracticeSession, submitPracticeAnswer } from './practice.ts';

@@ -5,11 +5,11 @@ import type { BackupData } from './backupSchema.ts';
 /** Pure validation of structurally parsed backup rows, before any database writes. */
 export function validateBackupIntegrity(data: BackupData): string[] {
   const errors: string[] = [];
-  const total = Object.values(data).reduce((sum, rows) => sum + rows.length, 0);
+  const total = Object.values(data).reduce((sum, rows) => sum + (rows?.length ?? 0), 0);
   if (total > dataConfig.maxBackupRows) return ['La copia supera el límite de filas permitido.'];
   for (const [table, rows] of Object.entries(data)) {
     const seen = new Set<string>();
-    for (const row of rows) {
+    for (const row of rows ?? []) {
       const key = 'id' in row ? row.id : 'key' in row ? row.key : row.attemptId;
       if (seen.has(key)) errors.push(`Clave duplicada en ${table}: ${key}.`);
       seen.add(key);
@@ -90,12 +90,12 @@ export function validateBackupIntegrity(data: BackupData): string[] {
     if (!validPacks.has(`${chapter.subjectId}|${chapter.id}|${String(chapter.version)}`))
       errors.push(`Falta el paquete activo del capítulo ${chapter.id}.`);
   }
-  for (const attempt of data.attempts) {
+  for (const attempt of [...data.attempts, ...(data.practiceAttempts ?? [])]) {
     const item = items.get(attempt.itemId);
     if (!item || attempt.subjectId !== item.subjectId || attempt.chapterId !== item.chapterId)
       errors.push(`Ítem, capítulo o asignatura incoherente en intento ${attempt.attemptId}.`);
     if (item && attempt.itemGen > item.itemGen) errors.push(`Generación futura en intento ${attempt.attemptId}.`);
-    if (attempt.schedulerVersion > studyConfig.schedulerVersion)
+    if ('schedulerVersion' in attempt && typeof attempt.schedulerVersion === 'number' && attempt.schedulerVersion > studyConfig.schedulerVersion)
       errors.push(`Actualiza la app antes de restaurar esta copia: planificador futuro en intento ${attempt.attemptId}.`);
     // Historical block ids and session item ids deliberately need not exist today.
   }

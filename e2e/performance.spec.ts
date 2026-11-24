@@ -69,3 +69,23 @@ test('import 2000 items through settings', async ({ page }) => {
     await expect(page.getByText(/^Importado:/)).toBeVisible({ timeout: c.testMs });
   });
 });
+
+test('free practice and home remain within budget with 20000 attempts', async ({ page }) => {
+  test.setTimeout(c.testMs);
+  await prepare(page);
+  const backup = generateBackup();
+  backup.data.attempts = backup.data.attempts.map(a => ({ ...a, at: c.now, studyDay: c.now.slice(0, 10) }));
+  await restore(page, backup);
+  await measure('home', async () => {
+    await page.goto('./');
+    await expect(page.getByRole('link', { name: 'Ver asignatura', exact: true })).toHaveCount(c.large.subjects);
+  });
+  await page.goto('./#/asignatura/large-s0');
+  await page.getByRole('button', { name: 'Estudiar', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Practicar más', exact: true })).toBeVisible();
+  await measure('study', async () => {
+    await page.getByRole('button', { name: 'Practicar más', exact: true }).click();
+    await expect(page.getByRole('article', { name: 'Pregunta', exact: true })).toBeVisible();
+    await expect(page.getByRole('note')).toHaveText('Práctica libre: no cambia tu progreso');
+  });
+});

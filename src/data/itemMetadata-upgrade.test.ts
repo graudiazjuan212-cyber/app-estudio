@@ -24,7 +24,7 @@ it.each([false, true])('copies old v1 before extending its index (copy failure: 
     previous.version(1).stores({ ...version.stores,
       items: 'id, blockId, chapterId, subjectId, archived' });
     await previous.open();
-    for (const [table, rows] of Object.entries(data)) await previous.table(table).bulkAdd(rows);
+    for (const [table, rows] of Object.entries(data)) if (table !== 'practiceAttempts') await previous.table(table).bulkAdd(rows ?? []);
     previous.close();
     const proto = Dexie.prototype as { open: (this: Dexie) => Promise<Dexie> };
     const originalOpen = proto.open;

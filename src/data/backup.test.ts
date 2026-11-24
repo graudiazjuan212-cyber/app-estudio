@@ -31,7 +31,7 @@ it('round trips data, settings, sessions and rebuilt caches to an empty database
   const { json } = await exportBackup(db, exportContext);
   expect((await restoreBackup(target, json, backupContext)).status).toBe('restored');
   expect(await dataAndCaches(target)).toEqual(await dataAndCaches(db));
-  expect(await target.meta.get('schemaVersion')).toEqual({ key: 'schemaVersion', value: 1 });
+  expect(await target.meta.get('schemaVersion')).toEqual({ key: 'schemaVersion', value: 2 });
 });
 it('keeps every pack version and every historical attempt', async () => {
   await importPackText(db, packText('mat-ejemplo-c01-v2'), backupContext);

@@ -23,11 +23,12 @@ function subjectPercent(catalog: Catalog, states: Map<string, BlockState>): numb
 }
 export async function getHomeView(db: StudyDb, ctx: DataContext): Promise<HomeView> {
   return db.transaction('r', [db.subjects, db.chapters, db.blocks, db.items, db.attempts,
-    db.itemState, db.blockState, db.settings, db.meta, db.sessions], async () => {
+    db.itemState, db.blockState, db.settings, db.meta, db.sessions, db.practiceAttempts], async () => {
     const today = studyDay(ctx.now, ctx.tz);
     const cutoff = dueCutoffMs(ctx.now, ctx.tz);
     const attempts = await db.attempts.where('studyDay').equals(today).toArray();
-    const days = await db.attempts.orderBy('studyDay').uniqueKeys();
+    const practice = await db.practiceAttempts.where('studyDay').equals(today).toArray();
+    const days = [...await db.attempts.orderBy('studyDay').uniqueKeys(), ...await db.practiceAttempts.orderBy('studyDay').uniqueKeys()];
     const hasAttempts = await db.attempts.count() > 0;
     const catalog = await loadMetadataCatalog(db);
     const states = new Map((await db.blockState.toArray()).map(state => [state.blockId, state]));
@@ -50,7 +51,7 @@ export async function getHomeView(db: StudyDb, ctx: DataContext): Promise<HomeVi
       subjects.push({ ...subject, percent: subjectPercent(subjectCatalog, states), dueToday, lastStudyDay: last?.studyDay ?? null });
     }
     const { dailyGoalMinutes } = await getSettings(db);
-    const secondsToday = secondsStudiedToday(attempts, today);
+    const secondsToday = secondsStudiedToday(attempts, today) + practice.reduce((sum, a) => sum + a.durationMs, 0) / studyConfig.millisecondsPerSecond;
     const open = (await getOpenSessions(db))[0];
     return { subjects, hasData: subjects.length > 0, dailyGoalMinutes, secondsToday,
       streak: currentStreak(days.map(day => {

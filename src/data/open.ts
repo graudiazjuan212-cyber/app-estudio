@@ -15,14 +15,14 @@ function dynamicDb(name: string): Dexie {
 }
 
 /** Separate database: failure here must never start the schema upgrade. */
-export async function savePremigration(name: string, source: Dexie): Promise<void> {
+export async function savePremigration(name: string, source: Dexie, version = source.verno): Promise<void> {
   const dump = await source.transaction('r', source.tables, async () => {
     const rows: Record<string, unknown[]> = {};
     for (const table of source.tables) rows[table.name] = await table.toArray() as unknown[];
     return JSON.stringify(rows);
   });
   const prefix = `${name}-premigration-v`;
-  const copy = dynamicDb(`${prefix}${String(source.verno)}`);
+  const copy = dynamicDb(`${prefix}${String(version)}`);
   copy.version(1).stores({ backup: 'key' });
   try {
     await copy.open();
@@ -54,8 +54,8 @@ export async function openStudyDb(name: string, handlers: OpenHandlers = {}, ver
     // Dexie's pre-publication index patch increments the native version by one;
     // its dynamic connection reports that as a fractional application version.
     const itemTable = source.tables.find(table => table.name === 'items');
-    const sourceVersion = source.verno === target + dataConfig.nativeSchemaPatchIncrement &&
-      itemTable?.schema.idxByName.metadataKey ? target : source.verno;
+    const sourceVersion = source.verno === Math.floor(source.verno) + dataConfig.nativeSchemaPatchIncrement &&
+      itemTable?.schema.idxByName.metadataKey ? Math.floor(source.verno) : source.verno;
     if (exists && sourceVersion > target) {
       return { ok: false, reason: 'version-newer', message: 'Recarga para actualizar' };
     }
@@ -68,7 +68,7 @@ export async function openStudyDb(name: string, handlers: OpenHandlers = {}, ver
       // ADR-024: another tab may save answers between this snapshot and the new version opening.
       // Those answers remain in the database but are absent from the recovery snapshot.
       // Accepted risk while no real migrations exist and future migrations remain additive.
-      await savePremigration(name, source);
+      await savePremigration(name, source, sourceVersion);
     }
     source.close();
     db = defineDb(name, versions);

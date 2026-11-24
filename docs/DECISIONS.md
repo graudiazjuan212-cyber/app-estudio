@@ -170,3 +170,18 @@ Cada dependencia nueva se justifica aquí (CLAUDE.md, regla 8).
 - **Esquema:** se amplió `studyVersions` v1 en lugar de añadir v2 porque la app no está publicada. `openStudyDb` detecta bases v1 antiguas, hace antes la copia `-premigration-v1` y rellena el índice (probado). **Desde la primera publicación, cualquier cambio de índices exige una versión nueva (ADR-013).**
 - **Alternativas descartadas:** campo `evaluables` por bloque (no resuelve los repasos de hoy por ítem); consultas con `count()` por bloque (miles de consultas).
 - **Consecuencias:** el índice duplica metadatos pequeños por pregunta; `startStudySession` usa las cachés `itemState`/`blockState` (coherentes con la reconstrucción, M3-3) y solo reconstruye si falta algún bloque.
+
+
+## ADR-028: Free practice isolated from progress (M11-3)
+
+Status: accepted; implementation pending Claude verification.
+
+IndexedDB v2 adds only `practiceAttempts`; all v1 stores, indexes and rows remain unchanged. `openStudyDb` first saves the complete prior database to `<bd>-premigration-v1`. A failed copy prevents migration. Published native version 11 (the metadataKey patch) is recognised as application v1, including when upgrading to v2. No upgrade callback rewrites historical rows or metadata.
+
+Practice sessions write exclusively to `practiceAttempts`. Normal attempts remain the sole input to FSRS, mastery, blind spots, study planning and progress exports. Practice contributes only to elapsed minutes, daily goals and streaks. The interface always displays «Práctica libre: no cambia tu progreso» during practice and its summary.
+
+Weighted sampling without replacement uses the existing seeded generator. Consecutive practice failures increase only the next practice draw, capped at three; a later practice success resets that contribution. Data queries supply the last 30 study dates, inclusive of today. Historical eligibility and unresolved blind spots use an additional normal-attempt query before the window, via the compound subjectId/studyDay index, so previously answered material remains eligible even when its last attempt predates the window. Weighting never changes an already started session. As required by the windowed read contract, practice streaks used for weighting are restricted to that window.
+
+`estudio-backup/1` accepts optional validated `practiceAttempts`. Exports include it; restore and undo preserve it. Old copies restore with an empty practice table. The built-in v1-to-v2 document migration updates only the version header; rebuilding caches continues to use normal attempts alone. A copy containing practice cannot be opened by an older app: its strict schema rejects the unknown key (and the v2 version header).
+
+The requirement for byte-identical exports except for `practiceAttempts: []` also requires one unavoidable exception: `dbVersion` changes from 1 to 2. Migration tests compare all existing stored rows exactly and exports after normalising only that header and the new empty array. `meta` and `snapshots` are not changed by the database upgrade. Restoring a backup retains the existing restore behaviour: a pre-restore snapshot and refreshed schema metadata/caches.

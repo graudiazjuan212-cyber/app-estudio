@@ -6,7 +6,8 @@ import { dataConfig } from '../config.ts';
 import { defineDb } from './db.ts';
 import type { StudyDb } from './db.ts';
 import { openStudyDb } from './open.ts';
-import { studyVersions } from './schema.ts';
+import { studyVersions as productionVersions } from './schema.ts';
+const studyVersions = productionVersions.filter(v => v.version === 1);
 import type { DbVersion } from './schema.ts';
 import { importPackText } from './importPack.ts';
 import { recordAttempt } from './attempts.ts';
@@ -88,7 +89,7 @@ it('rejects older code without modifying a newer database', async () => {
   const db = await open(versions());
   const before = await dump(db);
   db.close();
-  expect(await openStudyDb(name)).toMatchObject({ ok: false, reason: 'version-newer', message: 'Recarga para actualizar' });
+  expect(await openStudyDb(name, {}, studyVersions)).toMatchObject({ ok: false, reason: 'version-newer', message: 'Recarga para actualizar' });
   expect(await dump(await open(versions()))).toEqual(before);
 });
 it('closes the old connection on versionchange and calls its handler', async () => {

@@ -19,7 +19,7 @@ export async function submitAnswer(db: StudyDb, input: SubmitAnswerInput, ctx: D
   return db.transaction('rw', [db.sessions, db.items, db.chapters, db.blocks, db.attempts, db.itemState, db.blockState], async () => {
     const session = await db.sessions.get(input.sessionId);
     const item = await db.items.get(input.itemId);
-    if (!session || !item || item.archived || item.subjectId !== session.subjectId || !session.itemIds.includes(item.id))
+    if (!session || session.kind === 'practice' || !item || item.archived || item.subjectId !== session.subjectId || !session.itemIds.includes(item.id))
       throw new Error('La pregunta no pertenece a esta sesión o ya no está disponible.');
     const previous = await db.attempts.get(input.attemptId);
     if (previous && (previous.sessionId !== session.id || previous.itemId !== item.id))
